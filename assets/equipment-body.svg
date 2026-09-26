@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 460" role="img" aria-label="Human equipment silhouette">
+  <defs>
+    <radialGradient id="halo"><stop stop-color="#ad755b" stop-opacity=".18"/><stop offset=".55" stop-color="#836545" stop-opacity=".06"/><stop offset="1" stop-color="#181923" stop-opacity="0"/></radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2=".4"><stop stop-color="#9f8473"/><stop offset=".19" stop-color="#77605c"/><stop offset=".48" stop-color="#35343d"/><stop offset=".74" stop-color="#71605b"/><stop offset="1" stop-color="#1b222c"/></linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#53484b"/><stop offset=".43" stop-color="#272b35"/><stop offset="1" stop-color="#100f17"/></linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2=".3"><stop stop-color="#e1c38d" stop-opacity=".8"/><stop offset=".5" stop-color="#847063" stop-opacity=".5"/><stop offset="1" stop-color="#d0ad82" stop-opacity=".6"/></linearGradient>
+    <radialGradient id="heart"><stop stop-color="#e8b983" stop-opacity=".52"/><stop offset=".35" stop-color="#b67a57" stop-opacity=".18"/><stop offset="1" stop-color="#b67a57" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter>
+  </defs>
+  <ellipse cx="140" cy="219" rx="102" ry="212" fill="url(#halo)"/>
+  <g fill="none" stroke="#b49466" stroke-opacity=".23" stroke-width=".8">
+    <path d="M140 10C69 12 25 85 25 203s37 232 115 247c78-15 115-129 115-247S211 12 140 10Z"/>
+    <path d="M140 18C77 18 34 92 34 203s34 213 106 238c72-25 106-127 106-238S203 18 140 18Z" stroke-dasharray="3 9"/>
+    <path d="M48 218h23m138 0h23M140 13v18m0 397v21"/>
+    <path d="M53 186c-12 16-18 38-17 57M227 186c12 16 18 38 17 57M102 43c-23 5-36 16-45 29M178 43c23 5 36 16 45 29"/>
+    <circle cx="140" cy="219" r="91" stroke-dasharray="1 11"/>
+  </g>
+  <path d="M91 445Q140 429 189 445" fill="none" stroke="#98785b" stroke-opacity=".34"/>
+  <!-- Limbs are independent contours; the narrow joins keep the figure anatomical rather than armoured. -->
+  <g stroke="url(#rim)" stroke-width="1.3" stroke-linejoin="round">
+    <path d="M117 257Q110 269 111 289l-4 44q-3 12-2 22l-3 42q-2 17-7 30l-5 13q9 8 25 4l6-14 4-34 3-18 5-27 7-38 1-28-1-32Z" fill="url(#body)"/>
+    <path d="M163 257q7 12 6 32l4 44q3 12 2 22l3 42q2 17 7 30l5 13q-9 8-25 4l-6-14-4-34-3-18-5-27-7-38-1-28 1-32Z" fill="url(#body)"/>
+    <path d="M103 122q-20-2-29 12-8 13-9 33l-7 40-6 30q-4 9-2 19l-2 18q-5 15 0 23 4 6 10 3l3-14 3 14q6 3 10-3l1-30-2-11 5-22 13-38 10-25 15-24Z" fill="url(#body)"/>
+    <path d="M177 122q20-2 29 12 8 13 9 33l7 40 6 30q4 9 2 19l2 18q5 15 0 23-4 6-10 3l-3-14-3 14q-6 3-10-3l-1-30 2-11-5-22-13-38-10-25-15-24Z" fill="url(#body)"/>
+    <path d="M122 101q-2 14-11 18l-16 5q6 17 11 31l6 37-3 26 4 24-8 33q9 20 35 22 26-2 35-22l-8-33 4-24-3-26 6-37q5-14 11-31l-16-5q-9-4-11-18Z" fill="url(#body)"/>
+    <path d="M140 27q-22 0-28 27l-2 18q-5 2-3 13l4 8q2 14 14 24 7 5 15 5t15-5q12-10 14-24l4-8q2-11-3-13l-2-18q-6-27-28-27Z" fill="url(#shade)"/>
+  </g>
+  <path d="M111 73q3-17 6-25 8-15 23-16 15 1 23 16 3 8 6 25l-8-6q-4-15-21-17-17 2-21 17Z" fill="#171b24" stroke="#b29675" stroke-opacity=".5"/>
+  <g fill="none" stroke="#c7ac85" stroke-linecap="round" stroke-opacity=".43">
+    <path d="M120 79q8-4 14 0m12 0q6-4 14 0" stroke-width="1.5"/>
+    <path d="M140 82q-3 12-4 15l5 3m-13 8q12 5 24 0" stroke-width="1"/>
+    <path d="M116 120q11 11 24 13 13-2 24-13M106 142q8 18 33 22m35-22q-8 18-33 22" stroke-width="1.4"/>
+    <path d="M109 168q16 6 31 3 15 3 31-3M140 172v39M119 203q5-5 10-4m22 0q5-1 10 4M115 221q25 10 50 0M118 238q22 6 44 0"/>
+    <path d="M112 276q10 7 27 4m2 0q17 3 27-4m-51 28q-2 32-9 50m55-50q2 32 9 50M107 354q10 7 17 3m49-3q-10 7-17 3"/>
+    <path d="M85 147q-7 25-11 44M195 147q7 25 11 44M69 211q-8 18-8 34m150-34q8 18 8 34"/>
+    <path d="M107 397q6 5 15 2m51-2q-6 5-15 2"/>
+  </g>
+  <path d="M140 157q-13 14-16 31 16 15 32 0-3-17-16-31Z" fill="url(#heart)" filter="url(#glow)"/>
+  <g fill="none" stroke="#b98664" stroke-opacity=".52" stroke-width=".8">
+    <path d="M140 142v11m-6-5h12M93 126l11 7M187 126l-11 7M105 275l12 7M175 275l-12 7"/>
+    <circle cx="140" cy="167" r="2.5" fill="#d5a471" stroke="none"/>
+  </g>
+</svg>

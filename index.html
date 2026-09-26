@@ -7,24 +7,16 @@
   <meta name="description" content="Nightreap — a dark fantasy loot-driven action RPG beneath an endless night.">
   <title>Nightreap · 永夜收割</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/game.css?v=032d6ca6c01ff4e6">
+  <link rel="stylesheet" href="css/game.css?v=251a3e4fbfb83058">
 </head>
 <body>
   <div id="desktop-warning" role="alert"></div>
   <header class="topbar">
     <a class="brand" href="./" aria-label="Nightreap"><img src="assets/icon.svg" alt="" width="42" height="42"><span><strong id="brand-title">NIGHTREAP</strong><small id="brand-subtitle">BENEATH THE LAST MOON</small></span></a>
     <div class="character-line"><span id="character-name">Wanderer</span><span id="character-level">I</span><span class="separator">/</span><span id="difficulty-label">Normal</span></div>
-    <nav class="top-actions"><button id="save-button" type="button">Save</button><button id="load-button" type="button">Load</button><button id="settings-button" type="button">Settings</button><button id="language-button" type="button">中文</button></nav>
+    <nav class="top-actions"><button id="inventory-button" type="button" aria-controls="inventory-panel" aria-expanded="false">Inventory</button><button id="save-button" type="button">Save</button><button id="load-button" type="button">Load</button><button id="settings-button" type="button">Settings</button><button id="language-button" type="button">中文</button></nav>
   </header>
   <main class="layout">
-    <aside class="skill-panel panel">
-      <div class="section-heading"><span id="journey-heading">JOURNEY</span><span class="ornament">✦</span></div>
-      <div id="class-portrait" class="portrait"><img src="assets/warrior.svg" alt=""></div>
-      <div id="class-name" class="class-name">Warrior</div>
-      <div id="skills" class="skills"></div>
-      <div id="passives" class="passives"></div>
-      <button id="town-button" type="button" class="subtle">Return to sanctuary</button>
-    </aside>
     <section class="viewport" aria-label="Game world">
       <canvas id="game" tabindex="0" aria-label="Nightreap game world"></canvas>
       <div class="world-heading"><span id="area-kicker">ACT I · THE ETERNAL NIGHT</span><h1 id="area-name">Sanctuary</h1><div id="area-progress"></div></div>
@@ -39,16 +31,28 @@
       <div id="travel-actions" class="travel-actions" hidden><button id="next-button" type="button">Travel onward</button><button id="dungeon-button" type="button">Descend into dungeon</button><button id="sheep-button" type="button" hidden>Hidden gate</button></div>
       <div id="pause-overlay" class="pause-overlay" hidden><button id="resume-button" type="button">Resume</button></div>
     </section>
-    <aside class="inventory-panel panel">
-      <div class="tabs" role="tablist"><button id="tab-inventory" role="tab" data-panel="inventory" aria-selected="true">Inventory</button><button id="tab-equipment" role="tab" data-panel="equipment" aria-selected="false">Equipment</button></div>
+    <aside id="inventory-panel" class="inventory-panel panel" aria-label="Inventory and equipment" hidden>
+      <div class="inventory-header"><div class="tabs" role="tablist"><button id="tab-inventory" role="tab" data-panel="inventory" aria-selected="true">Inventory</button><button id="tab-equipment" role="tab" data-panel="equipment" aria-selected="false">Equipment</button></div><button id="inventory-close" type="button" aria-label="Close">×</button></div>
       <div class="wealth"><span id="gold-value">0 gold</span><span id="materials-value">0 materials</span></div>
-      <div id="items" class="items"></div>
-      <div class="pagination"><button id="previous-page" aria-label="Previous page">‹</button><span id="page-number">1 / 1</span><button id="next-page" aria-label="Next page">›</button></div>
-      <div id="item-detail" class="item-detail"><span class="eyebrow">RELICS OF A FALLEN WORLD</span><p id="empty-hint">No relics yet. The night will provide.</p></div>
-      <div id="item-actions" class="item-actions"></div>
+      <div class="inventory-content">
+        <div class="inventory-browser">
+          <div id="items" class="items"></div>
+          <div id="equipment-body" class="equipment-body" hidden></div>
+          <div id="inventory-pagination" class="pagination"><button id="previous-page" aria-label="Previous page">‹</button><span id="page-number">1 / 1</span><button id="next-page" aria-label="Next page">›</button></div>
+        </div>
+        <div class="inventory-inspector">
+          <div id="item-detail" class="item-detail"><span class="eyebrow">RELICS OF A FALLEN WORLD</span><p id="empty-hint">No relics yet. The night will provide.</p></div>
+          <div id="item-actions" class="item-actions"></div>
+        </div>
+      </div>
       <div class="bottom-actions"><button id="shop-button">Merchant</button><button id="forge-button">Forge</button></div>
     </aside>
   </main>
+  <section class="skill-panel panel" aria-label="Skills">
+    <div class="hero-summary"><div id="class-portrait" class="portrait"><img src="assets/warrior.svg" alt=""></div><div id="class-name" class="class-name">Warrior</div></div>
+    <div id="skills" class="skills"></div>
+    <div class="hero-actions"><div id="passives" class="passives"></div><button id="town-button" type="button" class="subtle">Return to sanctuary</button></div>
+  </section>
   <footer class="hud">
     <div class="vital"><span id="health-label">LIFE</span><div class="meter health"><i id="health-fill"></i><strong id="health-value">240 / 240</strong></div></div>
     <div class="vital"><span id="resource-label">FURY</span><div class="meter resource"><i id="resource-fill"></i><strong id="resource-value">100 / 100</strong></div></div>
@@ -57,6 +61,6 @@
   </footer>
   <dialog id="modal"><div class="modal-heading"><h2 id="modal-title"></h2><button id="modal-close" aria-label="Close">×</button></div><div id="modal-content"></div></dialog>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
-  <script type="module" src="src/main.js?v=23ecdcffd8981f90"></script>
+  <script type="module" src="src/main.js?v=fd4c7807dab74da7"></script>
 </body>
 </html>

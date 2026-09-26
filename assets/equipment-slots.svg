@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <view id="weapon" viewBox="0 0 48 48"/><view id="head" viewBox="48 0 48 48"/>
+    <view id="chest" viewBox="96 0 48 48"/><view id="hands" viewBox="144 0 48 48"/>
+    <view id="feet" viewBox="192 0 48 48"/><view id="belt" viewBox="240 0 48 48"/>
+    <view id="ring1" viewBox="288 0 48 48"/><view id="ring2" viewBox="336 0 48 48"/>
+    <view id="amulet" viewBox="384 0 48 48"/>
+    <linearGradient id="iron" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4ddad"/><stop offset=".34" stop-color="#968482"/><stop offset=".6" stop-color="#414858"/><stop offset="1" stop-color="#b79a75"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fff0bb"/><stop offset=".38" stop-color="#d2a661"/><stop offset=".75" stop-color="#765035"/><stop offset="1" stop-color="#daba80"/></linearGradient>
+    <radialGradient id="ruby" cx=".35" cy=".25"><stop stop-color="#ffe0b2"/><stop offset=".35" stop-color="#df6961"/><stop offset="1" stop-color="#602637"/></radialGradient>
+    <radialGradient id="sapphire" cx=".35" cy=".25"><stop stop-color="#e7f6ff"/><stop offset=".4" stop-color="#7eaad1"/><stop offset="1" stop-color="#333f76"/></radialGradient>
+  </defs>
+  <g stroke="#d7b683" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(0)">
+      <path d="M27 5 17 26l5 5 4-5 6-18-1-4Z" fill="url(#iron)"/>
+      <path d="m27 6-8 19m10-14-6 14" stroke="#f2e2bc" stroke-opacity=".7" fill="none"/>
+      <path d="m12 25 13 11m-12-2 10-10" fill="none" stroke="url(#gold)" stroke-width="3"/>
+      <path d="m18 31-6 9 3 3 8-7" fill="url(#gold)"/>
+      <circle cx="13" cy="40" r="2" fill="url(#ruby)"/>
+    </g>
+    <g transform="translate(48)">
+      <path d="M10 24q1-17 14-18 13 1 14 18l-4 15H14Z" fill="url(#iron)"/>
+      <path d="M14 15q10-12 20 0m-22 6 12-4 12 4-3 6H15Z" fill="url(#gold)"/>
+      <path d="M18 29h12l-2 6h-8Z" fill="#181c29"/><path d="m24 7-3 9 3 3 3-3Z" fill="url(#ruby)"/>
+      <path d="m16 37 8 4 8-4" fill="none" stroke="#f3dfaa" stroke-opacity=".6"/>
+    </g>
+    <g transform="translate(96)">
+      <path d="m8 11 9-5 7 5 7-5 9 5-4 12-5-3-1 20H18l-1-20-5 3Z" fill="url(#iron)"/>
+      <path d="m18 10 6 7 6-7M17 21q7 8 14 0m-12 6 5 4 5-4" fill="none" stroke="url(#gold)" stroke-width="2"/>
+      <path d="m20 38 4-4 4 4" fill="none"/><circle cx="24" cy="22" r="2" fill="url(#ruby)"/>
+    </g>
+    <g transform="translate(144)">
+      <path d="m13 8 11-3 4 8-5 8 4 5-2 13-10 2-4-13 2-10Z" fill="url(#iron)"/>
+      <path d="m16 12 8-2m-9 9 8 2m-8 4 9 3m-8 3 8 3" fill="none" stroke="url(#gold)" stroke-width="2"/>
+      <path d="m25 21 7-4 4 4-7 9-3-4" fill="url(#gold)"/>
+      <path d="m13 37 12-2-2 6-8 2Z" fill="url(#gold)"/>
+    </g>
+    <g transform="translate(192)">
+      <path d="M9 7h12l2 17-4 6 2 4 2 5-4 3H5l-2-5 7-7 1-9Z" fill="url(#iron)"/>
+      <path d="M27 7h12l-1 14 1 9 7 7-2 5H30l-4-3 2-5 2-4-4-6Z" fill="url(#iron)"/>
+      <path d="M9 15h12M27 15h12M7 34l12 2m10 0 12-2" fill="none" stroke="url(#gold)" stroke-width="2"/>
+    </g>
+    <g transform="translate(240)">
+      <path d="M6 17q18 7 36 0l-2 12q-16 6-32 0Z" fill="url(#iron)"/>
+      <path d="M6 17q18 7 36 0M8 29q16 6 32 0" fill="none" stroke="url(#gold)" stroke-width="2"/>
+      <rect x="18" y="17" width="12" height="14" rx="1" fill="url(#gold)"/><rect x="21" y="20" width="6" height="8" rx="1" fill="#25252e"/>
+      <circle cx="24" cy="24" r="2" fill="url(#ruby)" stroke="none"/>
+    </g>
+    <g transform="translate(288)">
+      <ellipse cx="24" cy="31" rx="11" ry="9" fill="none" stroke="url(#gold)" stroke-width="4"/>
+      <path d="m20 18 4-8 4 8-4 7Z" fill="url(#ruby)" stroke="url(#gold)" stroke-width="2"/>
+      <path d="m19 19-5 4 5 3m10-7 5 4-5 3" fill="none" stroke="url(#gold)"/>
+      <path d="M20 10h8" stroke="#f4e0ad"/>
+    </g>
+    <g transform="translate(336)">
+      <ellipse cx="24" cy="30" rx="11" ry="10" fill="none" stroke="url(#gold)" stroke-width="4"/>
+      <path d="m17 18 7-9 7 9-7 8Z" fill="url(#sapphire)" stroke="url(#gold)" stroke-width="2"/>
+      <path d="m17 18 7 3 7-3M24 9v12" fill="none" stroke="#d8eafa" stroke-opacity=".8"/>
+    </g>
+    <g transform="translate(384)">
+      <path d="M9 11q15 23 30 0" fill="none" stroke="url(#gold)" stroke-width="2.8"/>
+      <path d="M16 19q8 11 16 0M24 27v5" fill="none" stroke="#f0dfb7" stroke-opacity=".7"/>
+      <path d="m24 25 8 8-8 11-8-11Z" fill="url(#ruby)" stroke="url(#gold)" stroke-width="2"/>
+      <path d="m24 29-4 4 4 8 4-8Z" fill="none" stroke="#fce0a4" stroke-opacity=".7"/>
+    </g>
+  </g>
+</svg>

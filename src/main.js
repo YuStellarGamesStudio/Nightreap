@@ -27,6 +27,7 @@ const WORDS = {
   healthShort: label('LIFE', '生命'), resourceShort: label('RESOURCE', '資源'),
   noAffixes: label('No affixes on this item.', '這件裝備沒有詞綴。'),
   primary: label('LMB · Primary', '左鍵 · 普攻'), secondary: label('RMB · Secondary', '右鍵 · 次要攻擊'),
+  sanctuaryOnly: label('Available in the sanctuary only.', '僅能在庇護所使用。'),
 };
 const node = (tag, className, value) => {
   const element = document.createElement(tag);
@@ -62,6 +63,7 @@ let pendingDeath = false;
 let modalPaused = false;
 let modalOpen = false;
 let input;
+let inventoryReturnFocus = null;
 const role = () => CLASSES.find(entry => entry.id === player.classId);
 const show = (target, value) => { $(target).hidden = !value; };
 
@@ -116,6 +118,8 @@ function setScene() {
     : state.area.enemies.some(enemy => enemy.boss && enemy.hp > 0) ? 'boss' : `act${state.area.act}`);
 }
 function enterArea(options) {
+  closeModal();
+  setInventoryOpen(false);
   inTown = false;
   pendingDeath = false;
   input.clear();
@@ -186,6 +190,8 @@ function renderSkills() {
   $('skills').replaceChildren(...skills.map((skill, index) => {
     const hotkey = index === 0 ? 'L' : index === 7 ? 'R' : String(index);
     const tile = button(null, () => { if (!inTown && !state.paused) combat.cast(index, input.aim); }, 'skill-button');
+    const icon = node('img', 'skill-icon'); icon.src = `assets/skills.svg?v=59750d7c3dbfe6f5#${skill.id}`; icon.alt = '';
+    tile.append(icon);
     tile.title = `${index === 0 ? message(WORDS.primary) : index === 1 ? message(WORDS.secondary) : hotkey} · ${message(skill.description)}`;
     tile.append(node('span', 'skill-key', hotkey), node('span', 'skill-name', message(skill.name)),
       node('small', 'skill-cost', `${skill.cost} ${message(role().resourceName)}`));
@@ -223,44 +229,86 @@ function updateSkillAvailability() {
     tiles[index].disabled = inTown || state.paused || remaining > 0 || player.resource < skill.cost;
   }
 }
-function itemsForPanel() {
-  return activePanel === 'inventory' ? player.inventory
-    : Object.entries(SLOT_NAMES).map(([slot, name]) => ({ slot, slotName: name, item: player.equipment[slot] }));
+function setInventoryOpen(open) {
+  const panel = $('inventory-panel');
+  if (open === !panel.hidden) return;
+  panel.hidden = !open;
+  $('inventory-button').setAttribute('aria-expanded', String(open));
+  input.clear();
+  if (open) {
+    inventoryReturnFocus = document.activeElement;
+    renderInventory();
+    $(`tab-${activePanel}`).focus();
+  } else {
+    if (panel.contains(document.activeElement)) inventoryReturnFocus?.focus();
+    inventoryReturnFocus = null;
+  }
 }
 function findSelected() {
   return player.inventory.find(item => item.id === selectedItemId) ||
     Object.values(player.equipment).find(item => item?.id === selectedItemId);
+}
+function itemIcon(slot, className = 'slot-icon') {
+  const icon = node('img', className);
+  icon.src = `assets/equipment-slots.svg?v=f1d9f97bb18d82ae#${slot}`;
+  icon.alt = '';
+  return icon;
 }
 function renderInventory() {
   $('tab-inventory').setAttribute('aria-selected', String(activePanel === 'inventory'));
   $('tab-equipment').setAttribute('aria-selected', String(activePanel === 'equipment'));
   $('gold-value').textContent = `${player.gold} ${message(UI.gold)}`;
   $('materials-value').textContent = `${player.materials} ${message(UI.materials)} · ${player.tickets} ${message(UI.tickets)}`;
-  const entries = itemsForPanel();
-  const pages = Math.max(1, Math.ceil(entries.length / CONFIG.inventoryPage));
-  page = Math.min(page, pages - 1);
-  $('page-number').textContent = `${page + 1} / ${pages}`;
-  $('previous-page').disabled = page === 0;
-  $('next-page').disabled = page >= pages - 1;
-  $('items').replaceChildren(...entries.slice(page * CONFIG.inventoryPage, (page + 1) * CONFIG.inventoryPage).map(entry => {
-    const item = activePanel === 'inventory' ? entry : entry.item;
-    const tile = button(null, () => { selectedItemId = item?.id || null; renderInventory(); }, item ? 'item-button' : 'empty-slot');
-    tile.setAttribute('aria-pressed', String(!!item && selectedItemId === item.id));
-    if (item) {
+  const equipment = activePanel === 'equipment';
+  show('items', !equipment);
+  show('inventory-pagination', !equipment);
+  show('equipment-body', equipment);
+  if (equipment) {
+    const silhouette = node('img', 'equipment-silhouette');
+    silhouette.src = 'assets/equipment-body.svg?v=9df0b002845ff23c'; silhouette.alt = '';
+    $('equipment-body').replaceChildren(silhouette, ...Object.entries(SLOT_NAMES).map(([slot, name]) => {
+      const item = player.equipment[slot];
+      const tile = button(null, () => { selectedItemId = item?.id || null; renderItemDetail(); updateItemSelection(); },
+        `equipment-slot ${item ? 'item-button' : 'empty-slot'}`);
+      tile.dataset.slot = slot;
+      if (item) tile.dataset.rarity = item.rarity;
+      tile.dataset.itemId = item?.id || '';
+      const slotName = `${message(name)}${slot.startsWith('ring') ? ` ${slot.slice(-1)}` : ''}`;
+      tile.title = `${slotName} · ${item ? message(item.name) : message(WORDS.noSlot)}`;
+      tile.append(node('span', 'slot-label', slotName), itemIcon(slot),
+        node('strong', 'item-name', item ? message(item.name) : message(WORDS.noSlot)));
+      return tile;
+    }));
+  } else {
+    const pages = Math.max(1, Math.ceil(player.inventory.length / CONFIG.inventoryPage));
+    page = Math.min(page, pages - 1);
+    $('page-number').textContent = `${page + 1} / ${pages}`;
+    $('previous-page').disabled = page === 0;
+    $('next-page').disabled = page >= pages - 1;
+    $('items').replaceChildren(...player.inventory.slice(page * CONFIG.inventoryPage, (page + 1) * CONFIG.inventoryPage).map(item => {
+      const tile = button(null, () => { selectedItemId = item.id; renderItemDetail(); updateItemSelection(); }, 'item-button');
+      tile.dataset.itemId = item.id;
       tile.dataset.rarity = item.rarity;
-      tile.append(node('strong', 'item-name', message(item.name)), node('small', 'item-meta',
-        `${message(SLOT_NAMES[entry.slot || item.slot])} · ${item.durability}/${item.maxDurability}`));
-    } else tile.textContent = `${message(entry.slotName)} · ${message(WORDS.noSlot)}`;
-    return tile;
-  }));
+      const copy = node('div', 'item-copy');
+      copy.append(node('strong', 'item-name', message(item.name)), node('small', 'item-meta',
+        `${message(SLOT_NAMES[item.slot])} · ${item.durability}/${item.maxDurability}`));
+      tile.append(itemIcon(item.slot), copy);
+      return tile;
+    }));
+  }
+  updateItemSelection();
   renderItemDetail();
+}
+function updateItemSelection() {
+  for (const tile of $('inventory-panel').querySelectorAll('[data-item-id]'))
+    tile.setAttribute('aria-pressed', String(!!selectedItemId && tile.dataset.itemId === selectedItemId));
 }
 function renderItemDetail() {
   const item = findSelected(), detail = $('item-detail'), actions = $('item-actions');
   detail.replaceChildren(); actions.replaceChildren();
   if (!item) { selectedItemId = null; detail.append(node('p', '', message(UI.empty))); return; }
   const title = node('h3', 'detail-name', message(item.name)); title.dataset.rarity = item.rarity;
-  detail.append(title, node('p', 'detail-meta', `${message(SLOT_NAMES[item.slot])} · ${message(WORDS.itemLevel)} ${item.level} · ${message(WORDS.durability)} ${item.durability}/${item.maxDurability}`));
+  detail.append(itemIcon(item.slot, 'detail-icon'), title, node('p', 'detail-meta', `${message(SLOT_NAMES[item.slot])} · ${message(WORDS.itemLevel)} ${item.level} · ${message(WORDS.durability)} ${item.durability}/${item.maxDurability}`));
   for (const entry of item.affixes) {
     const affix = AFFIXES.find(definition => definition.id === entry.id);
     detail.append(node('div', 'affix-row', `${message(affix.name)} +${entry.value} · T${entry.tier}`));
@@ -277,9 +325,12 @@ function renderItemDetail() {
   else {
     actions.append(button(message(UI.equip), () => apply(equip(player, item.id), true)));
     if (item.slot === 'ring1') actions.append(button(`${message(UI.equip)} · 2`, () => apply(equip(player, item.id, 'ring2'), true)));
-    actions.append(button(`${message(UI.sell)} · ${item.sellValue} ${message(UI.gold)}`, () => {
-      apply(sell(player, item.id));
-    }));
+    const sellButton = button(`${message(UI.sell)} · ${item.sellValue} ${message(UI.gold)}`, () => {
+      if (inTown) apply(sell(player, item.id));
+    });
+    sellButton.disabled = !inTown;
+    if (!inTown) sellButton.title = message(WORDS.sanctuaryOnly);
+    actions.append(sellButton);
   }
   if (inTown && item.affixes.length) actions.append(button(message(UI.forge), () => openForge(item.id)));
 }
@@ -302,7 +353,7 @@ function renderHud() {
 function renderTranslations() {
   document.documentElement.lang = language;
   for (const [id, key] of Object.entries({ 'brand-title':'title', 'brand-subtitle':'subtitle',
-    'journey-heading':'journey', 'sanctuary-title':'character', 'sanctuary-hint':'sanctuaryHint',
+    'inventory-button':'inventory', 'sanctuary-title':'character', 'sanctuary-hint':'sanctuaryHint',
     'save-button':'save', 'load-button':'load', 'settings-button':'settings',
     'town-button':'town', 'difficulty-caption':'difficulty',
     'next-button':'next', 'dungeon-button':'dungeon', 'sheep-button':'sheep',
@@ -313,6 +364,9 @@ function renderTranslations() {
   $('controls-hint').textContent = `${message(UI.controls)} · ${message(WORDS.secondary)}`;
   $('language-button').textContent = language === 'en' ? '中文' : 'English';
   $('modal-close').setAttribute('aria-label', message(UI.close));
+  $('inventory-close').setAttribute('aria-label', message(UI.close));
+  $('inventory-panel').setAttribute('aria-label', `${message(UI.inventory)} · ${message(UI.equipment)}`);
+  $('shop-button').title = $('forge-button').title = inTown ? '' : message(WORDS.sanctuaryOnly);
 }
 function renderAll() { renderTranslations(); renderClassChoice(); renderProgress(); renderSkills(); renderInventory(); renderHud(); }
 
@@ -355,11 +409,13 @@ function openShop() {
     ['resource', UI.resource, GEAR_BALANCE.resourcePotionGold],
     ['gamble', UI.gamble, GEAR_BALANCE.gambleGold],
   ]) rowButton(content, message(name), `${price} ${message(UI.gold)}`, () => {
+    if (!inTown) return;
     const result = buy(player, type);
     notify(result.message, result.ok ? 'loot' : null);
     if (result.ok) { renderInventory(); renderHud(); void persist(); }
   });
   rowButton(content, message(UI.repair), `${message(UI.gold)}: ${player.gold}`, () => {
+    if (!inTown) return;
     const result = repair(player);
     notify(result.message);
     if (result.ok) { combat.refreshPlayer(); renderInventory(); void persist(); }
@@ -373,13 +429,17 @@ function openForge(itemId = selectedItemId, affixIndex = 0) {
     const content = openModal(UI.forge);
     const choices = owned.filter(entry => entry.affixes.length);
     if (!choices.length) content.append(node('p', '', message(WORDS.noAffixes)));
-    else for (const choice of choices)
-      content.append(button(message(choice.name), () => openForge(choice.id), 'affix-choice'));
+    else for (const choice of choices) {
+      const tile = button(null, () => openForge(choice.id), 'affix-choice');
+      tile.dataset.rarity = choice.rarity;
+      tile.append(itemIcon(choice.slot, 'item-choice-icon'), node('span', '', message(choice.name)));
+      content.append(tile);
+    }
     return;
   }
   if (!item.affixes.length) { notify(WORDS.noAffixes); return; }
   const content = openModal(UI.forge);
-  content.append(node('h3', '', message(item.name)), node('p', '', message(WORDS.selectAffix)));
+  content.append(itemIcon(item.slot, 'detail-icon'), node('h3', '', message(item.name)), node('p', '', message(WORDS.selectAffix)));
   const affixes = node('div', 'modal-grid'); content.append(affixes);
   item.affixes.forEach((entry, index) => {
     const affix = AFFIXES.find(definition => definition.id === entry.id);
@@ -391,6 +451,7 @@ function openForge(itemId = selectedItemId, affixIndex = 0) {
   for (const operation of ['reroll', 'reforge', 'upgrade']) {
     const recipe = GEAR_BALANCE.craft[operation];
     const action = button(`${message(UI[operation])} · ${recipe.cost} ${message(UI.materials)}`, () => {
+      if (!inTown) return;
       const before = player.materials;
       const result = craft(player, item.id, affixIndex, operation);
       notify(result.message, result.ok ? 'equip' : null);
@@ -517,9 +578,10 @@ function tryTravel(kind) {
 }
 function action(key) {
   if (key === 'gesture') { void audio.unlock().catch(failure); return; }
-  if (key === 'tab') { activePanel = activePanel === 'inventory' ? 'equipment' : 'inventory'; page = 0; renderInventory(); return; }
+  if (key === 'tab') { setInventoryOpen($('inventory-panel').hidden); return; }
   if (key === 'escape') {
     if ($('modal').open) { closeModal(); return; }
+    if (!$('inventory-panel').hidden) { setInventoryOpen(false); return; }
     if (inTown) return;
     state.paused = !state.paused;
     show('pause-overlay', state.paused);
@@ -553,6 +615,8 @@ $('modal').addEventListener('close', () => {
   if (modalOpen) { state.paused = modalPaused; modalOpen = false; renderSkills(); }
 });
 $('modal-close').addEventListener('click', closeModal);
+$('inventory-button').addEventListener('click', () => setInventoryOpen($('inventory-panel').hidden));
+$('inventory-close').addEventListener('click', () => setInventoryOpen(false));
 $('save-button').addEventListener('click', () => void showSlots());
 $('load-button').addEventListener('click', () => void showSlots(true));
 $('settings-button').addEventListener('click', openSettings);
