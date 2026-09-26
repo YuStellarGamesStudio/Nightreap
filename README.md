@@ -42,7 +42,7 @@
 
 圖示以 SVG 為來源，提供 16／32／180／192／512 與 maskable 版本；另提供由 SVG 轉製、含 16／32／48px 的根目錄 `favicon.ico`。維護者修改資產後執行 `node scripts/version-assets.mjs`，將內容雜湊與離線清單一起提交；這是發版維護工具，遊戲直接執行已提交檔案，不需建置。
 
-配樂每首獨立存於 `src/data/music/{scene}.json`；`src/data/music/index.json` 只列場景與檔名。新增曲目時建立一份 JSON 並加入索引，不用改 Web Audio 播放引擎；發版前重新產生內容雜湊，所有曲目會各自納入離線快取。
+背景音樂共 20 首：五幕各三首，分別對應每幕三張小地圖；主選單、庇護所、地下城、Boss 戰及綿羊秘境各一首。Boss 等特殊場景優先選曲，Boss 擊敗後回到小地圖配樂。每首獨立存於 `src/data/music/{scene}.json`，索引列場景檔名，`src/data/audio.js` 的 `ACT_MUSIC` 提供地圖映射；新增曲目後更新索引、映射及資產雜湊，全部曲目納入離線快取。
 
 美術目錄位於 `assets/`：`characters/` 五職人物、`creatures/` 怪物／召喚物／變身、`terrain/` 地形圖集、`sanctuaries/` 五村、`ui/` 技能與裝備、`icons/` 網站圖示、`scenes/` 開始場景、`social/` 分享圖。人物映射集中在 `src/data/config.js` 的 `ART`；地形圖集依 `data-terrain` 分組，不拆成每障礙一檔。
 
@@ -92,7 +92,7 @@ Open over HTTPS or a local HTTP server, not `file://`. After the first online as
 
 SVG source icons cover 16/32/180/192/512 and maskable variants; the root `favicon.ico` contains derived 16/32/48px images. After asset changes, maintainers run `node scripts/version-assets.mjs` and commit the refreshed hashes and offline inventory. This is release maintenance, not a required game build step.
 
-Every composition has its own `src/data/music/{scene}.json`; `src/data/music/index.json` maps scene names to filenames only. Add a track file and index entry without changing the shared Web Audio engine, then refresh content hashes so every track is cached separately for offline play.
+There are 20 compositions: three per act, one for each of its three maps, plus one each for the menu, sanctuary, dungeon, Boss battle, and sheep realm. Special scenes take priority; defeating a Boss restores the map's music. Each track lives in `src/data/music/{scene}.json`, the index lists filenames, and `ACT_MUSIC` in `src/data/audio.js` maps campaign areas to tracks. Update these mappings and content hashes when adding music; all tracks are cached for offline play.
 
 Artwork lives under `assets/`: `characters/` for heroes, `creatures/` for monsters/summons/forms, `terrain/` for the terrain atlas, `sanctuaries/` for villages, `ui/` for skills/equipment, `icons/` for site icons, `scenes/` for the title scene, and `social/` for share images. Actor paths are centralized in `ART` in `src/data/config.js`; terrain remains one atlas grouped by `data-terrain`, not one file per obstacle.
 

@@ -1,4 +1,4 @@
-import { AUDIO, SFX } from '../data/audio.js?v=09b125992cee5872';
+import { AUDIO, SFX } from '../data/audio.js?v=2abfc8d355f88935';
 import { DEFAULT_SETTINGS } from '../data/save.js?v=2a952fa1ede7fff0';
 
 export class AudioManager {
@@ -17,7 +17,7 @@ export class AudioManager {
     this.lastSfxTime = new Map();
   }
   async load() {
-    const catalogUrl = new URL('../data/music/index.json?v=f429095ebf9f9a5c', import.meta.url);
+    const catalogUrl = new URL('../data/music/index.json?v=0b68072fc10b6d1d', import.meta.url);
     const response = await fetch(catalogUrl);
     if (!response.ok) throw new Error(`Cannot load music index: ${response.status}`);
     const files = await response.json();

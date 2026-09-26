@@ -4,11 +4,12 @@ import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
+import { ACT_MUSIC } from './data/audio.js?v=2abfc8d355f88935';
 import { Renderer } from './core/renderer.js?v=1ce0644e570d16ec';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
 import { GameLoop } from './core/loop.js?v=55bc0165a2a456b0';
-import { AudioManager } from './core/audio.js?v=3f8b4fd401f6503f';
-import { Combat, createPlayer } from './systems/combat.js?v=a2a0e73bbd15aeb7';
+import { AudioManager } from './core/audio.js?v=5ba7100882cc0802';
+import { Combat, createPlayer } from './systems/combat.js?v=41564359d12f0a23';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
@@ -152,7 +153,7 @@ function makeState(area) {
 }
 function setScene() {
   audio.setScene(inTown ? 'town' : state.area.sheep ? 'sheep' : state.area.depth ? 'dungeon'
-    : state.area.enemies.some(enemy => enemy.boss && enemy.hp > 0) ? 'boss' : `act${state.area.act}`);
+    : state.area.enemies.some(enemy => enemy.boss && enemy.hp > 0) ? 'boss' : ACT_MUSIC[state.area.act][state.area.map]);
 }
 function enterArea(options) {
   closeModal();

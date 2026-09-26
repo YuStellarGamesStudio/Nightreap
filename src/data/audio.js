@@ -15,6 +15,14 @@ export const AUDIO = Object.freeze({
   beatFrequency: 76, beatEndFrequency: 37, beatDuration: 0.11,
 });
 
+export const ACT_MUSIC = [
+  ['act0', 'act0-1', 'act0-2'],
+  ['act1', 'act1-1', 'act1-2'],
+  ['act2', 'act2-1', 'act2-2'],
+  ['act3', 'act3-1', 'act3-2'],
+  ['act4', 'act4-1', 'act4-2'],
+];
+
 export const SFX = Object.freeze({
   hit: { notes: [54,44], duration: 0.065, wave: 'square', level: 0.24, group: 'impact' },
   monsterHurt: { notes: [49,39], duration: 0.062, wave: 'triangle', level: 0.19, group: 'impact' },
