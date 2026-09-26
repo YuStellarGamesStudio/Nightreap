@@ -1,7 +1,7 @@
 import { CLASSES, COMBAT } from '../data/combat.js?v=936ca80f602c3b09';
 import { AUDIO } from '../data/audio.js?v=09b125992cee5872';
-import { SpatialGrid } from '../core/spatial.js?v=39592db5ad528eff';
-import { isWalkable } from './world.js?v=29b0bb86fb9a7f41';
+import { SpatialGrid } from '../core/spatial.js?v=4755d9a1200c721a';
+import { isWalkable } from './world.js?v=5c31f3b40f67ee3b';
 
 const B = COMBAT.base;
 const colors = COMBAT.colors;

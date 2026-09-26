@@ -1,4 +1,4 @@
-import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js?v=40cb852ed18520b2';
+import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js?v=ef5f78c241fd8cdd';
 import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
 
 const choice = (items, rng) => items[Math.min(items.length - 1, Math.floor(rng() * items.length))];
