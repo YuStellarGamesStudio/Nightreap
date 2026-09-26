@@ -1,4 +1,5 @@
 import { CLASSES, COMBAT } from '../data/combat.js';
+import { AUDIO } from '../data/audio.js';
 import { SpatialGrid } from '../core/spatial.js';
 import { isWalkable } from './world.js';
 
@@ -42,6 +43,8 @@ export class Combat {
     this.attackTime = 0;
     this.trailDistance = 0;
     this.nextMinionId = 0;
+    this.nextMonsterMovementSound = 0;
+    this.nextPlayerMovementSound = 0;
     state.enemies = state.area.enemies;
     state.minions ||= [];
     state.projectiles ||= [];
@@ -223,6 +226,8 @@ export class Combat {
     const amount = Math.min(enemy.hp, Math.max(0, (options.flat ? power : p.damage * power)
       * (1 + bonus) * (critical ? p.critDamage : 1) * (options.element === 'physical' ? 1 : 1 - (enemy.resistance || 0))));
     enemy.hp -= amount;
+    if (!options.dot && amount > 0 && distance(enemy, p) < AUDIO.audibleRange)
+      this.onEvent('monsterHurt');
     if (!options.dot && amount > 0) {
       if (p.classId === 'warrior') p.resource = Math.min(p.maxResource, p.resource + B.hitRage);
       if (p.classId === 'ranger') p.resource = Math.min(p.maxResource, p.resource + B.hitEnergy);
@@ -692,6 +697,7 @@ export class Combat {
     if (target === this.player) {
       this.damagePlayer(enemy.damage * multiplier, enemy.element || 'physical', enemy);
       if (status) this.applyStatus(target, status);
+      if (distance(enemy, this.player) < AUDIO.audibleRange) this.onEvent('enemyAttack');
     } else target.hp -= enemy.damage * multiplier;
   }
 
@@ -701,6 +707,7 @@ export class Combat {
       side: 'enemy', source: enemy, radius: B.enemyProjectileRadius,
       speed: B.enemyProjectileSpeed, range: B.enemyCasterRange + B.enemyRangedRange,
       damage: enemy.damage, element: enemy.element || 'physical', status });
+    if (distance(enemy, this.player) < AUDIO.audibleRange) this.onEvent('enemyAttack');
   }
 
   telegraph(enemy, target, radius, delay, damage, element = 'physical', type = 'strike') {
@@ -708,6 +715,8 @@ export class Combat {
       type: 'telegraph', color: colors.warning, life: delay + B.effectFlashLife,
       maxLife: delay + B.effectFlashLife, delay, active: 0, pulses: 1,
       damage, side: 'enemy', element, source: enemy, strike: type });
+    if (!enemy.boss && distance(enemy, this.player) < AUDIO.audibleRange)
+      this.onEvent(element === 'physical' ? 'enemyAttack' : 'monsterCast');
   }
 
   enemyAction(enemy, target) {
@@ -783,6 +792,7 @@ export class Combat {
       enemy.phase = phase;
       this.flash(enemy.x, enemy.y, B.bossNovaRadius, 'arcane', B.bossTelegraphLife);
       this.onEvent('bossPhase');
+      if (distance(enemy, this.player) < AUDIO.audibleRange) this.onEvent('monsterRoar');
     }
     const cycle = enemy.attackCycle = (enemy.attackCycle || 0) + 1;
     const abilities = enemy.bossAbilities || ['fanVolley', 'summon', 'hazard', 'homing'];
@@ -829,6 +839,15 @@ export class Combat {
     if (phase >= 2 && diff >= 1) this.telegraph(enemy, target, B.bossRingRadius,
       B.bossWindup, enemy.damage * B.bossSummonDamage, 'arcane');
     enemy.attackTime = B.bossCooldown * (1 - (phase - 1) * B.bossPhaseSpeed);
+    if (distance(enemy, this.player) < AUDIO.audibleRange) this.onEvent('bossCast');
+  }
+
+  emitMonsterMovement(enemy) {
+    if (this.state.time < this.nextMonsterMovementSound ||
+        (enemy.x === enemy.prevX && enemy.y === enemy.prevY) ||
+        distance(enemy, this.player) >= AUDIO.audibleRange) return;
+    this.nextMonsterMovementSound = this.state.time + AUDIO.monsterMovementInterval;
+    this.onEvent('monsterMove');
   }
 
   tickEnemies(dt, think) {
@@ -858,11 +877,16 @@ export class Combat {
         this.move(enemy, enemy.charge.dx * speed * dt, enemy.charge.dy * speed * dt);
         enemy.charge.life -= dt;
         if (enemy.charge.life <= 0) delete enemy.charge;
+        this.emitMonsterMovement(enemy);
         continue;
       }
       if (enemy.status.stunned > 0 || enemy.status.frozen > 0) continue;
       if (think) {
         enemy.target = this.enemyTarget(enemy);
+        if (!enemy._roared && distance(enemy, this.player) < AUDIO.audibleRange) {
+          enemy._roared = true;
+          this.onEvent('monsterRoar');
+        }
         if (enemy.boss) {
           if (enemy.attackTime <= 0 && distance(enemy, enemy.target) < B.enemyLeash)
             this.bossAction(enemy, enemy.target);
@@ -883,6 +907,7 @@ export class Combat {
         * (behavior === 'flying' ? B.enemyFlyingSpeed : behavior === 'tank' ? B.enemyTankSpeed : 1);
       this.move(enemy, face.x * speed * dt * (fleeing ? -1 : 1),
         face.y * speed * dt * (fleeing ? -1 : 1));
+      this.emitMonsterMovement(enemy);
     }
   }
 
@@ -924,6 +949,11 @@ export class Combat {
     const speedBonus = (p.buffs.killSpeed ? (this.traits.killSpeed || 0) / 100 : 0)
       + (p.buffs.pack?.speed || 0) + (p.buffs.stormavatar?.speed || 0);
     this.move(p, x * p.speed * (1 + speedBonus) * dt, y * p.speed * (1 + speedBonus) * dt);
+    if (this.state.time >= this.nextPlayerMovementSound &&
+        (p.x !== p.prevX || p.y !== p.prevY)) {
+      this.nextPlayerMovementSound = this.state.time + AUDIO.playerMovementInterval;
+      this.onEvent('playerMove');
+    }
     if (this.traits.fireTrail && distance(p, { x: p.prevX, y: p.prevY }) > 0) {
       this.trailDistance += distance(p, { x: p.prevX, y: p.prevY });
       if (this.trailDistance >= B.trailStep) {

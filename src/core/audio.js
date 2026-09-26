@@ -13,6 +13,7 @@ export class AudioManager {
     this.nextNote = 0;
     this.musicVoices = new Set();
     this.sfxVoices = new Set();
+    this.lastSfxTime = new Map();
   }
 
   async unlock() {
@@ -66,6 +67,7 @@ export class AudioManager {
   }
 
   voice(frequency, start, duration, wave, level, output, voices, endFrequency = null) {
+    if (voices.size >= (voices === this.musicVoices ? AUDIO.musicVoiceLimit : AUDIO.sfxVoiceLimit)) return;
     const oscillator = this.context.createOscillator();
     const envelope = this.context.createGain();
     oscillator.type = wave;
@@ -128,7 +130,12 @@ export class AudioManager {
     const effect = SFX[event];
     if (!effect || !this.context || this.context.state !== 'running' ||
         !this.settings.sfxEnabled || !this.settings.sfxVolume) return;
+    const group = effect.group || event;
     const start = this.context.currentTime;
+    const cooldown = AUDIO.sfxCooldowns[group] ?? AUDIO.sfxCooldowns.default;
+    if (start - (this.lastSfxTime.get(group) ?? -Infinity) < cooldown ||
+        this.sfxVoices.size >= AUDIO.sfxVoiceLimit) return;
+    this.lastSfxTime.set(group, start);
     for (let index = 0; index < effect.notes.length; index++) this.voice(
       this.pitch(effect.notes[index]), start + effect.duration * index,
       effect.duration * AUDIO.leadGate, effect.wave, effect.level,

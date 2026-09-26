@@ -6,7 +6,13 @@ export const AUDIO = Object.freeze({
   leadGate: 0.79, bassGate: 1.65,
   leadAttack: 0.008, bassAttack: 0.012, release: 0.045,
   leadLevel: 0.18, bassLevel: 0.16, beatLevel: 0.09,
-  musicGain: 0.34, sfxGain: 0.4, volumeMaximum: 100,
+  musicGain: 0.22, sfxGain: 0.24, volumeMaximum: 100,
+  musicVoiceLimit: 12, sfxVoiceLimit: 10,
+  audibleRange: 440, monsterMovementInterval: 0.6, playerMovementInterval: 0.45,
+  sfxCooldowns: Object.freeze({
+    default: 0.09, impact: 0.075, monsterRoar: 1.4, monsterMove: 0.6,
+    monsterCast: 0.38, bossCast: 0.28, enemyAttack: 0.24,
+  }),
   beatFrequency: 76, beatEndFrequency: 37, beatDuration: 0.11,
 });
 
@@ -34,15 +40,28 @@ export const TRACKS = Object.freeze({
 });
 
 export const SFX = Object.freeze({
-  hit: { notes: [54,44], duration: 0.065, wave: 'square', level: 0.24 },
+  hit: { notes: [54,44], duration: 0.065, wave: 'square', level: 0.24, group: 'impact' },
+  monsterHurt: { notes: [49,39], duration: 0.062, wave: 'triangle', level: 0.19, group: 'impact' },
+  hurt: { notes: [47,40], duration: 0.095, wave: 'sawtooth', level: 0.22 },
   attack: { notes: [55,60], duration: 0.055, wave: 'square', level: 0.16 },
+  enemyAttack: { notes: [44,36], duration: 0.07, wave: 'square', level: 0.14 },
+  monsterMove: { notes: [34,31], duration: 0.075, wave: 'triangle', level: 0.12 },
+  playerMove: { notes: [40,45], duration: 0.065, wave: 'triangle', level: 0.1 },
+  monsterRoar: { notes: [43,40,36], duration: 0.12, wave: 'sawtooth', level: 0.19 },
+  monsterCast: { notes: [51,58,46], duration: 0.085, wave: 'square', level: 0.16 },
+  bossCast: { notes: [41,49,36], duration: 0.13, wave: 'sawtooth', level: 0.2 },
   cast: { notes: [64,67,72], duration: 0.09, wave: 'triangle', level: 0.2 },
   skill: { notes: [64,67,72], duration: 0.09, wave: 'triangle', level: 0.2 },
+  ultimate: { notes: [52,59,64,71], duration: 0.12, wave: 'sawtooth', level: 0.23 },
   loot: { notes: [67,72,76], duration: 0.1, wave: 'square', level: 0.19 },
   level: { notes: [60,64,67,72,76], duration: 0.14, wave: 'triangle', level: 0.24 },
   boss: { notes: [48,47,43,36], duration: 0.16, wave: 'sawtooth', level: 0.28 },
+  bossPhase: { notes: [48,43,36], duration: 0.13, wave: 'sawtooth', level: 0.21 },
+  bossKill: { notes: [36,43,48,55], duration: 0.14, wave: 'triangle', level: 0.23 },
+  kill: { notes: [43,48], duration: 0.07, wave: 'triangle', level: 0.14 },
   death: { notes: [57,53,48,41], duration: 0.12, wave: 'triangle', level: 0.22 },
   portal: { notes: [57,64,69,72], duration: 0.1, wave: 'square', level: 0.16 },
+  potion: { notes: [59,64,69], duration: 0.085, wave: 'triangle', level: 0.18 },
   heal: { notes: [64,69,72], duration: 0.1, wave: 'triangle', level: 0.18 },
   equip: { notes: [60,67], duration: 0.08, wave: 'square', level: 0.14 },
 });
