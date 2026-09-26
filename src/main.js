@@ -9,13 +9,13 @@ import { Renderer } from './core/renderer.js?v=1822a268c5482197';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
 import { GameLoop } from './core/loop.js?v=a08da43477caf53d';
 import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
-import { Combat, createPlayer } from './systems/combat.js?v=063fed6d9007da7c';
+import { Combat, createPlayer, skillRankScales } from './systems/combat.js?v=ec58fe86a53fcb17';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
-import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=d52fab6b6ae6c0e9';
+import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=e53b6131f86e52f9';
 import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
 
 const $ = id => document.getElementById(id);
@@ -292,20 +292,33 @@ function openGrowth() {
   content.append(...role().passives.map(passive => node('div', 'passive-label', message(passive))));
   const stats = node('div', 'modal-grid');
   content.append(node('h3', '', `${message(UI.attributePoints)}: ${player.attributePoints}`), stats);
+  const B = COMBAT.base;
+  const format = value => String(Number(value.toFixed(2)));
+  const separator = language === 'zh' ? '；' : '; ';
   for (const attribute of Object.keys(player.attributes)) {
     const choice = button(`${message(UI[attribute])} ${player.attributes[attribute]} +`, () => {
       if (combat.spendAttribute(attribute)) { renderSkills(); renderHud(); openGrowth(); void persist(); }
     }, 'stat-button');
     choice.disabled = !player.attributePoints;
-    const descriptions = {
-      strength: UI.growthStrength, dexterity: UI.growthDexterity,
-      intelligence: UI.growthIntelligence, vitality: UI.growthVitality, spirit: UI.growthSpirit,
-    };
     const primary = COMBAT.primary[player.classId] === attribute;
-    const detail = [message(descriptions[attribute])];
-    if (primary) detail.push(message(UI.growthPrimary));
-    else if (attribute === 'intelligence') detail.push(message(UI.growthNoEffect));
-    growthHint(choice, detail.join('\n'), stats);
+    const effects = [];
+    if (attribute === 'strength') {
+      const armor = B.strengthArmor * (player.classId === 'warrior' ? 1 + B.passiveWarriorArmor : 1);
+      effects.push(message(UI.growthArmor(format(armor))));
+    } else if (attribute === 'dexterity') {
+      effects.push(message(UI.growthCrit(format(B.dexterityCrit * 100))), message(UI.growthDexterityNote));
+    } else if (attribute === 'vitality') {
+      effects.push(message(UI.growthLife(B.attributeLife, format(B.vitalityLife * 10))));
+    } else if (attribute === 'spirit') {
+      effects.push(message(UI.growthResource(B.spiritResource)));
+      if (player.classId === 'wizard' || player.classId === 'druid') effects.push(message(UI.growthRegen(format(B.spiritRegen))));
+    } else if (!primary) {
+      effects.push(message(UI.growthIntelligence), message(UI.growthNoEffect));
+    }
+    if (primary) effects.push(message(UI.growthPrimary(format(B.attributeDamage * 100))));
+    const lines = [`${message(UI[attribute])} ${player.attributes[attribute]} → ${player.attributes[attribute] + 1}`];
+    if (effects.length) lines.push(`${message(UI.growthPerPoint)}${language === 'zh' ? '' : ' '}${effects.join(separator)}`);
+    growthHint(choice, lines.join('\n'), stats);
   }
   const ranks = node('div', 'modal-grid');
   content.append(node('h3', '', `${message(UI.skillPoints)}: ${player.skillPoints}`), ranks);
@@ -314,18 +327,16 @@ function openGrowth() {
       if (combat.spendSkill(index + 1)) { renderSkills(); openGrowth(); void persist(); }
     }, 'stat-button');
     const rank = player.skillRanks[skill.id] || 0;
-    const next = Math.min(rank + 1, COMBAT.base.maxSkillRank);
-    const scales = skill.effects.some(effect =>
-      ['cone', 'nova', 'line', 'projectile', 'chain', 'zone', 'aura', 'rush', 'corpse'].includes(effect.type));
-    const multiplier = value => (1 + (Math.max(1, value) - 1) * COMBAT.base.rankDamage).toFixed(2);
-    const detail = [message(skill.description), message(UI.growthRank(rank, next, COMBAT.base.maxSkillRank))];
-    if (rank >= COMBAT.base.maxSkillRank) detail.push(message(UI.growthMaxRank));
-    else if (!scales) detail.push(message(UI.growthUnscaled));
+    const next = Math.min(rank + 1, B.maxSkillRank);
+    const detail = [message(skill.description), message(UI.growthRank(rank, next, B.maxSkillRank))];
+    if (rank >= B.maxSkillRank) detail.push(message(UI.growthMaxRank));
+    else if (!skillRankScales(skill)) detail.push(message(UI.growthUnscaled));
+    else if (!rank) detail.push(message(UI.growthDamageSteady('1.00')));
     else {
+      const multiplier = value => (1 + (value - 1) * B.rankDamage).toFixed(2);
       detail.push(message(UI.growthDamage(multiplier(rank), multiplier(next))));
-      if (!rank) detail.push(message(UI.growthFirstRank));
     }
-    choice.disabled = !player.skillPoints || rank >= COMBAT.base.maxSkillRank;
+    choice.disabled = !player.skillPoints || rank >= B.maxSkillRank;
     growthHint(choice, detail.join('\n'), ranks);
   });
   $('modal-close').focus();

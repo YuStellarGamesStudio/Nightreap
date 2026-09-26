@@ -32,6 +32,14 @@ export function createPlayer(classId) {
   return player;
 }
 
+// Effect types whose damage is multiplied by cast-time rank power; UI reads this to describe rank ups.
+const RANK_POWER_TYPES = new Set(['cone', 'nova', 'line', 'projectile', 'chain', 'zone', 'aura', 'rush', 'corpse', 'trap', 'tornado']);
+
+export function skillRankScales(skill) {
+  return skill.effects.some(effect => RANK_POWER_TYPES.has(effect.type)
+    && ((effect.power || 0) > 0 || (effect.finishPower || 0) > 0));
+}
+
 export class Combat {
   constructor(state, { onKill = () => {}, onDeath = () => {}, onEvent = () => {}, modifiers = () => ({}) } = {}) {
     this.state = state;
