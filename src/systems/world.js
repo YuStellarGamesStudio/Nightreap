@@ -376,9 +376,6 @@ export function advance(player, area) {
   const current = progress.difficulty === area.difficulty && progress.act === area.act && progress.map === area.map;
   const lastMap = area.map === ACTS[area.act].maps.length - 1;
   const final = area.act === ACTS.length - 1 && lastMap;
-  if (lastMap && !area.enemies.some(enemy => enemy.boss && enemy.killRecorded)) {
-    return { ok: false, message: { en: 'Defeat the guardian first.', zh: '請先擊敗守關首領。' } };
-  }
   if (current) {
     if (!lastMap) progress.map++;
     else if (!final) { progress.act++; progress.map = 0; }

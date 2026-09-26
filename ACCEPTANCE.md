@@ -338,3 +338,9 @@
 - 正式站 Chromium 進入野外後，`Combat.tickEnemies` 在怪物開始移動時拋出 `ReferenceError: speed is not defined`（`combat.js:1049`），使固定步長迴圈中斷；WASD 與滑鼠攻擊因而同時失效。恢復原有的怪物速度計算（含迅捷、飛行及坦克倍率），不改輸入對應與數值。
 - `node --test tests/combat-input.test.mjs`：移動中的怪物、玩家走位、滑鼠普攻及下一幀模擬均通過（1/1）。
 - Chromium 1440×900 以更新後資產版本 `600c67e3895b52f8` 實際進入野外：按 D 約 230ms，玩家 x 由 345→387、更新幀數 637→651；滑鼠在畫布按住約 230ms，成功施放次數 0→1、更新幀數 1129→1144，戰鬥特效可見且沒有新增頁面錯誤。僅驗證本機新版，正式站須待更新部署；其他瀏覽器未測。
+
+### 守關地圖清怪後換圖修正
+
+- 重現：第一幕第三張地圖擊殺全部 52 敵人後，戰鬥更新會從 `area.enemies` 移除死亡的 Boss；舊 `advance()` 卻從同一陣列尋找 `killRecorded` 的 Boss，導致 `cleared=true` 仍回覆「請先擊敗守關首領」。清場已包含 Boss 擊殺，因此移除這項失效且重複的檢查；未清場仍禁止換圖。
+- `node --test tests/world-advance.test.mjs tests/combat-input.test.mjs`：3/3 通過；守關測試走實際 `Combat.kill()`、清理死亡敵人及 `advance()`，確認第一幕第三張推進到第二幕第一張，最終 Boss 擊殺後解鎖並進入下一難度。`node --check src/systems/world.js` 通過。
+- Chromium 1440×900 本機版實際進入第一幕第三張，透過測試注入擊殺全體 52 敵人，顯示 `Harvest 52 / 52` 與「Travel onward」。遠離出口點擊時維持原圖並提示靠近；移至出口後點擊，實際切換至第二幕第一張 `Bone Passage`，角色進度為 act=1、map=0。測試期間未新增頁面錯誤；先前載入本機測試來源曾有資產連線重置與一次音樂資料未載入例外，重新載入後完成上述驗證。其他瀏覽器與第五幕最終 Boss 介面未測。

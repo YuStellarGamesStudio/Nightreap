@@ -2,8 +2,8 @@ import { CLASSES, COMBAT } from '../data/combat.js?v=fdc1129299fc0d36';
 import { AUDIO } from '../data/audio.js?v=c5e4578c00cd424f';
 import { ATTACK_VFX, VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 import { SpatialGrid } from '../core/spatial.js?v=fe9bd797ec125fc7';
-import { isWalkable } from './world.js?v=b2d93fe55488415e';
-import { approachVector } from './navigation.js?v=d12a7a5405669cc7';
+import { isWalkable } from './world.js?v=9d5a2afb8a663141';
+import { approachVector } from './navigation.js?v=40284008e3202ca5';
 
 const B = COMBAT.base;
 const colors = COMBAT.colors;

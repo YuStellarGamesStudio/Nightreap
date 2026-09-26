@@ -1,6 +1,6 @@
 import { COMBAT } from '../data/combat.js?v=fdc1129299fc0d36';
 import { TERRAIN } from '../data/terrain.js?v=fb3dec75add047a6';
-import { isWalkable } from './world.js?v=b2d93fe55488415e';
+import { isWalkable } from './world.js?v=9d5a2afb8a663141';
 
 const grids = new WeakMap();
 const fields = new WeakMap();
