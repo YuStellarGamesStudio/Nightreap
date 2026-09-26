@@ -3,6 +3,7 @@ import { AUDIO } from '../data/audio.js?v=c5e4578c00cd424f';
 import { ATTACK_VFX, VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 import { SpatialGrid } from '../core/spatial.js?v=fe9bd797ec125fc7';
 import { isWalkable } from './world.js?v=b2d93fe55488415e';
+import { approachVector } from './navigation.js?v=d12a7a5405669cc7';
 
 const B = COMBAT.base;
 const colors = COMBAT.colors;
@@ -223,8 +224,13 @@ export class Combat {
     return null;
   }
 
-  move(entity, dx, dy) {
+  move(entity, dx, dy, flying = false) {
     const area = this.state.area, radius = entity.radius || 0;
+    if (flying) {
+      entity.x = clamp(entity.x + dx, radius, area.bounds.width - radius);
+      entity.y = clamp(entity.y + dy, radius, area.bounds.height - radius);
+      return;
+    }
     const steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / B.collisionStep));
     for (let step = 0; step < steps; step++) {
       const x = entity.x + dx / steps, y = entity.y + dy / steps;
@@ -774,11 +780,12 @@ export class Combat {
       if (distance(m, this.player) > B.minionTeleportRange) {
         m.x = this.player.x; m.y = this.player.y;
       } else if (target && best > m.radius + target.radius + B.enemyContactRange) {
-        const d = direction(m, target), speed = m.speed * (1 + (m.buff?.speed || 0));
-        this.move(m, d.x * speed * dt, d.y * speed * dt);
+        const speed = m.speed * (1 + (m.buff?.speed || 0));
+        const heading = approachVector(s.area, m, target, false, speed * dt);
+        this.move(m, heading.x * speed * dt, heading.y * speed * dt);
       } else if (!target && distance(m, this.player) > B.minionFollowRadius) {
-        const d = direction(m, this.player);
-        this.move(m, d.x * m.speed * dt, d.y * m.speed * dt);
+        const heading = approachVector(s.area, m, this.player, false, m.speed * dt);
+        this.move(m, heading.x * m.speed * dt, heading.y * m.speed * dt);
       }
       if (target && best < m.radius + target.radius + B.enemyContactRange && m.attackTime <= 0) {
         this.damageEnemy(target, m.damage / this.player.damage * (1 + (m.buff?.damage || 0)),
@@ -1038,11 +1045,10 @@ export class Combat {
       if (enemy.prison && distance(enemy, enemy.prison) >= enemy.prison.radius - enemy.radius) continue;
       const fleeing = enemy.status.feared > 0 || ranged && dist < B.enemyRetreatRange;
       if (!fleeing && dist <= idealRange) continue;
-      const face = direction(enemy, target);
-      const speed = enemy.speed * (has(enemy, 'swift') ? B.enemyFlyingSpeed : 1)
-        * (behavior === 'flying' ? B.enemyFlyingSpeed : behavior === 'tank' ? B.enemyTankSpeed : 1);
-      this.move(enemy, face.x * speed * dt * (fleeing ? -1 : 1),
-        face.y * speed * dt * (fleeing ? -1 : 1));
+      const flying = behavior === 'flying';
+      const travel = speed * dt;
+      const heading = approachVector(this.state.area, enemy, target, fleeing, travel);
+      this.move(enemy, heading.x * travel, heading.y * travel, flying);
       this.emitMonsterMovement(enemy);
     }
   }
