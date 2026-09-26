@@ -15,7 +15,7 @@ import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatchin
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
-import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=1f01adf22871d910';
+import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=d52fab6b6ae6c0e9';
 import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
 
 const $ = id => document.getElementById(id);
@@ -266,6 +266,27 @@ function renderSkills() {
   const points = player.attributePoints + player.skillPoints;
   $('passives').replaceChildren(button(`${message(UI.growth)}${points ? ` · +${points}` : ''}`, openGrowth, 'growth-button'));
 }
+function growthHint(choice, description, container) {
+  const wrapper = node('div', 'growth-choice');
+  const hint = node('div', 'growth-tooltip', description);
+  hint.id = `growth-hint-${$('modal-content').querySelectorAll('.growth-tooltip').length}`;
+  hint.setAttribute('role', 'tooltip');
+  hint.hidden = true;
+  choice.setAttribute('aria-describedby', hint.id);
+  const reveal = () => {
+    hint.hidden = false;
+    const rect = choice.getBoundingClientRect();
+    hint.style.left = `${Math.max(8, Math.min(rect.left, innerWidth - hint.offsetWidth - 8))}px`;
+    hint.style.top = `${Math.max(8, rect.top - hint.offsetHeight - 8)}px`;
+  };
+  wrapper.addEventListener('mouseenter', reveal);
+  wrapper.addEventListener('mouseleave', () => { hint.hidden = true; });
+  choice.addEventListener('focus', reveal);
+  choice.addEventListener('blur', () => { hint.hidden = true; });
+  wrapper.append(choice);
+  container.append(wrapper, hint);
+}
+
 function openGrowth() {
   const content = openModal(UI.growth);
   content.append(...role().passives.map(passive => node('div', 'passive-label', message(passive))));
@@ -276,7 +297,15 @@ function openGrowth() {
       if (combat.spendAttribute(attribute)) { renderSkills(); renderHud(); openGrowth(); void persist(); }
     }, 'stat-button');
     choice.disabled = !player.attributePoints;
-    stats.append(choice);
+    const descriptions = {
+      strength: UI.growthStrength, dexterity: UI.growthDexterity,
+      intelligence: UI.growthIntelligence, vitality: UI.growthVitality, spirit: UI.growthSpirit,
+    };
+    const primary = COMBAT.primary[player.classId] === attribute;
+    const detail = [message(descriptions[attribute])];
+    if (primary) detail.push(message(UI.growthPrimary));
+    else if (attribute === 'intelligence') detail.push(message(UI.growthNoEffect));
+    growthHint(choice, detail.join('\n'), stats);
   }
   const ranks = node('div', 'modal-grid');
   content.append(node('h3', '', `${message(UI.skillPoints)}: ${player.skillPoints}`), ranks);
@@ -284,8 +313,20 @@ function openGrowth() {
     const choice = button(`${message(skill.name)} + (${message(UI.rank)} ${player.skillRanks[skill.id] || 0})`, () => {
       if (combat.spendSkill(index + 1)) { renderSkills(); openGrowth(); void persist(); }
     }, 'stat-button');
-    choice.disabled = !player.skillPoints;
-    ranks.append(choice);
+    const rank = player.skillRanks[skill.id] || 0;
+    const next = Math.min(rank + 1, COMBAT.base.maxSkillRank);
+    const scales = skill.effects.some(effect =>
+      ['cone', 'nova', 'line', 'projectile', 'chain', 'zone', 'aura', 'rush', 'corpse'].includes(effect.type));
+    const multiplier = value => (1 + (Math.max(1, value) - 1) * COMBAT.base.rankDamage).toFixed(2);
+    const detail = [message(skill.description), message(UI.growthRank(rank, next, COMBAT.base.maxSkillRank))];
+    if (rank >= COMBAT.base.maxSkillRank) detail.push(message(UI.growthMaxRank));
+    else if (!scales) detail.push(message(UI.growthUnscaled));
+    else {
+      detail.push(message(UI.growthDamage(multiplier(rank), multiplier(next))));
+      if (!rank) detail.push(message(UI.growthFirstRank));
+    }
+    choice.disabled = !player.skillPoints || rank >= COMBAT.base.maxSkillRank;
+    growthHint(choice, detail.join('\n'), ranks);
   });
   $('modal-close').focus();
 }
