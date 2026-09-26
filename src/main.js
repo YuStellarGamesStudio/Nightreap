@@ -147,7 +147,6 @@ function enterArea(options) {
 }
 function returnTown(dead = false) {
   if (inTown) return;
-  if (!dead && !window.confirm(message(UI.confirmReturn))) return;
   if (dead) { deathPenalty(player); notify(UI.dead, 'death'); }
   inTown = true;
   input.clear();
@@ -156,6 +155,31 @@ function returnTown(dead = false) {
   player.status = {}; player.cooldowns = {}; player.buffs = {}; player.form = 'human';
   makeState(createArea(player.progress));
   void persist();
+}
+
+function confirmReturnTown() {
+  if (inTown) return;
+  const sanctuary = SANCTUARIES[player.progress.act];
+  const content = openModal(UI.town);
+  $('modal').classList.add('return-modal');
+  $('modal').setAttribute('aria-describedby', 'return-description');
+  const destination = node('div', 'return-destination');
+  const art = node('img', 'return-art');
+  art.src = `assets/sanctuaries/sanctuary-${sanctuary.art}.svg`;
+  art.alt = '';
+  const caption = node('div', 'return-caption');
+  caption.append(node('span', 'return-kicker', message(UI.sanctuary)), node('strong', '', message(sanctuary.name)));
+  destination.append(art, caption);
+  const description = node('p', 'return-description', message(UI.confirmReturn));
+  description.id = 'return-description';
+  const actions = node('div', 'return-actions');
+  const cancel = button(message(UI.cancel), closeModal, 'subtle');
+  actions.append(cancel, button(message(UI.town), () => {
+    closeModal();
+    returnTown();
+  }, 'return-confirm'));
+  content.append(destination, description, actions);
+  cancel.focus();
 }
 function renderProgress() {
   const p = player, area = state.area;
@@ -447,6 +471,8 @@ function invalidateShop() {
 }
 function openModal(title) {
   invalidateShop();
+  $('modal').classList.remove('return-modal');
+  $('modal').removeAttribute('aria-describedby');
   if (!$('modal').open) {
     modalPaused = state.paused;
     modalOpen = true;
@@ -868,7 +894,19 @@ function render(alpha) { renderer.draw(state, alpha); }
 input = new Input($('game'), (x, y) => renderer.toWorld(x, y), action);
 $('modal').addEventListener('close', () => {
   invalidateShop();
-  if (modalOpen) { state.paused = modalPaused; modalOpen = false; renderSkills(); }
+  if (modalOpen) { state.paused = inTown || modalPaused; modalOpen = false; renderSkills(); }
+});
+$('modal').addEventListener('keydown', event => {
+  if (event.key !== 'Tab' || !$('modal').classList.contains('return-modal')) return;
+  const first = $('modal-close');
+  const last = $('modal-content').querySelector('.return-confirm');
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
 });
 $('modal-close').addEventListener('click', closeModal);
 $('inventory-button').addEventListener('click', () => setInventoryOpen($('inventory-panel').hidden));
@@ -915,7 +953,7 @@ $('oath-button').addEventListener('click', () => {
 $('oath-close').addEventListener('click', () => {
   oathOpen = false; renderProgress(); $('oath-button').focus();
 });
-$('town-button').addEventListener('click', () => returnTown());
+$('town-button').addEventListener('click', confirmReturnTown);
 $('next-button').addEventListener('click', () => tryTravel('next'));
 $('dungeon-button').addEventListener('click', () => tryTravel('dungeon'));
 $('sheep-button').addEventListener('click', () => tryTravel('sheep'));

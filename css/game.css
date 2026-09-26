@@ -289,6 +289,17 @@ input[type="range"] { min-height: 36px; cursor: pointer; }
 #modal-content .modal-row > *, #modal-content .setting-row > * { min-width: 0; }
 #modal-content .modal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
 #modal-content .modal-grid > * { min-width: 0; }
+#modal.return-modal { width: min(520px, calc(100vw - 50px)); border-color: #b89764; }
+#modal.return-modal #modal-content { padding: 0; overflow: hidden; }
+.return-destination { position: relative; height: 190px; overflow: hidden; border-bottom: 1px solid #94704480; background: radial-gradient(ellipse at center, #49342f, #14151e); }
+.return-art { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.return-caption { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; padding: 20px 24px; background: linear-gradient(transparent 20%, #11121bd9 80%, #11121b); }
+.return-kicker { color: #c8ab7e; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+.return-caption strong { color: #f5dfbb; font: normal 24px Georgia, serif; text-shadow: 0 2px 12px #000; }
+#modal-content .return-description { margin: 0; padding: 22px 24px; color: #d8cabb; font-size: 16px; line-height: 1.7; }
+.return-actions { display: flex; justify-content: flex-end; gap: 12px; padding: 0 24px 24px; }
+.return-actions button { min-width: 110px; }
+.return-confirm { border-color: #bb965c; background: linear-gradient(#765039, #3e2c27); box-shadow: inset 0 1px #eaca8740, 0 3px 12px #0005; }
 #modal-content .setting-row { min-height: 52px; }
 #modal-content .setting-toggle { position: relative; display: inline-flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer; font-size: 16px; font-weight: 700; }
 #modal-content .setting-toggle input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
