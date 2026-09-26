@@ -1,4 +1,4 @@
-import { CLASSES, COMBAT } from '../data/combat.js?v=936ca80f602c3b09';
+import { CLASSES, COMBAT } from '../data/combat.js?v=fdc1129299fc0d36';
 import { AUDIO } from '../data/audio.js?v=c5e4578c00cd424f';
 import { VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=a956e5f214ab820d';
 import { SpatialGrid } from '../core/spatial.js?v=aea79118b961517e';
@@ -427,14 +427,15 @@ export class Combat {
         { ...effect, innerRadius: effect.innerRadius }); break;
       case 'line': this.line(p, target, effect, power); break;
       case 'projectile': {
-        const face = direction(p, target), count = effect.count || 1;
+        const face = direction(p, target), count = effect.count || 1, gale = p.buffs.gale;
         for (let i = 0; i < count; i++) {
           const angle = (i - (count - 1) / 2) * (effect.spread || 0);
           const dx = face.x * Math.cos(angle) - face.y * Math.sin(angle);
           const dy = face.y * Math.cos(angle) + face.x * Math.sin(angle);
           this.projectile({ x: p.x, y: p.y, dx, dy, side: 'player',
             power: effect.power * power, speed: B.projectileSpeed, range: effect.range,
-            radius: B.projectileRadius, homing: effect.homing, pierce: effect.pierce,
+            radius: B.projectileRadius, homing: effect.homing, pierce: effect.pierce || gale?.pierce,
+            split: gale?.split ? gale : null,
             blast: effect.blast, status: effect.status, statusTime: effect.statusTime,
             knockback: effect.knockback, element: effect.element,
             vfx: this.visualKey, vfxPart: this.visualPart });
@@ -598,6 +599,21 @@ export class Combat {
     return { x: p.x + d.x * length, y: p.y + d.y * length };
   }
 
+  // Gale arrows split once on their first hit; children skip enemies the parent already struck.
+  splitShot(shot) {
+    const { splitCount, splitAngle, splitPower } = shot.split;
+    shot.split = null;
+    const heading = Math.atan2(shot.dy, shot.dx), range = shot.life * shot.speed;
+    for (let i = 0; i < splitCount; i++) {
+      const angle = heading + (i - (splitCount - 1) / 2) * splitAngle * 2 / Math.max(1, splitCount - 1);
+      const child = { ...shot, dx: Math.cos(angle), dy: Math.sin(angle), power: shot.power * splitPower,
+        range, split: null };
+      delete child.life; delete child.maxLife; delete child.hit;
+      this.projectile(child);
+      this.state.projectiles.at(-1).hit = new Set(shot.hit);
+    }
+  }
+
   projectile(options) {
     const lifetime = options.range ? options.range / options.speed : B.projectileLife;
     this.state.projectiles.push({ ...options, prevX: options.x, prevY: options.y,
@@ -637,6 +653,7 @@ export class Combat {
             else {
               this.damageEnemy(enemy, shot.power, shot);
               this.visual(shot.vfx, 'hit', { x: shot.x, y: shot.y, angle: Math.atan2(shot.dy, shot.dx), part: shot.vfxPart });
+              if (shot.split) this.splitShot(shot);
             }
             if (!shot.pierce) { struck = true; break; }
           }

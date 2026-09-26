@@ -94,8 +94,8 @@ const wizard = [
   skill('lightningchain', 'Chain Lightning', '閃電鏈', ['Arc between six nearby enemies.', '連鎖彈跳六個目標。'], 27, 5,
     [{ type: 'chain', range: 390, jumps: 6, jumpRange: 150, power: 1.15, element: 'lightning' }]),
   skill('meteor', 'Meteor', '隕石', ['Impact after 1.5 seconds, leaving burning ground.', '1.5 秒後轟擊，留下燃燒地面。'], 38, 12,
-    [{ type: 'zone', radius: 155, power: 2.6, delay: 1.5, pulses: 1, element: 'fire', status: 'burning', statusTime: 3 },
-      { type: 'zone', radius: 145, power: 0.35, delay: 1.5, duration: 3, interval: 0.5, element: 'fire', status: 'burning' }]),
+    [{ type: 'zone', range: 430, radius: 155, power: 2.6, delay: 1.5, pulses: 1, element: 'fire', status: 'burning', statusTime: 3 },
+      { type: 'zone', range: 430, radius: 145, power: 0.35, delay: 1.5, duration: 3, interval: 0.5, element: 'fire', status: 'burning' }]),
   skill('teleport', 'Teleport', '傳送', ['Blink to the targeted open ground.', '瞬移至指定空地。'], 20, 8,
     [{ type: 'blink', range: 310 }]),
   skill('energyshield', 'Energy Shield', '能量護盾', ['Reduce damage taken for six seconds.', '六秒內減少受到的傷害。'], 28, 17,
@@ -141,7 +141,7 @@ const ranger = [
   skill('arrowrain', 'Arrow Rain', '箭雨', ['Three seconds of delayed volleys over a wide area.', '大片區域內持續三秒降下箭雨。'], 35, 12,
     [{ type: 'zone', range: 430, radius: 185, delay: 0.55, duration: 3, interval: 0.35, power: 0.65, element: 'physical' }]),
   skill('gale', 'Gale of Arrows', '狂風箭舞', ['Eight seconds of rapid piercing and splitting arrows.', '八秒雙倍攻速、穿透與分裂箭。'], 65, 45,
-    [{ type: 'buff', key: 'gale', duration: 8, attackSpeed: 1, pierce: true, split: true }]),
+    [{ type: 'buff', key: 'gale', duration: 8, attackSpeed: 1, pierce: true, split: true, splitCount: 2, splitAngle: 0.22, splitPower: 0.5 }]),
 ];
 
 const human = [

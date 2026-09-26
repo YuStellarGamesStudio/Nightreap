@@ -1,6 +1,6 @@
 import { CONFIG, UI, ART } from './data/config.js?v=cd5d8d477f8af273';
 import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
-import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
+import { CLASSES, COMBAT } from './data/combat.js?v=fdc1129299fc0d36';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
@@ -9,7 +9,7 @@ import { Renderer } from './core/renderer.js?v=e55a9c925c3bdc4f';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
 import { GameLoop } from './core/loop.js?v=b1c05ff8179f76b6';
 import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
-import { Combat, createPlayer } from './systems/combat.js?v=7227b0ab5758cb57';
+import { Combat, createPlayer } from './systems/combat.js?v=521494c5ca7f4c8a';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
