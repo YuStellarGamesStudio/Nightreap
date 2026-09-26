@@ -160,7 +160,7 @@ function confirmReturnTown() {
   if (inTown) return;
   const sanctuary = SANCTUARIES[player.progress.act];
   const content = openModal(UI.town);
-  $('modal').classList.add('return-modal');
+  $('modal').classList.add('confirmation-modal');
   $('modal').setAttribute('aria-describedby', 'return-description');
   const destination = node('div', 'return-destination');
   const art = node('img', 'return-art');
@@ -493,7 +493,7 @@ function invalidateShop() {
 }
 function openModal(title) {
   invalidateShop();
-  $('modal').classList.remove('return-modal');
+  $('modal').classList.remove('confirmation-modal');
   $('modal').removeAttribute('aria-describedby');
   if (!$('modal').open) {
     modalPaused = state.paused;
@@ -773,27 +773,49 @@ async function showSlots() {
     for (const entry of entries) {
       const name = message(CLASSES.find(character => character.id === entry.classId).name);
       const detail = entry.exists ? `${message(UI.level)} ${entry.level} · ${message(ACTS[entry.progress.act].name)}` : message(UI.newCharacter);
-      const choice = button(`${name} · ${detail}`, async () => {
-        try {
-          if (!entry.exists) { notify(UI.noSave); return; }
-          if (!window.confirm(message(UI.confirmLoad(`${name} · ${detail}`)))) return;
-          const restored = await saves.load(entry.classId);
-          if (!restored) { notify(UI.noSave); return; }
-          player = Object.assign(createPlayer(entry.classId), restored);
-          inTown = true; selectedItemId = null; page = 0;
-          makeState(createArea(player.progress));
-          hasSavedCharacter = true;
-          if (titleOpen) beginJourney();
-          notify(UI.loaded);
-          closeModal();
-        } catch (error) { failure(error); }
-      });
+      const choice = button(`${name} · ${detail}`, () => confirmLoad(entry, name, detail));
       choice.disabled = !entry.exists;
       grid.append(choice);
     }
     content.append(button(message(UI.export), () => void exportSaves()), button(message(UI.import), () => $('import-file').click()),
       button(message(UI.restore), () => void restoreBackup()));
   } catch (error) { failure(error); }
+}
+function confirmLoad(entry, name, detail) {
+  if (!entry.exists) return;
+  const content = openModal(UI.load);
+  $('modal').classList.add('confirmation-modal');
+  $('modal').setAttribute('aria-describedby', 'load-description');
+  const preview = node('div', 'return-destination');
+  const art = node('img', 'return-art');
+  art.src = `assets/sanctuaries/sanctuary-${SANCTUARIES[entry.progress.act].art}.svg`;
+  art.alt = '';
+  const caption = node('div', 'return-caption');
+  caption.append(node('span', 'return-kicker', detail), node('strong', '', name));
+  preview.append(art, caption);
+  const description = node('p', 'return-description', message(UI.confirmLoad(`${name} · ${detail}`)));
+  description.id = 'load-description';
+  const actions = node('div', 'return-actions');
+  const cancel = button(message(UI.cancel), () => void showSlots(), 'subtle');
+  const confirm = button(message(UI.load), async () => {
+    confirm.disabled = true;
+    cancel.disabled = true;
+    try {
+      const restored = await saves.load(entry.classId);
+      if (!restored) { notify(UI.noSave); await showSlots(); return; }
+      player = Object.assign(createPlayer(entry.classId), restored);
+      inTown = true; selectedItemId = null; page = 0;
+      makeState(createArea(player.progress));
+      hasSavedCharacter = true;
+      if (titleOpen) beginJourney();
+      notify(UI.loaded);
+      closeModal();
+    } catch (error) { failure(error); }
+    finally { confirm.disabled = false; cancel.disabled = false; }
+  }, 'return-confirm');
+  actions.append(cancel, confirm);
+  content.append(preview, description, actions);
+  cancel.focus();
 }
 async function downloadScreenshot() {
   const control = $('screenshot-button');
@@ -929,7 +951,7 @@ $('modal').addEventListener('close', () => {
   if (modalOpen) { state.paused = inTown || modalPaused; modalOpen = false; renderSkills(); }
 });
 $('modal').addEventListener('keydown', event => {
-  if (event.key !== 'Tab' || !$('modal').classList.contains('return-modal')) return;
+  if (event.key !== 'Tab' || !$('modal').classList.contains('confirmation-modal')) return;
   const first = $('modal-close');
   const last = $('modal-content').querySelector('.return-confirm');
   if (event.shiftKey && document.activeElement === first) {
