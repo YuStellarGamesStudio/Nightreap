@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Nightreap: Beneath the Last Moon. A crescent moon glows above a village beneath the endless night.">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1">
+      <stop stop-color="#090f23"/>
+      <stop offset=".55" stop-color="#24233b"/>
+      <stop offset="1" stop-color="#825345"/>
+    </linearGradient>
+    <radialGradient id="moonlight">
+      <stop stop-color="#e4d9c1" stop-opacity=".39"/>
+      <stop offset=".46" stop-color="#a295ac" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#a295ac" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff6db"/>
+      <stop offset=".55" stop-color="#dbd2c3"/>
+      <stop offset="1" stop-color="#a99cb3"/>
+    </linearGradient>
+    <linearGradient id="peaks" x2="0" y2="1">
+      <stop stop-color="#484357"/>
+      <stop offset="1" stop-color="#1a2234"/>
+    </linearGradient>
+    <linearGradient id="ground" x2="0" y2="1">
+      <stop stop-color="#282b37"/>
+      <stop offset="1" stop-color="#090d19"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="0" x2="1">
+      <stop stop-color="#0d1121" stop-opacity="0"/>
+      <stop offset=".21" stop-color="#0c1020" stop-opacity=".88"/>
+      <stop offset="1" stop-color="#0b1020" stop-opacity=".96"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fbebc0"/>
+      <stop offset=".47" stop-color="#d8b477"/>
+      <stop offset="1" stop-color="#9c7355"/>
+    </linearGradient>
+    <radialGradient id="fire">
+      <stop stop-color="#ffe6a5" stop-opacity=".95"/>
+      <stop offset=".22" stop-color="#f4aa60" stop-opacity=".69"/>
+      <stop offset="1" stop-color="#e98753" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="crescent"><rect width="1200" height="630" fill="white"/><circle cx="298" cy="125" r="71" fill="black"/></mask>
+    <path id="pine" d="M0 0 16 43 8 40 23 79 11 73 30 115-30 115-11 73-23 79-8 40-16 43Z"/>
+  </defs>
+  <rect width="1200" height="630" fill="url(#sky)"/>
+  <ellipse cx="270" cy="152" rx="274" ry="257" fill="url(#moonlight)"/>
+  <g fill="#e9d6c3">
+    <circle cx="48" cy="85" r="1.4" opacity=".7"/><circle cx="112" cy="182" r="1" opacity=".45"/><circle cx="169" cy="67" r="1.6" opacity=".72"/><circle cx="384" cy="48" r="1.2" opacity=".67"/><circle cx="478" cy="109" r="1.4" opacity=".53"/><circle cx="543" cy="53" r="1" opacity=".54"/><circle cx="615" cy="140" r="1.2" opacity=".6"/><circle cx="693" cy="72" r="1.5" opacity=".5"/><circle cx="810" cy="117" r="1" opacity=".45"/><circle cx="937" cy="61" r="1.4" opacity=".6"/><circle cx="1064" cy="127" r="1" opacity=".45"/><circle cx="1153" cy="77" r="1.6" opacity=".55"/>
+  </g>
+  <circle cx="248" cy="159" r="80" fill="url(#silver)" mask="url(#crescent)"/>
+  <path d="M0 397 72 354 117 364 189 310 242 354 303 308 369 349 426 301 497 358 572 315 650 359 739 295 834 347 944 295 1048 357 1123 314 1200 343V630H0Z" fill="url(#peaks)"/>
+  <path d="M0 444 108 401 153 417 218 391 290 417 339 387 396 409 450 374 507 402 574 369 657 425 758 383 840 419 947 375 1050 425 1136 391 1200 411V630H0Z" fill="#1c2532" opacity=".91"/>
+  <path d="M0 479Q139 441 258 467T514 456Q681 435 782 469T1019 447Q1124 429 1200 457V630H0Z" fill="url(#ground)"/>
+  <!-- Sanctuary silhouettes and windows form a separate middle-distance layer. -->
+  <g fill="#151a29" stroke="#3e3d46" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M44 471V395l47-24 48 24v76Z"/><path d="M48 398 91 350l46 48Z"/>
+    <path d="M133 478V417l45-22 42 23v60Z"/><path d="m127 416 51-43 49 44Z"/>
+    <path d="M221 474V384h34v90Z"/><path d="m215 385 23-53 23 53Z"/><path d="M238 332v-31" stroke="#525061"/>
+    <path d="M267 485V424l47-25 50 24v62Z"/><path d="m262 425 52-49 55 48Z"/>
+    <path d="M358 475V384h68v91Z"/><path d="m350 388 42-40 42 40Z"/>
+    <path d="M423 486V432l42-20 43 20v54Z"/><path d="m418 432 47-42 48 42Z"/>
+  </g>
+  <g fill="#ecad6b" opacity=".77">
+    <path d="M80 424h10v17H80zM101 424h9v17h-9zM170 430h10v14h-10zM287 444h9v13h-9zM327 440h10v17h-10zM378 413h9v17h-9zM400 414h9v16h-9zM457 448h10v17h-10z"/>
+  </g>
+  <path d="M0 497Q142 468 286 492T586 488Q743 467 881 495T1200 490V630H0Z" fill="#101724"/>
+  <g fill="#101620" opacity=".94"><use href="#pine" transform="translate(27 401) scale(1.55)"/><use href="#pine" transform="translate(154 443) scale(1.12)"/><use href="#pine" transform="translate(533 400) scale(1.56)"/><use href="#pine" transform="translate(605 455) scale(1.03)"/></g>
+  <path d="M0 553Q115 526 218 554T415 541Q495 520 575 548T760 541Q890 522 1015 552T1200 540V630H0Z" fill="#0a111d"/>
+  <!-- A lantern and sparks pick up the warm lights in the village. -->
+  <ellipse cx="374" cy="520" rx="102" ry="102" fill="url(#fire)"/>
+  <path d="M353 501h42l-5 42h-32Z" fill="#a97951" stroke="#dfac71" stroke-width="2"/>
+  <path d="M357 502v-15q16-20 33 0v15m-29 0v-15m25 15v-15" fill="none" stroke="#d5ac79" stroke-width="3"/>
+  <path d="M365 528q-6-11 5-20 0 9 5 10 2-12 9-17 3 8 2 14 6 9-2 17Z" fill="#ffe4a6"/>
+  <path d="M347 542h54" stroke="#392d30" stroke-width="7"/>
+  <g fill="#e6aa71"><circle cx="310" cy="487" r="1.5"/><circle cx="340" cy="450" r="1.7"/><circle cx="407" cy="464" r="1.6"/><circle cx="431" cy="513" r="1.2"/><circle cx="298" cy="542" r="1.1"/></g>
+  <!-- The text sits over its own shaded sky, not over the village. -->
+  <rect x="472" width="728" height="630" fill="url(#ink)"/>
+  <path d="M595 112h536M595 516h536" stroke="#b19270" stroke-opacity=".53" stroke-width="1"/>
+  <path d="M595 112h76m390 0h70M595 516h76m390 0h70" stroke="#e3bd82" stroke-width="2"/>
+  <path d="m855 112 11-11 11 11-11 11Zm0 404 11-11 11 11-11 11Z" fill="#d5ad77"/>
+  <text x="862" y="181" fill="#ddc19c" font-family="Georgia, 'Times New Roman', serif" font-size="19" letter-spacing="7" text-anchor="middle">BENEATH THE LAST MOON</text>
+  <text x="864" y="311" fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="bold" letter-spacing="3" text-anchor="middle" textLength="530" lengthAdjust="spacingAndGlyphs">NIGHTREAP</text>
+  <path d="M655 344h174m71 0h172" stroke="#9d8169" stroke-width="1"/><path d="m851 344 13-13 13 13-13 13Z" fill="#d0aa75"/>
+  <text x="864" y="407" fill="#e9e0d5" font-family="Georgia, 'Times New Roman', serif" font-size="27" text-anchor="middle">The night is endless.</text>
+  <text x="864" y="443" fill="#e9e0d5" font-family="Georgia, 'Times New Roman', serif" font-size="27" text-anchor="middle">Your flame is not.</text>
+  <rect x="12" y="12" width="1176" height="606" fill="none" stroke="#c5a477" stroke-opacity=".39" stroke-width="2"/>
+  <rect x="19" y="19" width="1162" height="592" fill="none" stroke="#c5a477" stroke-opacity=".18"/>
+</svg>

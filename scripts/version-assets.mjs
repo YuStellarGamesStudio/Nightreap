@@ -15,7 +15,7 @@ async function save(path, content) {
 }
 async function version(path) {
   if (hashes.has(path)) return hashes.get(path);
-  if (path.endsWith('.ico')) {
+  if (path.endsWith('.ico') || path.endsWith('.png')) {
     const digest = hash(await readFile(resolve(root, path)));
     hashes.set(path, digest);
     return digest;
@@ -56,7 +56,7 @@ async function files(directory) {
   for (const entry of await readdir(resolve(root, directory), { withFileTypes: true })) {
     const path = posix.join(directory, entry.name);
     if (entry.isDirectory()) result.push(...await files(path));
-    else if (/\.(js|css|svg|json)$/.test(entry.name)) result.push(path);
+    else if (/\.(js|css|svg|json|png)$/.test(entry.name)) result.push(path);
   }
   return result;
 }
