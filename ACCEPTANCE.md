@@ -344,3 +344,8 @@
 - 重現：第一幕第三張地圖擊殺全部 52 敵人後，戰鬥更新會從 `area.enemies` 移除死亡的 Boss；舊 `advance()` 卻從同一陣列尋找 `killRecorded` 的 Boss，導致 `cleared=true` 仍回覆「請先擊敗守關首領」。清場已包含 Boss 擊殺，因此移除這項失效且重複的檢查；未清場仍禁止換圖。
 - `node --test tests/world-advance.test.mjs tests/combat-input.test.mjs`：3/3 通過；守關測試走實際 `Combat.kill()`、清理死亡敵人及 `advance()`，確認第一幕第三張推進到第二幕第一張，最終 Boss 擊殺後解鎖並進入下一難度。`node --check src/systems/world.js` 通過。
 - Chromium 1440×900 本機版實際進入第一幕第三張，透過測試注入擊殺全體 52 敵人，顯示 `Harvest 52 / 52` 與「Travel onward」。遠離出口點擊時維持原圖並提示靠近；移至出口後點擊，實際切換至第二幕第一張 `Bone Passage`，角色進度為 act=1、map=0。測試期間未新增頁面錯誤；先前載入本機測試來源曾有資產連線重置與一次音樂資料未載入例外，重新載入後完成上述驗證。其他瀏覽器與第五幕最終 Boss 介面未測。
+
+### 裝備欄置中槽點按位移修正
+
+- 根因：通用 `button:active` 的 `translateY(1px)` 覆寫了頭盔、腰帶、鞋子三個置中槽的 `translateX(-50%)`，按住時各向右跳 66px。Chromium 1440×900 修正前實測三槽 X 位移皆為 +66px，左側護甲槽為 0。
+- 三槽點按樣式保留水平置中，同時保留向下 1px 的按壓回饋。新版 CSS 載入後，Chromium 實際按住並點擊頭盔、腰帶、鞋子：三槽按住時 X 位移均為 0、Y 位移 +1px，放開後仍位於 x=798；護甲槽亦維持 X 位移 0。裝備頁保持顯示，沒有頁面例外。測試在空槽進行；其他瀏覽器及有裝備物品時未測。

@@ -215,6 +215,9 @@ input[type="range"] { min-height: 36px; cursor: pointer; }
 .equipment-slot[data-slot="ring2"] { top: 52%; right: 0; }
 .equipment-slot[data-slot="belt"] { top: 65%; left: 50%; transform: translateX(-50%); }
 .equipment-slot[data-slot="feet"] { bottom: 2%; left: 50%; transform: translateX(-50%); }
+.equipment-slot[data-slot="head"]:active:not(:disabled),
+.equipment-slot[data-slot="belt"]:active:not(:disabled),
+.equipment-slot[data-slot="feet"]:active:not(:disabled) { transform: translate(-50%, 1px); }
 
 .tabs { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
 .tabs button { min-width: 0; padding: 0 5px; color: #d0bdac; font-size: 16px; }
