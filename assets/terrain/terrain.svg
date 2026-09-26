@@ -1,68 +1,175 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
   <defs>
-    <radialGradient id="ember-ground"><stop stop-color="#765041"/><stop offset=".68" stop-color="#393038"/><stop offset="1" stop-color="#262630"/></radialGradient>
-    <radialGradient id="crypt-ground"><stop stop-color="#58555b"/><stop offset=".7" stop-color="#353840"/><stop offset="1" stop-color="#262b35"/></radialGradient>
-    <radialGradient id="wood-ground"><stop stop-color="#425340"/><stop offset=".66" stop-color="#303f3c"/><stop offset="1" stop-color="#202f32"/></radialGradient>
-    <radialGradient id="frost-ground"><stop stop-color="#7d8b99"/><stop offset=".69" stop-color="#4e6272"/><stop offset="1" stop-color="#344455"/></radialGradient>
-    <radialGradient id="abyss-ground"><stop stop-color="#774343"/><stop offset=".65" stop-color="#493039"/><stop offset="1" stop-color="#28242f"/></radialGradient>
-    <radialGradient id="dungeon-ground"><stop stop-color="#65606a"/><stop offset=".7" stop-color="#423c48"/><stop offset="1" stop-color="#292a36"/></radialGradient>
-    <radialGradient id="sheep-ground"><stop stop-color="#635b53"/><stop offset=".7" stop-color="#404039"/><stop offset="1" stop-color="#2c3434"/></radialGradient>
+    <radialGradient id="ember-ground"><stop stop-color="#8d5140" stop-opacity=".32"/><stop offset=".58" stop-color="#5a3534" stop-opacity=".17"/><stop offset="1" stop-color="#302a2c" stop-opacity="0"/></radialGradient>
+    <radialGradient id="crypt-ground"><stop stop-color="#777277" stop-opacity=".27"/><stop offset=".65" stop-color="#59515b" stop-opacity=".15"/><stop offset="1" stop-color="#30323b" stop-opacity="0"/></radialGradient>
+    <radialGradient id="wood-ground"><stop stop-color="#667456" stop-opacity=".26"/><stop offset=".65" stop-color="#405545" stop-opacity=".14"/><stop offset="1" stop-color="#283c38" stop-opacity="0"/></radialGradient>
+    <radialGradient id="frost-ground"><stop stop-color="#adbdc6" stop-opacity=".27"/><stop offset=".65" stop-color="#718da0" stop-opacity=".15"/><stop offset="1" stop-color="#425666" stop-opacity="0"/></radialGradient>
+    <radialGradient id="abyss-ground"><stop stop-color="#ad5346" stop-opacity=".31"/><stop offset=".62" stop-color="#713840" stop-opacity=".16"/><stop offset="1" stop-color="#3c2830" stop-opacity="0"/></radialGradient>
+    <radialGradient id="dungeon-ground"><stop stop-color="#887783" stop-opacity=".27"/><stop offset=".64" stop-color="#61515b" stop-opacity=".15"/><stop offset="1" stop-color="#3c3740" stop-opacity="0"/></radialGradient>
+    <radialGradient id="sheep-ground"><stop stop-color="#9c9276" stop-opacity=".23"/><stop offset=".65" stop-color="#5d614e" stop-opacity=".12"/><stop offset="1" stop-color="#3c403b" stop-opacity="0"/></radialGradient>
     <linearGradient id="bark" x1="0" x2="1" y2=".2"><stop stop-color="#161d21"/><stop offset=".35" stop-color="#615449"/><stop offset=".68" stop-color="#302f2e"/><stop offset="1" stop-color="#1b2528"/></linearGradient>
     <linearGradient id="leaf" x2=".74" y2="1"><stop stop-color="#89977a"/><stop offset=".28" stop-color="#4c654f"/><stop offset=".68" stop-color="#2e413e"/><stop offset="1" stop-color="#172a31"/></linearGradient>
     <linearGradient id="stone" x2=".87" y2="1"><stop stop-color="#a0a5a2"/><stop offset=".42" stop-color="#777879"/><stop offset=".72" stop-color="#424951"/><stop offset="1" stop-color="#222a35"/></linearGradient>
     <linearGradient id="stone-side" x2="1" y2=".4"><stop stop-color="#5b6268"/><stop offset="1" stop-color="#262e3b"/></linearGradient>
-    <radialGradient id="water" cx=".46" cy=".28" r=".8"><stop stop-color="#6798a0"/><stop offset=".38" stop-color="#315b68"/><stop offset=".82" stop-color="#172d40"/><stop offset="1" stop-color="#101f2d"/></radialGradient>
-    <radialGradient id="shore"><stop stop-color="#345352"/><stop offset=".78" stop-color="#3b5551"/><stop offset="1" stop-color="#897f68"/></radialGradient>
+    <radialGradient id="water" cx=".4" cy=".24" r=".85"><stop stop-color="#587d85"/><stop offset=".39" stop-color="#2c515c"/><stop offset=".85" stop-color="#172c3d"/><stop offset="1" stop-color="#101d2d"/></radialGradient>
+    <radialGradient id="shore" cx=".4" cy=".27" r=".83"><stop stop-color="#293f43"/><stop offset=".7" stop-color="#505c53"/><stop offset="1" stop-color="#323b3b"/></radialGradient>
     <radialGradient id="moss"><stop stop-color="#94a384"/><stop offset="1" stop-color="#516850" stop-opacity="0"/></radialGradient>
+    <linearGradient id="leaf-facet" x1=".1" y1="0" x2=".8" y2="1"><stop stop-color="#879d7d"/><stop offset=".4" stop-color="#526b56"/><stop offset="1" stop-color="#263e3d"/></linearGradient>
+    <linearGradient id="ice" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#d6e8df"/><stop offset=".5" stop-color="#8faebd"/><stop offset="1" stop-color="#456178"/></linearGradient>
+    <radialGradient id="pond-light" cx=".32" cy=".16" r=".85"><stop stop-color="#b9ded3" stop-opacity=".32"/><stop offset=".6" stop-color="#61999b" stop-opacity=".12"/><stop offset="1" stop-color="#315b68" stop-opacity="0"/></radialGradient>
+    <radialGradient id="earth-shadow"><stop stop-color="#0a101a" stop-opacity=".38"/><stop offset="1" stop-color="#0a101a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="snow-drift"><stop stop-color="#839eae" stop-opacity=".35"/><stop offset="1" stop-color="#839eae" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ember-glow"><stop stop-color="#efaa6e" stop-opacity=".75"/><stop offset=".23" stop-color="#c56846" stop-opacity=".44"/><stop offset="1" stop-color="#aa483f" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lava-glow"><stop stop-color="#ce684f" stop-opacity=".54"/><stop offset=".3" stop-color="#ab3e40" stop-opacity=".31"/><stop offset="1" stop-color="#9a383d" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ground-pebble" x1="0" x2=".7" y2="1"><stop stop-color="#8b9290"/><stop offset=".32" stop-color="#596369"/><stop offset="1" stop-color="#242d37"/></linearGradient>
+    <linearGradient id="bank-stone" x1="0" x2=".8" y2="1"><stop stop-color="#a29f83"/><stop offset=".38" stop-color="#686e64"/><stop offset="1" stop-color="#303c3c"/></linearGradient>
   </defs>
   <!-- Tile motifs stay away from their edges, preserving continuous seams. -->
-  <g data-terrain="ground-ember"><path fill="url(#ember-ground)" d="M0 0h256v256H0z"/><path fill="#151c27" opacity=".35" d="m17 67 22-12 32 7-19 17Zm126 119 32-15 48 5-30 15Z"/><path d="m30 136 28-8 22 4m-14 5 29 5 22-8m84-66 13 11 21-7M103 207l17-12 27 4" stroke="#c68e6a" stroke-opacity=".36" stroke-width="2.5" fill="none"/><path d="m117 50 8 15 19 3m-50 126 21-8 15 3" stroke="#171d28" stroke-width="4" fill="none"/><circle cx="66" cy="188" r="4" fill="#e28a57" opacity=".6"/><circle cx="218" cy="106" r="2" fill="#e6ad76"/></g>
-  <g data-terrain="ground-crypt"><path fill="url(#crypt-ground)" d="M0 0h256v256H0z"/><path d="m31 58 19-8 47 1 11 23-30 10-43-9Zm122 105 29-11 44 16 7 34-40 8-36-19Z" fill="#9a9699" opacity=".23" stroke="#c0b8a8" stroke-opacity=".5"/><path d="m35 76 32-9 41 7m74 78 15 33 36 17M68 220l31-12 17 7m9-178 31-9 21 7" stroke="#d2c4b1" stroke-opacity=".37" fill="none" stroke-width="2"/><path d="m147 81 12-14 19 1m-65 101 17 7 5-15" stroke="#171e2b" fill="none" stroke-width="4"/><circle cx="216" cy="73" r="3" fill="#dad5cb" opacity=".4"/></g>
-  <g data-terrain="ground-wood"><path fill="url(#wood-ground)" d="M0 0h256v256H0z"/><path d="m19 93 18-13 27 1 15 12m25 111 18-8 19 8m49-127 18-10 21 4" fill="none" stroke="#9bad78" stroke-opacity=".45" stroke-width="3"/><path d="m41 153 21-15 24 9 10 17-32 7Zm126-31 27-17 18 10-8 22-24 3Z" fill="#192e34" opacity=".42"/><path d="m35 183 16-4m4-4 5-5m37-68 15 12 9-8m58 107 21-7" fill="none" stroke="#b5a98d" stroke-opacity=".38" stroke-width="2"/><circle cx="119" cy="51" r="6" fill="url(#moss)"/><circle cx="214" cy="185" r="8" fill="url(#moss)"/></g>
-  <g data-terrain="ground-frost"><path fill="url(#frost-ground)" d="M0 0h256v256H0z"/><path d="m23 73 24-10 28 14 26-5m60 115 32-13 30 15 13-5" fill="none" stroke="#cfe0de" stroke-opacity=".58" stroke-width="3"/><path d="m35 195 24-20 38 11-11 28-33 5Zm132-116 17-26 35 9-7 28-25 11Z" fill="#b6d3d5" opacity=".22" stroke="#edf0df" stroke-opacity=".45"/><path d="m69 182 13 15-20 13m112-126 27-12m-58 48 13 13-9 16" fill="none" stroke="#1e3b54" stroke-opacity=".48" stroke-width="3"/><path d="m120 45 9-14 14 12-8 13m-6-13-2 20m-10-16 23 4" stroke="#e4e8df" stroke-opacity=".6" fill="none"/></g>
-  <g data-terrain="ground-abyss"><path fill="url(#abyss-ground)" d="M0 0h256v256H0z"/><path d="m24 101 24-16 12 18 27-1 19 21m60 91 15-26 26-2 24-13" fill="none" stroke="#e88162" stroke-opacity=".6" stroke-width="5"/><path d="m18 99 31-21 14 19 31 2m83 110 23-16 35-15" fill="none" stroke="#ffbc73" stroke-opacity=".58" stroke-width="1.5"/><path d="m119 43 26-5 17 17-19 13-23-9Zm-80 160 28-13 14 12-15 22-22-3Z" fill="#1d1d2a" stroke="#a97a73" stroke-opacity=".6"/><circle cx="204" cy="82" r="3" fill="#ef9766"/></g>
-  <g data-terrain="ground-dungeon"><path fill="url(#dungeon-ground)" d="M0 0h256v256H0z"/><path d="m23 92 26-20 45-2 16 24-27 23-49-6Zm134 91 24-24 49 6 8 30-29 19-37-9Z" fill="#ad9e96" fill-opacity=".22" stroke="#c3b8af" stroke-opacity=".35"/><path d="m46 87 34-6 28 13m61 87 29-7 34 21m-174 16 23-15 23 7M173 62l23 13 23-11" fill="none" stroke="#dbceb7" stroke-opacity=".36" stroke-width="2"/><path d="m53 78 16 24m121 63 13 31m-100-76 17-9" stroke="#1a222d" stroke-width="3"/></g>
-  <g data-terrain="ground-sheep"><path fill="url(#sheep-ground)" d="M0 0h256v256H0z"/><path d="m27 160 19-8 33 10m48-87 18-8 24 12m17 119 23-9 25 12" fill="none" stroke="#bac6a7" stroke-opacity=".44" stroke-width="3"/><path d="m58 75 23 9 10 21-20 8-21-12Zm109 77 25-12 22 17-12 22-31-4Z" fill="#313d3c" opacity=".5"/><circle cx="143" cy="204" r="3" fill="#c2a785"/><circle cx="210" cy="85" r="3" fill="#c2a785"/></g>
+  <g data-terrain="ground-ember">
+    <path fill="#302a2c" d="M0 0h256v256H0z"/>
+    <ellipse cx="82" cy="83" rx="69" ry="59" fill="url(#ember-ground)"/>
+    <ellipse cx="174" cy="181" rx="61" ry="57" fill="url(#ember-ground)"/>
+    <ellipse cx="164" cy="82" rx="47" ry="30" fill="url(#earth-shadow)"/>
+    <path d="M28 82q21-11 42-8 15 2 25-5m56 118q24-12 46-8 13 2 24-5" fill="none" stroke="#1a2028" stroke-opacity=".65" stroke-width="3"/>
+    <path d="M31 85q20-10 37-8m85 112q20-9 37-7" fill="none" stroke="#9e6653" stroke-opacity=".39" stroke-width="1.8"/>
+    <path d="M93 142q16-5 25-2 12 3 21-4m-8-49q11 7 20 5" fill="none" stroke="#26232b" stroke-opacity=".68" stroke-width="2"/>
+    <path d="M38 173q7-5 14-3l6 5-10 5-11-2Zm149-71q8-6 16-4l7 6-9 5-13-2Z" fill="url(#ground-pebble)" opacity=".55"/>
+    <path d="m40 174q8-4 13-2m138-71q7-3 12-1" fill="none" stroke="#a8806b" stroke-opacity=".33" stroke-width="1.7"/>
+    <path d="M52 116q10-8 21-3m120 91q11-7 21-2" fill="none" stroke="#82736c" stroke-opacity=".23" stroke-width="2"/>
+    <circle cx="70" cy="191" r="10" fill="url(#ember-glow)"/><circle cx="192" cy="65" r="9" fill="url(#ember-glow)"/>
+    <circle cx="70" cy="191" r="1.9" fill="#e5a16c"/><circle cx="192" cy="65" r="1.6" fill="#c77e5d"/>
+  </g>
+  <g data-terrain="ground-crypt">
+    <path fill="#30323b" d="M0 0h256v256H0z"/>
+    <ellipse cx="72" cy="74" rx="63" ry="50" fill="url(#crypt-ground)"/>
+    <ellipse cx="179" cy="183" rx="63" ry="55" fill="url(#crypt-ground)"/>
+    <ellipse cx="141" cy="109" rx="54" ry="37" fill="url(#earth-shadow)"/>
+    <path d="M38 65q23-12 47-8m77 112q19-9 36-6" fill="none" stroke="#929393" stroke-opacity=".35" stroke-width="2"/>
+    <path d="M56 91q25 6 45-2m76 113q17 4 34-2" fill="none" stroke="#151e29" stroke-opacity=".52" stroke-width="2.5"/>
+    <path d="M112 152q12-7 19-5l8 8m-15-98q15-6 26-2l11 8" fill="none" stroke="#191f2b" stroke-opacity=".58" stroke-width="2"/>
+    <path d="M63 190q6-4 11-3l5 4-4 4-12-1Zm140-83q6-4 12-2l4 5-5 4-10-1Z" fill="url(#ground-pebble)" opacity=".48"/>
+    <path d="m67 189 8 1m131-82 8-1" fill="none" stroke="#a0a5a1" stroke-opacity=".35" stroke-width="1.6"/>
+    <path d="m80 132 3 2m8-5 2 2m84-46 2 2" fill="none" stroke="#b8b1a4" stroke-opacity=".38" stroke-width="1.5"/>
+  </g>
+  <g data-terrain="ground-wood">
+    <path fill="#283c38" d="M0 0h256v256H0z"/>
+    <ellipse cx="69" cy="105" rx="59" ry="62" fill="url(#wood-ground)"/>
+    <ellipse cx="183" cy="167" rx="59" ry="52" fill="url(#wood-ground)"/>
+    <ellipse cx="154" cy="72" rx="53" ry="39" fill="url(#earth-shadow)"/>
+    <path d="M37 175q12-12 25-6 15 6 24-9m-14 17q12 3 17 16m80-95q16-15 29-9 9 4 19-2" fill="none" stroke="#1a302d" stroke-opacity=".72" stroke-width="3"/>
+    <path d="M38 175q12-10 22-5m113-73q14-12 25-7" fill="none" stroke="#77907a" stroke-opacity=".32" stroke-width="1.6"/>
+    <ellipse cx="83" cy="83" rx="25" ry="16" fill="url(#moss)" opacity=".45"/>
+    <ellipse cx="187" cy="183" rx="33" ry="19" fill="url(#moss)" opacity=".5"/>
+    <path d="M101 140q12-11 23-8-3 13-17 15l-7-3Zm38 51q12-9 23-5-4 13-17 14l-7-4Z" fill="#4d5943" opacity=".6"/>
+    <path d="M101 141q9-7 17-7m22 57q8-6 16-4" fill="none" stroke="#91a47a" stroke-opacity=".31" stroke-width="1.6"/>
+    <path d="M52 104q6-5 11-3l4 4-6 4-8-2Zm147 37q6-4 11-2l3 5-7 4-7-2Z" fill="url(#ground-pebble)" opacity=".38"/>
+  </g>
+  <g data-terrain="ground-frost">
+    <path fill="#405465" d="M0 0h256v256H0z"/>
+    <ellipse cx="79" cy="92" rx="70" ry="61" fill="url(#frost-ground)" opacity=".72"/>
+    <ellipse cx="180" cy="177" rx="64" ry="58" fill="url(#snow-drift)"/>
+    <ellipse cx="156" cy="85" rx="55" ry="40" fill="url(#earth-shadow)" opacity=".48"/>
+    <path d="M27 88q24-14 45-9 14 5 27-3m62 109q20-12 38-8 15 4 31-3" fill="none" stroke="#a0bcc4" stroke-opacity=".37" stroke-width="3" stroke-linecap="round"/>
+    <path d="M31 96q26-11 43-5m89 103q21-9 37-6" fill="none" stroke="#17384c" stroke-opacity=".6" stroke-width="2"/>
+    <path d="M47 161q14-6 25 1 9 5 18 2m84-51q13-5 24 1" fill="none" stroke="#7e9eaf" stroke-opacity=".33" stroke-width="2.5"/>
+    <path d="M44 164q12-3 22 1m114-49q9-2 15 1" fill="none" stroke="#c8ded8" stroke-opacity=".2" stroke-width="1.5"/>
+    <path d="M111 57q7-6 16-4l5 5-5 6-13-1Zm71 145q9-7 17-4l6 5-6 6-15-1Z" fill="url(#ice)" opacity=".45"/>
+    <path d="M113 58q6-4 13-3m61 146q8-4 14 0" fill="none" stroke="#d8e6de" stroke-opacity=".43" stroke-width="1.6"/>
+    <circle cx="109" cy="149" r="1.7" fill="#d5e6e1" opacity=".65"/><circle cx="216" cy="84" r="1.4" fill="#c8dcd8" opacity=".6"/>
+  </g>
+  <g data-terrain="ground-abyss">
+    <path fill="#3c2830" d="M0 0h256v256H0z"/>
+    <ellipse cx="70" cy="86" rx="65" ry="61" fill="url(#abyss-ground)"/>
+    <ellipse cx="182" cy="178" rx="62" ry="58" fill="url(#abyss-ground)"/>
+    <ellipse cx="129" cy="107" rx="54" ry="39" fill="url(#earth-shadow)"/>
+    <path d="M26 103q16-17 28-12 10 5 18 0l25 14m77 107q10-20 23-20 13 0 31-14" fill="none" stroke="#b84d44" stroke-opacity=".2" stroke-width="10" stroke-linecap="round"/>
+    <path d="M26 103q16-17 28-12 10 5 18 0l25 14m77 107q10-20 23-20 13 0 31-14" fill="none" stroke="#211c29" stroke-width="5" stroke-linecap="round"/>
+    <path d="M31 102q14-11 23-7 11 5 19 0m105 113q8-14 18-13 11 0 23-10" fill="none" stroke="#ce6852" stroke-opacity=".6" stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M124 56q10-8 23-5 10 5 20 1m-91 135q13-6 21 0" fill="none" stroke="#201e28" stroke-opacity=".74" stroke-width="3"/>
+    <ellipse cx="65" cy="105" rx="19" ry="17" fill="url(#lava-glow)"/><ellipse cx="189" cy="193" rx="20" ry="15" fill="url(#lava-glow)"/>
+    <path d="M140 174q9-5 16-2l6 7-7 5-13-3Z" fill="url(#ground-pebble)" opacity=".4"/>
+    <circle cx="89" cy="114" r="7" fill="url(#ember-glow)"/><circle cx="89" cy="114" r="1.5" fill="#d1845d"/>
+  </g>
+  <g data-terrain="ground-dungeon">
+    <path fill="#3c3740" d="M0 0h256v256H0z"/>
+    <ellipse cx="78" cy="73" rx="62" ry="54" fill="url(#dungeon-ground)"/>
+    <ellipse cx="174" cy="182" rx="63" ry="56" fill="url(#dungeon-ground)"/>
+    <ellipse cx="134" cy="107" rx="65" ry="42" fill="url(#earth-shadow)" opacity=".73"/>
+    <path d="M33 82q22-14 43-11m86 105q18-10 36-8" fill="none" stroke="#a9a2a4" stroke-opacity=".29" stroke-width="2.1"/>
+    <path d="M45 101q29 10 57 1m74 100q19 5 37-4" fill="none" stroke="#1b222d" stroke-opacity=".62" stroke-width="2.8"/>
+    <path d="M118 140q12-9 21-7 14 3 20-5m31-83q12-4 22 0" fill="none" stroke="#23232e" stroke-opacity=".68" stroke-width="2.5"/>
+    <path d="M117 144q10-6 20-6m55-92q9-2 16 1" fill="none" stroke="#918c94" stroke-opacity=".24" stroke-width="1.6"/>
+    <ellipse cx="101" cy="161" rx="33" ry="17" fill="url(#earth-shadow)" opacity=".65"/>
+    <path d="M65 185q7-4 13-1l6 5-5 4-12-2Z" fill="url(#ground-pebble)" opacity=".43"/>
+  </g>
+  <g data-terrain="ground-sheep">
+    <path fill="#3c403b" d="M0 0h256v256H0z"/>
+    <ellipse cx="80" cy="82" rx="64" ry="53" fill="url(#sheep-ground)"/>
+    <ellipse cx="173" cy="178" rx="58" ry="58" fill="url(#sheep-ground)"/>
+    <ellipse cx="163" cy="91" rx="62" ry="40" fill="url(#earth-shadow)" opacity=".59"/>
+    <path d="M37 162q14-8 24 0 12 10 27 1m89-63q10-12 25-9 10 3 16-3" fill="none" stroke="#26312e" stroke-opacity=".7" stroke-width="3"/>
+    <path d="M40 161q12-4 20 2m120-65q10-8 22-5" fill="none" stroke="#7b8b73" stroke-opacity=".31" stroke-width="1.8"/>
+    <path d="M65 80q2-9 7-12l-1 10 7-13 1 13 6-8-2 14m73 104q2-10 8-13l-1 10 6-10 1 11 7-7-2 12" fill="#293a34" opacity=".75"/>
+    <path d="m71 80 3-8m91 113 2-8" stroke="#9da78b" stroke-opacity=".33" stroke-width="1.8"/>
+    <path d="M113 120q11-4 18 2 8 8 21 1" fill="none" stroke="#2b3431" stroke-opacity=".53" stroke-width="2"/>
+    <path d="M205 154q7-5 12-2l5 5-8 5-8-3Z" fill="url(#ground-pebble)" opacity=".42"/>
+  </g>
   <!-- All raised silhouettes have their ground contact at (128,211). -->
   <g data-terrain="obstacle-tree">
     <path d="m57 207 40-11 32 9 33-13 40 17-76 21Z" fill="#131e26" opacity=".55"/>
-    <path d="m119 209-18-24-27 15m55 12 24-24 32 14m-60 2-8-47-25-35 11-17 28 24 5 20 15-25 24-11 6 15-30 26-8 53" fill="url(#bark)" stroke="#20282b" stroke-width="5" stroke-linejoin="round"/>
-    <path d="m124 198-1-47-22-35m33 51 12-41 30-12m-42 51-4-45" fill="none" stroke="#ac9175" stroke-opacity=".55" stroke-width="3"/>
-    <path d="m82 102-17-13 6-29 20-14 24 6 15-18 27 6 15 22 25 2 12 28-16 24-33 2-16 19-28-12-20 8-14-20-24 2Z" fill="url(#leaf)" stroke="#243c3b" stroke-width="6"/>
-    <path d="m70 83 20-5 18-26 22 9 22-15 14 24 28 16-23 8-19 23-25-9-23 13-22-19-15 4Z" fill="#85926e" opacity=".3"/>
-    <path d="m73 82 32 1 20-25m5 55 11-30 27-18m-59 26 30 3m30-4 25 2" fill="none" stroke="#a6ac86" stroke-opacity=".4" stroke-width="3"/>
-    <path d="m81 110 13 9 25-6m44 4 22-12" fill="none" stroke="#17292d" stroke-width="5"/>
-    <circle cx="97" cy="78" r="3" fill="#b7a77b"/><circle cx="166" cy="83" r="3" fill="#c3af86"/>
+    <path d="m119 209-18-24-27 15m55 12 24-24 32 14m-60 2-8-47-25-35 11-17 28 24 5 20 15-25 24-11 6 15-30 26-8 53" fill="url(#bark)" stroke="#1a2225" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M111 128q14 27 13 63l-8 18m29-78q-8 24-11 55" fill="none" stroke="#151c22" stroke-opacity=".48" stroke-width="5"/>
+    <path d="m121 193 1-43-17-31m24 48 11-29" fill="none" stroke="#a49678" stroke-opacity=".42" stroke-width="2.6"/>
+    <path d="m82 102-17-13 6-29 20-14 24 6 15-18 27 6 15 22 25 2 12 28-16 24-33 2-16 19-28-12-20 8-14-20-24 2Z" fill="url(#leaf)" stroke="#1d3436" stroke-width="6"/>
+    <path d="M68 84q-2-27 25-35 18-5 32 11 5 17-7 35-19 17-44 10Zm55-29q8-21 28-15 27 9 29 31 0 25-22 34-25 8-40-9Q106 73 123 55Zm44 27q10-19 27-13 18 8 17 27-2 19-22 25l-30-7Q151 96 167 82Z" fill="url(#leaf-facet)" opacity=".63"/>
+    <path d="M68 95q23 17 47 5 10 17 29 17 16 6 27-4 16 7 29-2l-19 18-27 2-14 17-31-10-20 5-18-22-14 1Z" fill="#10272e" opacity=".69"/>
+    <path d="M70 65q10-19 29-17m31-12q20-3 31 16m15 18q15-4 23 12" fill="none" stroke="#b4c4a0" stroke-opacity=".48" stroke-width="2.7" stroke-linecap="round"/>
+    <path d="M81 85q17 1 26-10m36-13q14 7 24 3" fill="none" stroke="#a3bb92" stroke-opacity=".32" stroke-width="2"/>
+    <ellipse cx="128" cy="143" rx="33" ry="13" fill="url(#earth-shadow)" opacity=".6"/>
+    <path d="M91 192q13-2 20 9m45-4q11-8 23 2" fill="none" stroke="#586c55" stroke-opacity=".42" stroke-width="2.5"/>
   </g>
   <g data-terrain="obstacle-rock">
-    <ellipse cx="128" cy="212" rx="96" ry="23" fill="#151e29" opacity=".55"/>
-    <path d="m42 193 20-47 47-45 45-8 47 33 18 69-50 28-86-2Z" fill="url(#stone-side)" stroke="#252d37" stroke-width="5"/>
-    <path d="m42 193 38-26 43 8 31-82-45 8-47 45Z" fill="url(#stone)" stroke="#b9b3a0" stroke-opacity=".42" stroke-width="2"/>
-    <path d="m123 175 31-82 47 33 18 69-50 28Z" fill="url(#stone-side)"/>
-    <path d="m123 175 47 19 49 1m-65-102 16 101m-108-48 18 21-38 26" fill="none" stroke="#d2c5b1" stroke-opacity=".47" stroke-width="3"/>
-    <path d="m69 181 20-8 25 11m55-35 21 11 10 25m-43 27 30 3" fill="none" stroke="#252c34" stroke-width="4"/>
-    <path d="m72 205 13-9 16 3 8 11m66-12 12-8 19 2" fill="none" stroke="#73806d" stroke-width="5" stroke-linecap="round"/>
-    <path d="m80 115 26-18 33-2" fill="none" stroke="#e8ddc1" stroke-opacity=".36" stroke-width="3"/>
+    <ellipse cx="128" cy="212" rx="96" ry="23" fill="#151e29" opacity=".6"/>
+    <path d="m42 193 20-47 47-45 45-8 47 33 18 69-50 28-86-2Z" fill="url(#stone-side)" stroke="#222a34" stroke-width="5"/>
+    <path d="m42 193 38-26 43 8 31-82-45 8-47 45Z" fill="url(#stone)" stroke="#a8b2ad" stroke-opacity=".3" stroke-width="2"/>
+    <path d="M62 148q25-37 48-44l36-7-26 65-43 11-32 18Z" fill="#c0bfb0" opacity=".13"/>
+    <path d="m123 175 31-82 47 33 18 69-50 28Z" fill="#172532" opacity=".52"/>
+    <path d="M154 97q28 7 45 30l17 61-44 4-36-17Z" fill="url(#stone-side)" opacity=".65"/>
+    <path d="m43 192 38-26 42 9 31-82m0 0 17 101 47 1" fill="none" stroke="#a8b5b5" stroke-opacity=".37" stroke-width="2.3"/>
+    <path d="M92 119l8 17-6 13m92 0 3 13-7 9" fill="none" stroke="#15202c" stroke-opacity=".76" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M93 120l6 15m87 15 2 9" fill="none" stroke="#a4aea8" stroke-opacity=".27" stroke-width="1.4"/>
+    <path d="M55 198q29 9 54 8m55 5q20-1 37-13" fill="none" stroke="#101c26" stroke-opacity=".72" stroke-width="5"/>
+    <path d="M76 203q11-7 19-3m80-2q9-4 21-2" fill="none" stroke="#768977" stroke-opacity=".42" stroke-width="3.5"/>
   </g>
   <g data-terrain="obstacle-outcrop">
-    <ellipse cx="127" cy="212" rx="106" ry="29" fill="#111b25" opacity=".62"/>
-    <path d="m35 196 27-85 31 30 27-101 25 50 24-34 39 128 23 14-44 28-117-2Z" fill="url(#stone-side)" stroke="#252b36" stroke-width="5"/>
-    <path d="m62 111 31 30 27-101 18 83-28 58-37 30-38-15Z" fill="url(#stone)" stroke="#c1b5a3" stroke-opacity=".45" stroke-width="3"/>
-    <path d="m120 40 25 50 24-34 39 128-37 34-33-95Z" fill="url(#stone-side)"/>
-    <path d="m169 56 9 84 30 44m-63-94-7 33m-45 18 18 41-38 29" fill="none" stroke="#c1bfb6" stroke-opacity=".43" stroke-width="3"/>
-    <path d="m85 158-13 17 9 15m74-45 17 14-10 19 22 16m-89-62 12 13" fill="none" stroke="#282a38" stroke-width="5"/>
-    <path d="m54 199 27 14 28-10m65 4 24-9 19 2" fill="none" stroke="#9d998d" stroke-opacity=".6" stroke-width="3"/>
-    <path d="m117 48 8 44m40-28 5 35" stroke="#e5dcca" stroke-opacity=".5" stroke-width="3"/>
-    <path d="m66 210 20-11 14 11m74-13 14-8 14 9" fill="none" stroke="#738570" stroke-opacity=".55" stroke-width="5"/>
+    <ellipse cx="127" cy="212" rx="106" ry="29" fill="#111b25" opacity=".67"/>
+    <path d="m35 196 27-85 31 30 27-101 25 50 24-34 39 128 23 14-44 28-117-2Z" fill="url(#stone-side)" stroke="#202934" stroke-width="5"/>
+    <path d="M35 194 62 111l31 30 27-101 22 75-32 73-38 24Z" fill="url(#stone)" stroke="#a5aea9" stroke-opacity=".28" stroke-width="2"/>
+    <path d="M63 117q18 15 28 37l-15 37-34 1Zm53-66 19 65-26 61-19-34Z" fill="#c4c8bb" opacity=".15"/>
+    <path d="m120 40 25 50 24-34 39 128-37 34-33-95Z" fill="#1a2936" opacity=".64"/>
+    <path d="m169 56 9 84 30 44-37 34-33-95 7-33Z" fill="url(#stone-side)" opacity=".7"/>
+    <path d="m35 195 27-84 31 30 27-101m49 16 9 84 30 44" fill="none" stroke="#aeb8af" stroke-opacity=".36" stroke-width="2.7"/>
+    <path d="M78 141l9 16-5 10m91-27-5 15 6 10" fill="none" stroke="#15202c" stroke-opacity=".73" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="m78 142 8 14m86-15-5 13" fill="none" stroke="#9da9a2" stroke-opacity=".27" stroke-width="1.4"/>
+    <path d="M45 196q31 19 65 11m64 4q17-8 31-8" fill="none" stroke="#1a252d" stroke-opacity=".69" stroke-width="5"/>
+    <path d="m72 207q11-6 24-3m75-2q10-5 19-4" fill="none" stroke="#718775" stroke-opacity=".38" stroke-width="3.5"/>
   </g>
   <!-- Top-down pond is transformed by the exact world ellipse affine matrix. -->
   <g data-terrain="obstacle-pond">
     <circle cx="128" cy="128" r="128" fill="url(#shore)"/>
-    <path d="M128 13c54-4 105 41 111 96 7 48-28 100-79 120-44 17-98-6-128-51C7 140 22 88 49 52 71 24 100 16 128 13Z" fill="url(#water)" stroke="#a0a394" stroke-width="5"/>
-    <path d="M31 106c16-30 43-36 60-47 36-20 66-8 94 2 15 5 35 26 43 44" fill="none" stroke="#b5d2c5" stroke-opacity=".55" stroke-width="4"/>
-    <path d="M50 144c30 14 52-7 78-6 32 1 44 21 76 10M72 178c23-13 39-13 59-4 22 9 43 9 55 2" fill="none" stroke="#85c1bb" stroke-opacity=".42" stroke-width="3"/>
-    <path d="m48 74 26-16 19-2m97 13 18 16m-8 106-22 14m-99-7-21-19" fill="none" stroke="#c9ba9d" stroke-opacity=".7" stroke-width="7" stroke-linecap="round"/>
-    <path d="m62 90 12 8 18-2m90 26 21 3m-75 70 22-3" fill="none" stroke="#d2ebe0" stroke-opacity=".52" stroke-width="2"/>
-    <path d="m35 164 22 8m151-70 20-5" stroke="#334d47" stroke-width="8" stroke-linecap="round"/>
+    <ellipse cx="25" cy="127" rx="23" ry="53" fill="url(#earth-shadow)" opacity=".62"/>
+    <ellipse cx="190" cy="33" rx="52" ry="22" fill="url(#moss)" opacity=".19"/>
+    <ellipse cx="189" cy="219" rx="40" ry="26" fill="url(#earth-shadow)" opacity=".57"/>
+    <path d="M128 13c54-4 105 41 111 96 7 48-28 100-79 120-44 17-98-6-128-51C7 140 22 88 49 52 71 24 100 16 128 13Z" fill="url(#water)" stroke="#253b40" stroke-width="5"/>
+    <path d="M40 93q35-50 96-51 55-2 88 54-34-33-81-30Q76 63 40 93Z" fill="#b4d0c7" opacity=".11"/>
+    <ellipse cx="111" cy="91" rx="99" ry="88" fill="url(#pond-light)" opacity=".48"/>
+    <path d="M40 95q26-38 62-44 37-11 65 1" fill="none" stroke="#a6c7bc" stroke-opacity=".26" stroke-width="2.5"/>
+    <path d="M62 146q30 10 53 0 24-10 50 0m-77 42q28-11 49-3 20 7 39-1" fill="none" stroke="#8cb3b3" stroke-opacity=".29" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M55 151q27 7 48-1m22 32q19 2 33-3" fill="none" stroke="#a0c2c2" stroke-opacity=".18" stroke-width="1.6"/>
+    <path d="M37 91q12-26 33-43m137 25q20 18 26 35M58 192q17 25 48 33m81-13q23-14 35-36" fill="none" stroke="#829083" stroke-opacity=".38" stroke-width="3" stroke-linecap="round"/>
+    <path d="M17 129q-2-16 4-28m168-80q16 5 28 15m-33 190q-15 7-31 9" fill="none" stroke="#869484" stroke-opacity=".21" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M38 75q6-10 15-8l8 7-6 7-15-1Zm171 124q7-7 14-4l6 6-7 7-12-3ZM187 219q7-6 14-4l5 6-8 5-10-2Z" fill="url(#bank-stone)" opacity=".85"/>
+    <path d="M41 73q5-6 11-4m159 129q6-4 12-1m-33 21q5-3 11-1" fill="none" stroke="#b3b5a0" stroke-opacity=".43" stroke-width="1.7"/>
+    <path d="M34 155q9 5 18 3m161-60q11-2 17 4" fill="none" stroke="#314e4c" stroke-opacity=".76" stroke-width="5" stroke-linecap="round"/>
   </g>
 </svg>

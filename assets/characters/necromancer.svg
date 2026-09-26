@@ -4,12 +4,61 @@
     <linearGradient id="bone" x2=".6" y2="1"><stop stop-color="#f0e3c1"/><stop offset=".5" stop-color="#aaac97"/><stop offset="1" stop-color="#505767"/></linearGradient>
     <linearGradient id="leather" x2="1" y2="1"><stop stop-color="#8c7465"/><stop offset="1" stop-color="#242333"/></linearGradient>
     <radialGradient id="soul"><stop stop-color="#efffe5"/><stop offset=".4" stop-color="#89d7ac"/><stop offset="1" stop-color="#294e4b"/></radialGradient>
+    <linearGradient id="plum" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a18ca7"/><stop offset=".45" stop-color="#5b4969"/><stop offset="1" stop-color="#262438"/></linearGradient>
   </defs>
-  <g data-part="shroud" data-pivot="64 48" data-motion="static" stroke="#151d28" stroke-width="2"><path d="M40 40Q26 61 22 105L35 97 44 106 57 93 80 107 99 101 89 46Z" fill="url(#robe)"/><path d="M37 53 30 92M84 54 91 92M42 87 38 98" stroke="#75917c" stroke-width="1"/></g>
-  <g data-part="left-boot" data-pivot="51 82" data-motion="leg-left" stroke="#17212a" stroke-width="2"><path d="M43 79 57 80 55 101 52 114 50 120H32l2-7 8-5Z" fill="url(#leather)"/><path d="m43 100 11 1m-14 7 13 2m-17 6 15 1" stroke="#b0b0a0" stroke-width="1.2"/></g>
-  <g data-part="right-boot" data-pivot="73 82" data-motion="leg-right" stroke="#17212a" stroke-width="2"><path d="m66 79 15 1-2 29 9 6v5H67l-3-13Z" fill="url(#leather)"/><path d="m67 100 11 1m-12 7 13 2m-9 6 14 1" stroke="#b0b0a0" stroke-width="1.2"/></g>
-  <g data-part="reaping-arm" data-pivot="84 48" data-motion="arm-right" stroke="#18232a" stroke-width="2"><path d="m80 44 14 6 6 25-8 9-13-14Z" fill="url(#robe)"/><path d="m90 73 8-1 7 9-4 7-11-3Z" fill="url(#bone)"/><path d="M101 113 106 25" stroke="url(#leather)" stroke-width="5"/><path d="M106 27Q80 20 74 42 72 15 100 13l13 9 1 8Z" fill="url(#bone)"/><path d="M102 19Q83 19 78 29" fill="none" stroke="#f1eacb" stroke-width="1"/><path d="m101 72 7 1m-7 5 7 1m-8 5 8 1" stroke="#b9c2a0"/></g>
-  <g data-part="body" data-pivot="64 55" data-motion="static" stroke="#15222b" stroke-width="2"><path d="m44 41 19-6 20 9 5 39-10 23-16-9-22 7 7-34Z" fill="url(#robe)"/><path d="m48 48 14 8 16-9-3 11-12 7-15-8m0 7 14 8 14-6m-28 8 13 7 13-6" fill="none" stroke="url(#bone)" stroke-width="3"/><path d="M63 51v37" stroke="#d7cdb1"/><path d="m41 81 43-1-2 9-42 1Z" fill="url(#leather)"/><path d="m59 82 10-1 3 7-7 6-7-5Z" fill="url(#bone)"/><circle cx="62" cy="86" r="1.5"/><circle cx="68" cy="85" r="1.5"/><path d="m48 91-3 10m29-12 4 12" stroke="#6c9688" stroke-width="1"/></g>
-  <g data-part="hood" data-pivot="64 35" data-motion="static" stroke="#16212a" stroke-width="2"><path d="M44 39Q40 11 64 8 85 12 84 42l-12 10-18-3Z" fill="url(#robe)"/><path d="M53 25q11-15 22 0l-3 15-10 7-11-10Z" fill="url(#bone)"/><path d="m54 29 7 2-2 5-5-2m12-3 7-3-1 6-6 2" fill="#17282b"/><path d="m63 34-3 5 5 1m-9 1 3 4m2-3 1 4m3-4 1 3" fill="none" stroke="#43585a" stroke-width="1.2"/><path d="m48 36-2-12 9-10m24 22 2-11-8-12" fill="none" stroke="#9ab49a" stroke-width="1"/></g>
-  <g data-part="casting-arm" data-pivot="41 50" data-motion="arm-left" stroke="#18232a" stroke-width="2"><path d="m41 44-13 7-7 21 11 12 12-13Z" fill="url(#robe)"/><path d="m23 70-9-4-5 4 4 10 12 4 7-8Z" fill="url(#bone)"/><circle cx="15" cy="61" r="8" fill="url(#soul)" stroke="#8abf9e"/><path d="m13 55 3 5-2 6m-3 5 2 7m4-7 2 7m3-6 2 7" fill="none" stroke="#ccecc7" stroke-width="1"/></g>
+  <g data-part="shroud" data-pivot="64 48" data-motion="static" stroke="#151d28" stroke-width="2" stroke-linejoin="round">
+    <path d="M40 40Q26 61 22 105L35 97 44 106 57 93 80 107 99 101 89 46Z" fill="url(#robe)"/>
+    <path d="M34 62q2 22-8 39m16-49q-8 28-4 42m47-42q-4 30 9 46m-18-34 4 34" fill="none" stroke="#142831" stroke-width="3"/>
+    <path d="M32 53q-4 21-6 43l6-5q9-24 8-42Z" fill="#9aafa0" opacity=".17" stroke="none"/>
+  </g>
+  <g data-part="left-boot" data-pivot="51 82" data-motion="leg-left" stroke="#17212a" stroke-width="2" stroke-linejoin="round">
+    <path d="M43 79 57 80 55 101 52 114 50 120H32l2-7 8-5Z" fill="url(#leather)"/>
+    <path d="m43 100 11 1m-14 7 13 2m-17 6 15 1" fill="none" stroke="#b0b0a0" stroke-width="1.4"/>
+    <path d="m47 83 8 1-2 11-10-1m-8 22 8-5" fill="none" stroke="#5c5961" stroke-width="2"/>
+  </g>
+  <g data-part="right-boot" data-pivot="73 82" data-motion="leg-right" stroke="#17212a" stroke-width="2" stroke-linejoin="round">
+    <path d="m66 79 15 1-2 29 9 6v5H67l-3-13Z" fill="url(#leather)"/>
+    <path d="m67 100 11 1m-12 7 13 2m-9 6 14 1" fill="none" stroke="#b0b0a0" stroke-width="1.4"/>
+    <path d="m68 84 9 1-2 10-9-1m6 18 10 1" fill="none" stroke="#57545f" stroke-width="2"/>
+  </g>
+  <g data-part="reaping-arm" data-pivot="84 48" data-motion="arm-right" stroke="#18232a" stroke-width="2" stroke-linejoin="round">
+    <path d="m80 44 14 6 6 25-8 9-13-14Z" fill="url(#robe)"/>
+    <path d="m84 47 8 5 5 17-5-5Z" fill="#acbdae" opacity=".22" stroke="none"/>
+    <path d="m90 73 8-1 7 9-4 7-11-3Z" fill="url(#bone)"/>
+    <path d="M101 113 106 25" stroke="url(#leather)" stroke-width="5"/>
+    <path d="m103 108 4-70" fill="none" stroke="#cdb99d" stroke-width="1.3" opacity=".5"/>
+    <path d="M106 27Q80 20 74 42 72 15 100 13l13 9 1 8Z" fill="url(#bone)"/>
+    <path d="M101 19Q83 19 78 29" fill="none" stroke="#e8dcc3" stroke-width="1.3" opacity=".58"/>
+    <path d="m101 72 7 1m-7 5 7 1m-8 5 8 1" stroke="#b9c2a0"/>
+  </g>
+  <g data-part="body" data-pivot="64 55" data-motion="static" stroke="#15222b" stroke-width="2" stroke-linejoin="round">
+    <path d="m44 41 19-6 20 9 5 39-10 23-16-9-22 7 7-34Z" fill="url(#robe)"/>
+    <path d="M69 44q8-3 13 2l3 27-8 26-13-8 10-17Z" fill="#0c101c" opacity=".32" stroke="none"/>
+    <path d="m48 48 14 8 16-9-3 11-12 7-15-8m0 7 14 8 14-6m-28 8 13 7 13-6" fill="none" stroke="url(#bone)" stroke-width="3"/>
+    <path d="m48 49 13 9 16-9-2 6-13 10-14-10Z" fill="#d5dabd" opacity=".2" stroke="none"/>
+    <path d="M63 51v37" stroke="#d7cdb1" stroke-width="1.5"/>
+    <path d="m41 81 43-1-2 9-42 1Z" fill="url(#leather)"/>
+    <path d="m59 82 10-1 3 7-7 6-7-5Z" fill="url(#bone)"/>
+    <circle cx="62" cy="86" r="1.5"/><circle cx="68" cy="85" r="1.5"/>
+    <path d="m48 91-3 10m29-12 4 12" fill="none" stroke="#6c9688" stroke-width="1.5"/>
+    <path d="m44 93 9-1-4 8m25-6 6-2 4 9" fill="url(#plum)" stroke="#354044" stroke-width="1.3"/>
+    <path d="m46 95 4-2-1 6m28-6 4 5" fill="none" stroke="#a18ca7" stroke-width="1.2" opacity=".46"/>
+  </g>
+  <g data-part="hood" data-pivot="64 35" data-motion="static" stroke="#16212a" stroke-width="2" stroke-linejoin="round">
+    <path d="M44 39Q40 11 64 8 85 12 84 42l-12 10-18-3Z" fill="url(#robe)"/>
+    <path d="M53 25q11-15 22 0l-3 15-10 7-11-10Z" fill="url(#bone)"/>
+    <path d="M71 23q8 4 5 14l-7 9-6 1 8-12Z" fill="#2a3340" opacity=".3" stroke="none"/>
+    <path d="m53 28 8 3-2 5-6-2m13-3 8-3-1 6-7 2" fill="#17282b" stroke="none"/>
+    <path d="m55 30 5 2m8 0 5-2" fill="none" stroke="#a7ddb2" stroke-width="1.2" opacity=".75"/>
+    <path d="m63 34-3 5 5 1m-9 1 3 4m2-3 1 4m3-4 1 3" fill="none" stroke="#43585a" stroke-width="1.3"/>
+    <path d="m48 36-2-12 9-10m24 22 2-11-8-12" fill="none" stroke="#9ab49a" stroke-width="1.5"/>
+    <path d="m54 22 9-6 11 7m-24 13 4 7" fill="none" stroke="#b9c8ae" stroke-width="1.1"/>
+  </g>
+  <g data-part="casting-arm" data-pivot="41 50" data-motion="arm-left" stroke="#18232a" stroke-width="2" stroke-linejoin="round">
+    <path d="m41 44-13 7-7 21 11 12 12-13Z" fill="url(#robe)"/>
+    <path d="m30 53q4-7 9-6l-10 22-4 1Z" fill="#a6b9ab" opacity=".24" stroke="none"/>
+    <path d="m23 70-9-4-5 4 4 10 12 4 7-8Z" fill="url(#bone)"/>
+    <circle cx="15" cy="61" r="12" fill="url(#soul)" opacity=".16" stroke="none"/><circle cx="15" cy="61" r="8" fill="url(#soul)" stroke="#8abf9e"/><circle cx="12" cy="58" r="2" fill="#f2ffdc" stroke="none"/>
+    <path d="m13 55 3 5-2 6m-3 5 2 7m4-7 2 7m3-6 2 7" fill="none" stroke="#ccecc7" stroke-width="1.2"/>
+  </g>
 </svg>

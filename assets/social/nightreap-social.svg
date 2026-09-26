@@ -38,6 +38,10 @@
       <stop offset=".22" stop-color="#f4aa60" stop-opacity=".69"/>
       <stop offset="1" stop-color="#e98753" stop-opacity="0"/>
     </radialGradient>
+    <linearGradient id="mist" x2="0" y2="1"><stop stop-color="#bcb0be" stop-opacity="0"/><stop offset=".52" stop-color="#aaa0b6" stop-opacity=".19"/><stop offset="1" stop-color="#c8a7ab" stop-opacity="0"/></linearGradient>
+    <linearGradient id="cloud" x2="0" y2="1"><stop stop-color="#b7a9ba" stop-opacity=".19"/><stop offset="1" stop-color="#211d35" stop-opacity=".02"/></linearGradient>
+    <linearGradient id="stone" x2="0" y2="1"><stop stop-color="#383341"/><stop offset="1" stop-color="#151a29"/></linearGradient>
+    <linearGradient id="roof" x2="0" y2="1"><stop stop-color="#414051"/><stop offset="1" stop-color="#121a2a"/></linearGradient>
     <mask id="crescent"><rect width="1200" height="630" fill="white"/><circle cx="298" cy="125" r="71" fill="black"/></mask>
     <path id="pine" d="M0 0 16 43 8 40 23 79 11 73 30 115-30 115-11 73-23 79-8 40-16 43Z"/>
   </defs>
@@ -46,28 +50,39 @@
   <g fill="#e9d6c3">
     <circle cx="48" cy="85" r="1.4" opacity=".7"/><circle cx="112" cy="182" r="1" opacity=".45"/><circle cx="169" cy="67" r="1.6" opacity=".72"/><circle cx="384" cy="48" r="1.2" opacity=".67"/><circle cx="478" cy="109" r="1.4" opacity=".53"/><circle cx="543" cy="53" r="1" opacity=".54"/><circle cx="615" cy="140" r="1.2" opacity=".6"/><circle cx="693" cy="72" r="1.5" opacity=".5"/><circle cx="810" cy="117" r="1" opacity=".45"/><circle cx="937" cy="61" r="1.4" opacity=".6"/><circle cx="1064" cy="127" r="1" opacity=".45"/><circle cx="1153" cy="77" r="1.6" opacity=".55"/>
   </g>
+  <path d="M22 250q120-35 222 5 84 27 147-4-89 51-192 32-94-27-177-33Zm380-71q118-27 238 8 85 27 156 3-99 53-207 25-90-26-187-36Z" fill="url(#cloud)"/>
+  <path d="M0 299q163-30 308-5m-30-60q138 20 233-8" fill="none" stroke="#afa0ae" stroke-width="3" stroke-opacity=".15"/>
   <circle cx="248" cy="159" r="80" fill="url(#silver)" mask="url(#crescent)"/>
+  <path d="M244 81a80 80 0 0 0-47 147" fill="none" stroke="#fff7e5" stroke-width="2" stroke-opacity=".35"/>
   <path d="M0 397 72 354 117 364 189 310 242 354 303 308 369 349 426 301 497 358 572 315 650 359 739 295 834 347 944 295 1048 357 1123 314 1200 343V630H0Z" fill="url(#peaks)"/>
+  <path d="m184 319-43 52m285-61-28 50" fill="none" stroke="#aca0ad" stroke-opacity=".16" stroke-width="2.5"/>
   <path d="M0 444 108 401 153 417 218 391 290 417 339 387 396 409 450 374 507 402 574 369 657 425 758 383 840 419 947 375 1050 425 1136 391 1200 411V630H0Z" fill="#1c2532" opacity=".91"/>
+  <path d="M0 382q167-28 299 5 146 37 282-5 135-41 276-5 183 47 343-3v93H0Z" fill="url(#mist)"/>
   <path d="M0 479Q139 441 258 467T514 456Q681 435 782 469T1019 447Q1124 429 1200 457V630H0Z" fill="url(#ground)"/>
   <!-- Sanctuary silhouettes and windows form a separate middle-distance layer. -->
-  <g fill="#151a29" stroke="#3e3d46" stroke-width="1.5" stroke-linejoin="round">
-    <path d="M44 471V395l47-24 48 24v76Z"/><path d="M48 398 91 350l46 48Z"/>
-    <path d="M133 478V417l45-22 42 23v60Z"/><path d="m127 416 51-43 49 44Z"/>
-    <path d="M221 474V384h34v90Z"/><path d="m215 385 23-53 23 53Z"/><path d="M238 332v-31" stroke="#525061"/>
-    <path d="M267 485V424l47-25 50 24v62Z"/><path d="m262 425 52-49 55 48Z"/>
-    <path d="M358 475V384h68v91Z"/><path d="m350 388 42-40 42 40Z"/>
-    <path d="M423 486V432l42-20 43 20v54Z"/><path d="m418 432 47-42 48 42Z"/>
+  <g fill="url(#stone)" stroke="#555062" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M44 471V395l47-24 48 24v76Z"/><path d="M48 398 91 350l46 48Z" fill="url(#roof)"/>
+    <path d="M133 478V417l45-22 42 23v60Z"/><path d="m127 416 51-43 49 44Z" fill="url(#roof)"/>
+    <path d="M221 474V384h34v90Z"/><path d="m215 385 23-53 23 53Z" fill="url(#roof)"/><path d="M238 332v-31" stroke="#726b78"/>
+    <path d="M267 485V424l47-25 50 24v62Z"/><path d="m262 425 52-49 55 48Z" fill="url(#roof)"/>
+    <path d="M358 475V384h68v91Z"/><path d="m350 388 42-40 42 40Z" fill="url(#roof)"/>
+    <path d="M423 486V432l42-20 43 20v54Z"/><path d="m418 432 47-42 48 42Z" fill="url(#roof)"/>
   </g>
+  <g fill="none" stroke="#978595" stroke-width="1.6" stroke-opacity=".28"><path d="m55 395 36-33 37 34m9 19 40-32 43 34m48 7 46-38 47 37m-8-36 38-29 35 31m-12 44 45-32 38 32"/></g>
+  <g fill="url(#fire)" opacity=".44"><ellipse cx="86" cy="432" rx="35" ry="37"/><ellipse cx="176" cy="438" rx="32" ry="35"/><ellipse cx="316" cy="452" rx="48" ry="40"/><ellipse cx="393" cy="423" rx="47" ry="39"/><ellipse cx="461" cy="456" rx="38" ry="37"/></g>
   <g fill="#ecad6b" opacity=".77">
     <path d="M80 424h10v17H80zM101 424h9v17h-9zM170 430h10v14h-10zM287 444h9v13h-9zM327 440h10v17h-10zM378 413h9v17h-9zM400 414h9v16h-9zM457 448h10v17h-10z"/>
   </g>
+  <g fill="none" stroke="#76543e" stroke-width="1.5" opacity=".8"><path d="M85 424v17m17-10h8m65-1v14m117 0v13m35-17v17m51-27h9m18-16v16m52 18v17"/></g>
+  <path d="M0 466q184-35 381 8t388-7q207-55 431-2v67H0Z" fill="url(#mist)" opacity=".72"/>
   <path d="M0 497Q142 468 286 492T586 488Q743 467 881 495T1200 490V630H0Z" fill="#101724"/>
   <g fill="#101620" opacity=".94"><use href="#pine" transform="translate(27 401) scale(1.55)"/><use href="#pine" transform="translate(154 443) scale(1.12)"/><use href="#pine" transform="translate(533 400) scale(1.56)"/><use href="#pine" transform="translate(605 455) scale(1.03)"/></g>
   <path d="M0 553Q115 526 218 554T415 541Q495 520 575 548T760 541Q890 522 1015 552T1200 540V630H0Z" fill="#0a111d"/>
+  <path d="M5 566q214-49 434-14 186 26 394-1 206-21 364 14" fill="none" stroke="#978b9e" stroke-opacity=".09" stroke-width="18"/>
   <!-- A lantern and sparks pick up the warm lights in the village. -->
   <ellipse cx="374" cy="520" rx="102" ry="102" fill="url(#fire)"/>
   <path d="M353 501h42l-5 42h-32Z" fill="#a97951" stroke="#dfac71" stroke-width="2"/>
+  <path d="m357 508 5 30m27-30-4 30" fill="none" stroke="#f8ce8f" stroke-opacity=".6" stroke-width="2"/>
   <path d="M357 502v-15q16-20 33 0v15m-29 0v-15m25 15v-15" fill="none" stroke="#d5ac79" stroke-width="3"/>
   <path d="M365 528q-6-11 5-20 0 9 5 10 2-12 9-17 3 8 2 14 6 9-2 17Z" fill="#ffe4a6"/>
   <path d="M347 542h54" stroke="#392d30" stroke-width="7"/>
@@ -77,6 +92,7 @@
   <path d="M595 112h536M595 516h536" stroke="#b19270" stroke-opacity=".53" stroke-width="1"/>
   <path d="M595 112h76m390 0h70M595 516h76m390 0h70" stroke="#e3bd82" stroke-width="2"/>
   <path d="m855 112 11-11 11 11-11 11Zm0 404 11-11 11 11-11 11Z" fill="#d5ad77"/>
+  <path d="m607 97 6-12 6 12 12 5-12 5-6 12-6-12-12-5Zm511 0 5-10 5 10 10 5-10 4-5 11-5-11-10-4Z" fill="#c6a474" opacity=".52"/>
   <text x="862" y="181" fill="#ddc19c" font-family="Georgia, 'Times New Roman', serif" font-size="19" letter-spacing="7" text-anchor="middle">BENEATH THE LAST MOON</text>
   <text x="864" y="311" fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" font-size="78" font-weight="bold" letter-spacing="3" text-anchor="middle" textLength="530" lengthAdjust="spacingAndGlyphs">NIGHTREAP</text>
   <path d="M655 344h174m71 0h172" stroke="#9d8169" stroke-width="1"/><path d="m851 344 13-13 13 13-13 13Z" fill="#d0aa75"/>

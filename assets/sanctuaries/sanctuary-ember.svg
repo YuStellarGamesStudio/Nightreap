@@ -7,17 +7,27 @@
     <linearGradient id="roof" x2=".8" y2="1"><stop stop-color="#aa6650"/><stop offset=".4" stop-color="#703d3b"/><stop offset="1" stop-color="#322d38"/></linearGradient>
     <linearGradient id="wood" x2=".7" y2="1"><stop stop-color="#b59268"/><stop offset=".4" stop-color="#71533f"/><stop offset="1" stop-color="#342e30"/></linearGradient>
     <radialGradient id="fire"><stop stop-color="#ffe4a0" stop-opacity=".8"/><stop offset=".35" stop-color="#e6924e" stop-opacity=".4"/><stop offset="1" stop-color="#e47040" stop-opacity="0"/></radialGradient>
+    <radialGradient id="smoke"><stop stop-color="#cc805c" stop-opacity=".36"/><stop offset="1" stop-color="#956966" stop-opacity="0"/></radialGradient>
+    <linearGradient id="haze" x2="0" y2="1"><stop stop-color="#978077" stop-opacity="0"/><stop offset=".53" stop-color="#b59982" stop-opacity=".22"/><stop offset="1" stop-color="#c3a082" stop-opacity="0"/></linearGradient>
+    <radialGradient id="duskLight"><stop stop-color="#e1ad7d" stop-opacity=".42"/><stop offset=".33" stop-color="#b87862" stop-opacity=".2"/><stop offset="1" stop-color="#966274" stop-opacity="0"/></radialGradient>
     <linearGradient id="lane" x2="0" y2="1"><stop stop-color="#99816b"/><stop offset="1" stop-color="#554842"/></linearGradient>
     <pattern id="cobbles" width="48" height="24" patternUnits="userSpaceOnUse" patternTransform="skewX(-24)"><path d="M0 0H48M0 24H48M24 0v12M0 12h48M0 12v12M48 12v12" fill="none" stroke="#dac19c" stroke-opacity=".12" stroke-width="1.5"/></pattern>
     <pattern id="shingles" width="30" height="12" patternUnits="userSpaceOnUse" patternTransform="skewX(16)"><path d="M0 12H30M15 0v12M0 0v6M30 0v6" fill="none" stroke="#ffcc9b" stroke-opacity=".23"/></pattern>
-    <g id="window"><path d="M0 27V8Q8-5 16 8v19Z" fill="#2b2729" stroke="#c3a47e" stroke-width="3"/><path d="M3 24V9Q8 1 13 9v15Z" fill="#ffcd76"/><path d="M8 4v21M2 15h12" stroke="#68473c" stroke-width="2"/></g>
+    <g id="window"><circle cx="8" cy="14" r="43" fill="url(#fire)" opacity=".65"/><path d="M0 27V8Q8-5 16 8v19Z" fill="#2b2729" stroke="#c3a47e" stroke-width="3"/><path d="M3 24V9Q8 1 13 9v15Z" fill="#ffcd76"/><path d="M8 4v21M2 15h12" stroke="#68473c" stroke-width="2"/></g>
     <g id="lantern"><circle cx="0" cy="0" r="37" fill="url(#fire)"/><path d="M-9-6h18l-2 21H-7Z" fill="#8f6645" stroke="#f6c57a"/><path d="M-5-4h10v16H-5Z" fill="#ffd47f"/><path d="M-11-7 0-15 11-7M0-15v-5" fill="none" stroke="#e6b676" stroke-width="2"/></g>
     <g id="barrel"><ellipse cx="0" cy="0" rx="13" ry="5" fill="#b69369"/><path d="M-13 0q-2 15 1 19 12 7 24 0 3-4 1-19" fill="url(#wood)" stroke="#422f2c"/><path d="M-13 6q13 6 26 0M-12 16q12 6 24 0" fill="none" stroke="#d3b17c" stroke-width="2"/></g>
     <g id="hut"><ellipse cy="5" rx="89" ry="23" fill="#151922" opacity=".5"/><path d="M-64-72 4-105 68-75v75L0 29-64-4Z" fill="url(#plaster)" stroke="#b29978" stroke-width="2"/><path d="M-64-72 4-105l64 30-68 33Z" fill="url(#roof)" stroke="#d39872" stroke-width="4"/><path d="M-64-72 0-42V29L-64-4Z" fill="url(#shingles)" opacity=".3"/><path d="M-70-70-5-38 3-42-61-76M0-42 74-76M-61-6 0 24l68-28" fill="none" stroke="#423437" stroke-width="7"/><path d="M-55-28 0-2l63-25M-51-60v50M50-65v51" fill="none" stroke="#a9815a" stroke-width="4"/><use href="#window" x="28" y="-46" transform="skewY(-20)"/><path d="M-42-6v-28l26 12V5Z" fill="#432d2d" stroke="#bc9064" stroke-width="3"/><path d="M-35-26v19m13-13V0" stroke="#c49b6d"/><path d="M-64-72 4-105l64 30" fill="url(#shingles)" opacity=".8"/></g>
   </defs>
   <path fill="url(#sky)" d="M0 0h1400v285H0Z"/>
+  <ellipse cx="350" cy="103" rx="390" ry="176" fill="url(#duskLight)"/><circle cx="350" cy="105" r="29" fill="#e2ae87" opacity=".18"/>
+  <path d="M0 162 94 145l84 25 126-48 69 29 96-27 95 31 102-54 76 39 111-30 82 36 91-43 89 43 122-22 163 31v86H0Z" fill="#64606c" opacity=".25"/>
   <path d="M0 184 90 164l58-37 85 40 100-42 82 43 100-31 68 38 81-25 90 27 121-53 84 44 106-45 72 43 114-32 149 52v115H0Z" fill="#2d2c35"/>
   <path d="m0 213 91-25 68 21 78-22 83 27 106-31 93 29 81-38 90 30 107-19 80 25 98-36 100 35 83-25 100 17 142-18v86H0Z" fill="#393339"/>
+  <ellipse cx="990" cy="185" rx="480" ry="94" fill="url(#smoke)"/>
+  <path d="M0 201q171-35 291-11 180 30 341-5 138-27 282 6 251-45 486 19v67H0Z" fill="url(#haze)"/>
+  <path d="m26 204 89-23 35 12 79-24 88 16 49-22 83 18m469 6 82-23 69 11 61-22 94 23 75-25 102 31" fill="none" stroke="#b58c75" stroke-opacity=".22" stroke-width="3"/>
+  <path d="M0 211q207-31 380 2 150-21 294-1 222-41 383-12 179-12 343 12v45H0Z" fill="url(#haze)" opacity=".52"/>
+  <path d="M1118 144q-13-28 8-47 21-22 6-51-15-28 9-47m-16 129q33-28 27-52-7-20 11-34" fill="none" stroke="#97919d" stroke-opacity=".22" stroke-width="10" stroke-linecap="round"/>
   <path d="M0 227q239-67 476-24 205 39 456-6 260-42 468 15v348H0Z" fill="url(#earth)"/>
   <!-- Burnt outskirts and rebuilding scaffolds -->
   <path d="M0 247 92 220l81 25 85-31 49 18-72 49-235 23Zm1141-10 93-42 75 30 91-32v116l-249-30Z" fill="#242b30"/>
@@ -26,6 +36,10 @@
   <path d="M694 159 608 270l-12 80-293 75-303 33v102h1400V458l-313-48-299-59-10-82Z" fill="url(#lane)" stroke="#b49c7c" stroke-opacity=".55" stroke-width="4"/>
   <path d="M694 159 608 270l-12 80-293 75-303 33v102h1400V458l-313-48-299-59-10-82Z" fill="url(#cobbles)"/>
   <ellipse cx="700" cy="389" rx="230" ry="85" fill="#4d4141" stroke="#af9271" stroke-width="7"/><ellipse cx="700" cy="389" rx="215" ry="75" fill="url(#cobbles)" stroke="#796b60" stroke-width="2"/>
+  <ellipse cx="700" cy="385" rx="174" ry="65" fill="url(#duskLight)" opacity=".4"/>
+  <path d="M491 378q210-67 415 1M518 421q187 52 363 3" stroke="#c29b7d" stroke-opacity=".15" stroke-width="3" fill="none"/>
+  <ellipse cx="354" cy="356" rx="207" ry="80" fill="url(#fire)" opacity=".54"/><ellipse cx="1041" cy="366" rx="205" ry="89" fill="url(#fire)" opacity=".61"/>
+  <path d="m99 479 78-15 53 7m18-23 91-13 47 15m594-14 82-3 58 12m65 5 66 10 41-2" stroke="#1e222b" stroke-opacity=".43" stroke-width="4" fill="none"/>
   <path d="M0 517q201-66 367-63m103 24q65 42 113 59m239-48q58 39 143 56m102-93q183 16 333 70" stroke="#d4b185" stroke-opacity=".34" stroke-width="4" fill="none" stroke-dasharray="52 13 24 15"/>
   <!-- Outbound village gate and palisade -->
   <path d="M0 283 474 208l80 33 49-25m195 0 59 25 88-38 455 83" stroke="#a28a6d" stroke-width="17" fill="none" stroke-dasharray="27 7"/>
@@ -36,22 +50,30 @@
   <!-- Small chapel on the horizon -->
   <path d="m969 208 2-63 37-24 52 15v80l-49 21Z" fill="url(#stone)" stroke="#bba180" stroke-width="3"/><path d="m957 150 53-47 61 35-12 14-50-28-39 42Z" fill="url(#roof)" stroke="#c58763" stroke-width="3"/><path d="m1007 118 2-63 17-9 14 14v68" fill="url(#stone)" stroke="#d2b38c" stroke-width="3"/><path d="m1007 62 21-24 21 24" fill="url(#roof)" stroke="#e3a576" stroke-width="3"/><path d="M1027 44v-17m-9 9h18" stroke="#d9bd89" stroke-width="3"/><use href="#window" x="1000" y="164"/>
   <use href="#hut" x="151" y="350" transform="translate(151 350) scale(1.08) translate(-151 -350)"/><use href="#hut" x="480" y="287" transform="translate(480 287) scale(.68) translate(-480 -287)"/><use href="#hut" x="887" y="297" transform="translate(887 297) scale(.7) translate(-887 -297)"/><use href="#hut" x="1268" y="358" transform="translate(1268 358) scale(1.13) translate(-1268 -358)"/>
+  <path d="m87 265 53-12 52 24m278-64 34-8 21 10m353-7 26-10 30 10m276 71 51-13 39 16" fill="none" stroke="#d59b78" stroke-opacity=".3" stroke-width="3"/>
   <!-- Market: four timber poles, patchworked canopy, stocked tables -->
   <ellipse cx="350" cy="373" rx="145" ry="35" fill="#1a1d25" opacity=".5"/>
   <path d="M248 295v92m185-92v95M281 265v86m120-90v95" stroke="url(#wood)" stroke-width="10"/>
   <path d="m236 296 44-57 122-3 45 55-107 32Z" fill="url(#roof)" stroke="#e1a57b" stroke-width="4"/><path d="m280 240 60 83m-3-84 29 73m34-73-35 74M239 294l108 26 98-28" stroke="#c4876d" stroke-width="3" fill="none"/><path d="m239 294 108 26 98-28" stroke="#e9be88" stroke-width="5" stroke-dasharray="28 7"/>
+  <path d="m286 244-36 48m92-53-4 76m67-75 28 49M280 302l68 16 67-18" fill="none" stroke="#3d3139" stroke-opacity=".68" stroke-width="2"/>
+  <path d="m235 295 46-56 57 77-101-20Z" fill="#f3bc85" opacity=".1"/><path d="m341 320 104-30-42-52-65-2Z" fill="#171a28" opacity=".22"/>
   <path d="m266 328 72 16 78-18v36l-78 22-72-20Z" fill="url(#wood)" stroke="#d5b180" stroke-width="3"/><path d="m269 326 67 12 74-14-72 15Z" fill="#caa775"/><path d="m280 336 11 4m15 2 14 3m48-5 14-3" stroke="#f4d5a1" stroke-width="4"/>
   <ellipse cx="292" cy="326" rx="10" ry="6" fill="#b6a866"/><ellipse cx="315" cy="332" rx="9" ry="6" fill="#a67950"/><path d="m372 330 12-21 10 22m-2 2 11-17 8 14" fill="url(#wood)" stroke="#e2bc84"/><use href="#barrel" x="243" y="366"/><use href="#barrel" x="449" y="372"/><use href="#lantern" x="250" y="295"/><use href="#lantern" x="433" y="291"/>
+  <path d="m185 385 24-12 27 13v23l-25 10-26-11Zm48 15 19-9 21 8v22l-20 9-20-9Z" fill="url(#wood)" stroke="#c5a078" stroke-width="2"/><path d="m185 385 26 9 25-8m-25 8v25m22-19 20 7 20-8m-20 8v23" fill="none" stroke="#463535" stroke-width="2"/>
   <!-- Forge workshop with projecting chimney, smithy awning, anvil and quench barrel -->
   <ellipse cx="1071" cy="391" rx="148" ry="31" fill="#111823" opacity=".6"/>
   <path d="m952 260 61-41 141 21 52 54v83l-149 30-105-46Z" fill="url(#stone)" stroke="#b4a188" stroke-width="4"/>
   <path d="m941 267 73-64 146 18 52 70-155-32Z" fill="url(#roof)" stroke="#d59a72" stroke-width="5"/><path d="m952 269 105 19 155 3m-153-30v124M970 275v87m205-75v89" fill="none" stroke="#4b3634" stroke-width="9"/><path d="m962 270 95 20 150 0" fill="none" stroke="#e9af7c" stroke-width="3"/>
   <path d="m1080 240 4-94 32-9 18 101" fill="url(#stone)" stroke="#c2a88a" stroke-width="4"/><path d="m1076 148 40-15 23 15-8 15-50-4Z" fill="url(#roof)" stroke="#cc946a" stroke-width="3"/><path d="m1116 137-12-37 18-33 17 39 11-21 14 57" fill="#5c5356" opacity=".35"/>
+  <path d="m1059 291 152-1-6 87-146 30Z" fill="#1b1c2b" opacity=".26"/><path d="m954 284 77 13-73 18Z" fill="#f6bf8c" opacity=".1"/>
   <path d="m977 315 65 12v49l-65-20Z" fill="#281f24" stroke="#cf9769" stroke-width="5"/><ellipse cx="1007" cy="344" rx="57" ry="46" fill="url(#fire)"/><path d="m984 349 47 9-2-23-42-10Z" fill="#ef8e47" stroke="#ffe0a1" stroke-width="3"/><path d="m1064 364 37-13 27 12-37 13Z" fill="url(#stone)" stroke="#e3c499" stroke-width="3"/><path d="m1090 373 5 21 20-5 3-22" fill="url(#stone)"/><use href="#barrel" x="1168" y="379"/><use href="#window" x="1142" y="306"/>
+  <ellipse cx="1012" cy="346" rx="103" ry="67" fill="url(#fire)" opacity=".38"/><path d="m948 365 107 43 147-32" fill="none" stroke="#151721" stroke-opacity=".55" stroke-width="9"/>
   <!-- Plaza well and communal lamps leave center clear for hero -->
   <ellipse cx="700" cy="275" rx="52" ry="16" fill="#252931"/><path d="M654 250v27q46 22 92 0v-27" fill="url(#stone)" stroke="#c9b18f" stroke-width="3"/><ellipse cx="700" cy="250" rx="48" ry="14" fill="#171f2a" stroke="#c5b394" stroke-width="6"/><path d="m658 247 41-15 45 15m-45-15v-29" fill="none" stroke="#b59064" stroke-width="4"/><path d="m678 207 22-19 23 19" fill="url(#roof)" stroke="#daa477" stroke-width="3"/>
   <path d="M530 324v-78m337 80v-82" stroke="url(#wood)" stroke-width="8"/><use href="#lantern" x="530" y="252"/><use href="#lantern" x="867" y="253"/>
   <path d="M31 479q124-43 225-36m926-8q115 1 199 47M443 493l14-8 25 6m441 5 24-8 18 10" stroke="#b18b67" stroke-opacity=".42" stroke-width="4" fill="none"/>
+  <path d="m93 451 27-7 39 6-10 17-41 3Zm1148-22 28-8 33 9-9 18-43 3Z" fill="url(#stone)" stroke="#b29a7b" stroke-width="2"/>
+  <path d="m76 505 31-7 14 8m1169-22 24-6 25 9" fill="none" stroke="#e1b883" stroke-opacity=".35" stroke-width="3"/>
   <path d="m56 423 16-20 8 27m46-14 10-16 12 24m1091-17 15-20 8 30m49-18 18-13 12 36" stroke="#302d2d" stroke-width="9" fill="none"/>
   <use href="#lantern" x="177" y="292"/><use href="#lantern" x="1295" y="305"/>
   <path d="M0 0h1400v560H0Z" fill="none" stroke="#1b1c26" stroke-width="18" opacity=".28"/>

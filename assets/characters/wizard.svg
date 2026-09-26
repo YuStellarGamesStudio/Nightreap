@@ -11,18 +11,22 @@
     <path d="M48 43Q31 47 32 74L22 105 38 101 50 108 64 101 81 107 95 102 88 70Q93 53 77 43Z" fill="url(#robe)" stroke-width="2"/>
     <path d="M35 72Q41 76 42 92M84 73Q78 81 83 96" stroke="#ccadcb" stroke-opacity=".47" stroke-width="1.4" fill="none"/>
     <path d="M24 103L34 98 38 102 47 104 51 107 65 99 82 105 92 99" stroke="#c1a27e" stroke-width="1.2" fill="none"/>
+    <path d="M40 56q-8 21-11 41m19-40q-5 29 0 43m36-38 4 34" fill="none" stroke="#211e39" stroke-width="2.7" opacity=".6"/>
+    <path d="M36 58Q32 72 28 96L35 94Q42 73 42 58Z" fill="#d4a6d2" opacity=".24" stroke="none"/>
   </g>
   <g data-part="wizard-leg-rear" data-pivot="73 75" data-motion="leg-right" stroke="#171b2c" stroke-linejoin="round">
     <path d="M65 74L79 72 83 92 77 109 79 116 67 118 64 109 69 91Z" fill="url(#lining)" stroke-width="2"/>
     <path d="M69 96L80 94 78 104 67 106Z" fill="url(#robe)" stroke="#99849e"/>
     <path d="M68 107L78 107 80 115 83 119 66 120 61 118Z" fill="#29283d" stroke="#bca28a" stroke-width="1.7"/>
     <path d="M66 116L77 115M70 110L77 110" stroke="#d0b9a4" stroke-width="1"/>
+    <path d="m76 79 4 15-7 11-4-1 6-14Z" fill="#131428" opacity=".34" stroke="none"/>
   </g>
   <g data-part="wizard-leg-front" data-pivot="54 75" data-motion="leg-left" stroke="#171b2c" stroke-linejoin="round">
     <path d="M46 73L61 76 59 93 52 108 54 117 40 119 40 111 43 90Z" fill="url(#lining)" stroke-width="2"/>
     <path d="M43 96L57 95 54 104 40 106Z" fill="url(#robe)" stroke="#99849e"/>
     <path d="M41 107L53 108 55 117 54 120 36 120 34 117Z" fill="#29283d" stroke="#bca28a" stroke-width="1.7"/>
     <path d="M36 117L51 116M43 111L51 111" stroke="#d0b9a4" stroke-width="1"/>
+    <path d="m48 78-2 15-3 11 5-2 7-12Z" fill="#c6add0" opacity=".2" stroke="none"/>
   </g>
   <g data-part="wizard-arm-rear" data-pivot="43 50" data-motion="arm-left" stroke="#181a2c" stroke-linejoin="round">
     <path d="M40 45Q30 49 28 65L20 80 26 87 37 78 46 58Z" fill="url(#robe)" stroke="#a287aa" stroke-width="1.7"/>
@@ -31,6 +35,7 @@
     <path d="M15 89Q11 88 10 82M17 90L16 80M20 91L22 82" fill="none" stroke="#e3bfb0" stroke-width="1.3"/>
     <path d="M9 75L15 71 20 74 16 79 8 79Z" fill="url(#arcane)" stroke="#aacaf0" stroke-width="1"/>
     <path d="M6 68L7 63M18 67L22 62M13 79L13 84" stroke="#a2c9f4" stroke-width="1.3"/>
+    <path d="M33 51Q28 59 25 75l4 2q5-16 10-24Z" fill="#d7b3e2" opacity=".31" stroke="none"/>
   </g>
   <g data-part="wizard-body" data-pivot="64 60" data-motion="static" stroke="#1e1c30" stroke-linejoin="round">
     <path d="M49 42Q63 46 79 42L87 62 79 78 89 98 76 102 63 92 49 102 37 98 49 74 41 60Z" fill="url(#robe)" stroke-width="2.2"/>
@@ -42,6 +47,8 @@
     <circle cx="64" cy="84" r="2.6" fill="url(#arcane)"/>
     <path d="M41 96L50 98 62 91M68 93L78 100 86 97" fill="none" stroke="#d5b08f" stroke-width="1.2"/>
     <path d="M47 91L45 96M80 90L82 97" stroke="#e2d2b2" stroke-width="1.2"/>
+    <path d="M70 70 78 59 82 63 76 78 81 88 76 91 69 76Z" fill="#111323" opacity=".35" stroke="none"/>
+    <path d="m48 49 12 11-3 3-11-8Z" fill="#e7bfe0" opacity=".34" stroke="none"/>
   </g>
   <g data-part="wizard-head" data-pivot="64 41" data-motion="static" stroke="#211e30" stroke-linejoin="round">
     <path d="M53 35L73 35 79 48 63 55 48 47Z" fill="url(#lining)" stroke="#b091a3" stroke-width="1.8"/>
@@ -52,6 +59,7 @@
     <path d="M47 29Q47 17 58 13L68 6 76 20 82 30 76 36 71 24 56 26 51 39Z" fill="url(#robe)" stroke="#c8a8c5" stroke-width="1.8"/>
     <path d="M52 23L70 20M55 20L69 17M47 30L51 33M77 27L81 30" stroke="#e3c7aa" stroke-width="1.15" fill="none"/>
     <path d="M62 14L67 12 70 17 66 20Z" fill="url(#arcane)" stroke="#c6c0e3" stroke-width=".7"/>
+    <path d="m51 24 8-8 7-6-4 9-9 11Z" fill="#e8cce3" opacity=".24" stroke="none"/>
   </g>
   <g data-part="wizard-arm-front" data-pivot="84 49" data-motion="arm-right" stroke="#1a1b2f" stroke-linejoin="round">
     <path d="M78 45Q87 43 96 54L102 71 91 78 83 62Z" fill="url(#robe)" stroke="#b396bd" stroke-width="1.8"/>
@@ -62,5 +70,6 @@
     <path d="M108 27Q100 24 102 17L105 12M112 27Q121 25 120 16L115 11" fill="none" stroke="url(#metal)" stroke-width="2.4"/>
     <path d="M109 4L115 12 112 21 105 14Z" fill="url(#arcane)" stroke="#d3d4ef" stroke-width="1.4"/>
     <path d="M110 7L109 16M107 12L113 13" stroke="#fff8e2" stroke-opacity=".75" stroke-width=".8"/>
+    <path d="M84 48Q92 47 97 57l-4 1-11-7Z" fill="#dfbfec" opacity=".29" stroke="none"/>
   </g>
 </svg>

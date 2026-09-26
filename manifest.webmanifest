@@ -12,19 +12,19 @@
   "theme_color": "#11131c",
   "icons": [
     {
-      "src": "assets/icons/icon-192.svg?v=16aa1bc76c673115",
+      "src": "assets/icons/icon-192.svg?v=a80bed70da9b71c1",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "assets/icons/icon-512.svg?v=3c519fe5176228c3",
+      "src": "assets/icons/icon-512.svg?v=b9916bdf92342549",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "assets/icons/icon-maskable.svg?v=c11a1aa76efc5349",
+      "src": "assets/icons/icon-maskable.svg?v=1994e30c706d35df",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"

@@ -7,6 +7,9 @@
     <linearGradient id="thatch" x2=".8" y2="1"><stop stop-color="#c3ac72"/><stop offset=".43" stop-color="#807e50"/><stop offset="1" stop-color="#3c4e3c"/></linearGradient>
     <linearGradient id="boards" x2=".6" y2="1"><stop stop-color="#a29169"/><stop offset="1" stop-color="#504b3c"/></linearGradient>
     <radialGradient id="firefly"><stop stop-color="#f4ffbb" stop-opacity=".9"/><stop offset=".35" stop-color="#bbdf87" stop-opacity=".38"/><stop offset="1" stop-color="#a2e396" stop-opacity="0"/></radialGradient>
+    <linearGradient id="forestMist" x2="0" y2="1"><stop stop-color="#b5c9a3" stop-opacity="0"/><stop offset=".5" stop-color="#b3c9a2" stop-opacity=".18"/><stop offset="1" stop-color="#d4d6aa" stop-opacity="0"/></linearGradient>
+    <radialGradient id="hearthLight"><stop stop-color="#ffd89a" stop-opacity=".85"/><stop offset=".35" stop-color="#d9a166" stop-opacity=".35"/><stop offset="1" stop-color="#c69863" stop-opacity="0"/></radialGradient>
+    <radialGradient id="canopyMoon"><stop stop-color="#ccddb1" stop-opacity=".37"/><stop offset=".36" stop-color="#9cae9a" stop-opacity=".16"/><stop offset="1" stop-color="#86ad9b" stop-opacity="0"/></radialGradient>
     <pattern id="planks" width="25" height="48" patternUnits="userSpaceOnUse" patternTransform="skewX(-23)"><path d="M0 0v48M25 0v48M0 0h25M0 48h25" fill="none" stroke="#d3c295" stroke-opacity=".21" stroke-width="2"/></pattern>
     <pattern id="barkline" width="20" height="65" patternUnits="userSpaceOnUse"><path d="m3 0 5 24-3 16 6 25m5-65-4 15 4 25-1 25" stroke="#c9b383" stroke-opacity=".21" stroke-width="2" fill="none"/></pattern>
     <g id="lamp"><circle r="39" fill="url(#firefly)"/><path d="M-7 4q-2-13 7-19 10 6 7 19Q1 13-7 4Z" fill="#c8f1a5" stroke="#eaffc5" stroke-width="2"/><path d="m-10 7 10 7 10-7m-10 7v5" fill="none" stroke="#a79568" stroke-width="3"/></g>
@@ -14,11 +17,18 @@
     <g id="treehome"><ellipse rx="103" ry="22" fill="#101f27" opacity=".5"/><path d="M-19 16q-30-78-24-165l-36-26 32 12 14-54 20 57 36-55-17 71Q1-52 20 13Z" fill="url(#bark)" stroke="#bcac79" stroke-width="3"/><path d="M-19 16q-30-78-24-165l-36-26 32 12 14-54 20 57 36-55-17 71Q1-52 20 13Z" fill="url(#barkline)"/><path d="m-19 15-39 25 40-13 30-5 37 18-29-29" fill="url(#bark)" stroke="#b3a47a" stroke-width="2"/><path d="M-65-108-15-149l72 28 17 46-81 27-62-27Z" fill="url(#boards)" stroke="#c8b884" stroke-width="3"/><path d="M-76-113-18-168l74 30 28 59-90-36Z" fill="url(#thatch)" stroke="#d3c88e" stroke-width="4"/><path d="m-76-113 69-2 91 36M-18-168-7-114m-40-26 22 18m63-19 22 31" fill="none" stroke="#d9c993" stroke-width="2"/><path d="M-65-108-15-149l72 28 17 46-81 27-62-27Z" fill="url(#planks)" opacity=".55"/><path d="m-64-70 56 22 82-27m-80 26-1 35" fill="none" stroke="#897854" stroke-width="5"/><path d="m21-60 31-10 1-26-31 7Z" fill="#283e38" stroke="#d6c999" stroke-width="3"/><path d="m25-66 23-7v-17l-23 5Z" fill="#e4cb7c"/><path d="M-54-90v-20q16-18 27 6v26Z" fill="#293f35" stroke="#d1c892" stroke-width="3"/><path d="M-50-87v-17q9-9 19 5v17Z" fill="#d7dc8e"/><path d="m-75-71 73 26 85-30M-72-62-3-36l86-31" fill="none" stroke="#cbbb8a" stroke-width="4"/></g>
   </defs>
   <path fill="url(#night)" d="M0 0h1400v560H0Z"/>
+  <ellipse cx="701" cy="70" rx="413" ry="175" fill="url(#canopyMoon)"/><circle cx="703" cy="51" r="29" fill="#d0dab0" opacity=".12"/>
+  <path d="M0 173q141-62 265-17 93-73 204-40 112-57 234-16 150-56 265 15 134-37 220 25 93-39 212 27v105H0Z" fill="#8fae8a" opacity=".12"/>
   <path d="M0 149q108-71 217-28 63 12 115-28 131-43 244 16 112-76 232-22 103-50 174 19 106-61 231 5 106-32 187 40v183H0Z" fill="#223e39"/>
   <path d="M0 229q207-109 361-60 87 31 206-27 103-50 213 23 104-61 196-19 109-49 229 24 103-44 195 55v335H0Z" fill="url(#soil)"/>
+  <path d="M0 184q151-60 286-20 104 30 234-29 96-24 175 5 114-44 220 6 131-31 219 15 162-26 266 29v91H0Z" fill="url(#forestMist)"/>
+  <path d="M0 257q224-49 382 5 153-31 316-28 190-41 347 10 169-25 355 17v78H0Z" fill="url(#forestMist)" opacity=".56"/>
+  <path d="M0 239q174-25 342 8 219-32 356-5 176-42 346 0 192-30 356 1v50H0Z" fill="url(#forestMist)" opacity=".53"/>
   <!-- Forest giants frame, branches arch above the settlement -->
   <path d="M15 560q29-201 63-389L-31 5l126 116 58-155-17 172 148-62-121 99q-57 238-27 385Zm1370 0q-30-253-62-389l102-170-121 118-64-156 18 173-146-60 125 100q57 237 27 384Z" fill="url(#bark)" stroke="#c0aa79" stroke-width="5"/>
   <path d="M15 560q29-201 63-389L-31 5l126 116 58-155-17 172 148-62-121 99q-57 238-27 385Zm1370 0q-30-253-62-389l102-170-121 118-64-156 18 173-146-60 125 100q57 237 27 384Z" fill="url(#barkline)"/>
+  <path d="m72 203-14 56 20 22-15 57m69-131-15 38 16 32-18 66M1327 211l14 49-19 31 15 50m-61-135 13 39-16 35 16 62" stroke="#d2bc84" stroke-opacity=".33" stroke-width="4" fill="none"/>
+  <path d="m148 129 32 35-11 35m1057-71-30 38 11 31" stroke="#192b29" stroke-width="8" fill="none"/>
   <path d="M0 109q170-92 301-21-14-71-110-92H0Zm1400 0q-170-92-301-21 14-71 110-92h191ZM289 0q69 109 215 96-40-60-89-96Zm833 0Q1053 109 907 96q40-60 89-96Z" fill="url(#leaf)" stroke="#769d73" stroke-width="4"/>
   <path d="m154 17 62 88 118-13m927-77-63 87-128-13" fill="none" stroke="#a1c087" stroke-width="3"/>
   <!-- Elevated boardwalk, root-veined lanes, central communal deck -->
@@ -27,27 +37,45 @@
   <path d="M0 453 302 415l309-90m789 130-307-38-296-92" stroke="#423f34" stroke-width="9" fill="none"/><path d="M0 458 302 420l309-91m789 130-307-38-296-92" stroke="#ded09b" stroke-width="2" fill="none"/>
   <path d="M0 516q206-4 418-114m982 115q-238-8-428-113M562 560q41-52 52-142m224 142q-41-52-52-142" stroke="#6b6149" stroke-width="15" fill="none"/>
   <ellipse cx="700" cy="380" rx="249" ry="95" fill="#5c644b" stroke="#d4c693" stroke-width="10"/><ellipse cx="700" cy="380" rx="237" ry="84" fill="url(#planks)" stroke="#8ea374" stroke-width="3"/>
+  <ellipse cx="700" cy="377" rx="163" ry="68" fill="url(#hearthLight)" opacity=".22"/>
+  <path d="M472 377q218-53 457 0M500 415q192 50 400 0" stroke="#b9bb8e" opacity=".12" stroke-width="3" fill="none"/>
+  <ellipse cx="343" cy="368" rx="188" ry="75" fill="url(#firefly)" opacity=".34"/><ellipse cx="1055" cy="368" rx="184" ry="79" fill="url(#hearthLight)" opacity=".65"/>
+  <path d="m157 451 73-19 45 4m42-16 60-19 53 4m531-5 62 16 47 6m35 14 85 21" stroke="#29352f" stroke-opacity=".57" stroke-width="5" fill="none"/>
   <path d="M463 375q235 83 474 0m-444-42q209 69 414 0M491 430q205 36 420 0" stroke="#e0d29f" stroke-opacity=".25" stroke-width="3" fill="none"/>
   <!-- Outbound living bough gate and rope bridge -->
   <path d="M590 161q22-91 89-121l22 15q-55 22-70 103m180 3q-23-91-91-121l-22 15q55 22 71 103" fill="url(#bark)" stroke="#dbc88d" stroke-width="5"/><path d="M626 70q72-62 143 0M605 94q93-66 186 0" stroke="#71875f" stroke-width="13" fill="none"/><path d="M627 71q72-62 143 0" stroke="#d0d99b" stroke-width="3" fill="none"/><path d="M639 153 701 138l61 15m-131 13 71-18 69 18" stroke="#d7c18b" stroke-width="5" fill="none"/><path d="m607 101-15-41m200 42 16-43" stroke="#adc27e" stroke-width="4"/>
   <use href="#lamp" x="630" y="130"/><use href="#lamp" x="772" y="130"/>
   <!-- Tree dwellings and small bridge homes -->
   <use href="#treehome" x="138" y="351"/><use href="#treehome" x="499" y="277" transform="translate(499 277) scale(.67) translate(-499 -277)"/><use href="#treehome" x="901" y="282" transform="translate(901 282) scale(.69) translate(-901 -282)"/><use href="#treehome" x="1255" y="350" transform="translate(1255 350) scale(1.08) translate(-1255 -350)"/>
+  <ellipse cx="98" cy="251" rx="34" ry="36" fill="url(#hearthLight)" opacity=".5"/><ellipse cx="175" cy="273" rx="40" ry="36" fill="url(#hearthLight)" opacity=".57"/><ellipse cx="1211" cy="245" rx="39" ry="37" fill="url(#hearthLight)" opacity=".54"/><ellipse cx="1294" cy="263" rx="42" ry="38" fill="url(#hearthLight)" opacity=".6"/>
+  <ellipse cx="472" cy="214" rx="24" ry="25" fill="url(#hearthLight)" opacity=".42"/><ellipse cx="524" cy="223" rx="27" ry="25" fill="url(#hearthLight)" opacity=".48"/><ellipse cx="873" cy="217" rx="25" ry="25" fill="url(#hearthLight)" opacity=".42"/><ellipse cx="928" cy="226" rx="27" ry="25" fill="url(#hearthLight)" opacity=".48"/>
+  <path d="m69 184 50-25 31 19m318-73 31-23 35 17m333 5 38-23 28 22m279 74 39-25 45 27" fill="none" stroke="#c5c99b" stroke-opacity=".25" stroke-width="2.5"/>
+  <path d="M84 173q-9 34 7 65m1170-64q9 36-8 62M116 130q-3 27 9 43m1150-44q6 24-4 47" fill="none" stroke="#789868" stroke-width="3" stroke-dasharray="7 9"/>
   <path d="M145 191q172-37 312 20m507 0q153-56 300-21" stroke="#807753" stroke-width="10" fill="none" stroke-dasharray="6 3"/><path d="M145 193q172-37 312 20m507 0q153-56 300-21" stroke="#d5c486" stroke-width="2" fill="none"/>
   <!-- Market tents stitched with leaf cloth; baskets of safe woodland supplies -->
   <ellipse cx="348" cy="385" rx="145" ry="35" fill="#132722" opacity=".55"/>
   <path d="M234 303v82m225-82v87M277 272v78m142-78v80" stroke="url(#bark)" stroke-width="9"/>
   <path d="m223 305 66-71 127 2 58 70-127 20Z" fill="url(#leaf)" stroke="#c7d596" stroke-width="5"/><path d="m286 239 60 87m-5-87 34 82m41-82-42 82M226 305l121 21 122-19" fill="none" stroke="#a5c284" stroke-width="3"/><path d="m228 307 23 18 24-14 25 19 27-15 21 12 24-12 22 13 27-19 22 9 27-14" fill="url(#leaf)" stroke="#cbd69c" stroke-width="2"/>
+  <path d="m223 304 67-70 51 84-117-13Z" fill="#c7d598" opacity=".12"/><path d="m349 325 123-19-57-68-74-3Z" fill="#132a25" opacity=".27"/>
   <path d="m257 345 86 18 84-19v28l-84 24-86-22Z" fill="url(#boards)" stroke="#d3be88" stroke-width="3"/><path d="m259 343 82 14 84-14-84 12Z" fill="#acaa73"/><path d="m273 338 20-20 18 23m27 5 10-23 12 22" fill="url(#thatch)" stroke="#c7d09d" stroke-width="2"/><path d="m381 344 5-17 17 1 8 16" fill="#6b8059" stroke="#d8e2a5" stroke-width="2"/><use href="#mushroom" x="251" y="384"/><use href="#mushroom" x="448" y="390"/><use href="#lamp" x="235" y="310"/><use href="#lamp" x="465" y="308"/>
+  <path d="m181 396 25-10 24 11v21l-22 12-27-11Zm279-1 23-11 23 9v23l-23 11-23-12Z" fill="url(#boards)" stroke="#b7b181" stroke-width="2"/><path d="m181 396 27 11 22-10m-22 10v23m252-35 23 8 23-10m-23 10v24" fill="none" stroke="#4d5640" stroke-width="2"/>
+  <ellipse cx="183" cy="272" rx="55" ry="42" fill="url(#firefly)" opacity=".38"/><ellipse cx="1290" cy="273" rx="55" ry="42" fill="url(#firefly)" opacity=".38"/>
   <!-- Root-and-stone forge in a hollow trunk, smokeless sheltered charcoal hearth -->
   <ellipse cx="1060" cy="396" rx="147" ry="32" fill="#152624" opacity=".6"/>
   <path d="m927 371 10-125 37-51 118-16 91 66 25 131-139 32Z" fill="url(#bark)" stroke="#c6b285" stroke-width="4"/><path d="m928 365 10-125 37-51 118-16 91 66 25 131-139 32Z" fill="url(#barkline)"/><path d="m922 248 62-65 120-17 93 77-16 22-88-60-105 15-53 52Z" fill="url(#thatch)" stroke="#d7c58d" stroke-width="4"/>
+  <path d="m1093 204 91 41 23 126-139 35 1-92Z" fill="#10231f" opacity=".35"/><path d="m940 249 43-64 70-10-63 47Z" fill="#dcc995" opacity=".13"/>
   <path d="m963 357 8-92 35-27 125-5 45 30 13 101-121 32Z" fill="#334536" stroke="#c8bd89" stroke-width="4"/><path d="m970 313 20-57 58-12-13 58m61-58 26 60" fill="none" stroke="#7f8e61" stroke-width="9"/>
   <path d="m974 332 62 7v28l-62-9Z" fill="#292f2c" stroke="#dbab76" stroke-width="4"/><ellipse cx="1005" cy="341" rx="61" ry="47" fill="url(#firefly)"/><path d="m976 344 57 9-8-15-45-7Z" fill="#d7a267" stroke="#ffe4a5" stroke-width="3"/><path d="m1058 376 46-20 29 16-42 22Z" fill="url(#bark)" stroke="#e3d2a3" stroke-width="3"/><path d="m1089 390 2 21 22-7 5-21" fill="url(#bark)"/><path d="m1154 371 10-22 23-4 13 24-20 19Z" fill="url(#boards)" stroke="#d4bf8a" stroke-width="3"/><use href="#lamp" x="1167" y="281"/>
+  <ellipse cx="1005" cy="344" rx="79" ry="58" fill="url(#hearthLight)"/>
+  <path d="m961 237 22-32 27-9m91-11 58 42m-206 63 11-30m221 32 15 58" stroke="#e6d199" stroke-opacity=".36" stroke-width="3" fill="none"/>
+  <path d="m985 344 43 7-8-13-34-5Z" fill="#eeaf70" stroke="#ffe6b2" stroke-width="2"/>
+  <path d="m957 368 111 37 140-29" stroke="#0d2420" opacity=".58" stroke-width="10" fill="none"/>
   <!-- Hearthstone at rear of communal plaza; moss grows around safe walkways -->
   <ellipse cx="701" cy="271" rx="48" ry="14" fill="#314139" stroke="#d4c393" stroke-width="5"/><path d="m681 265 8-33 15-28 17 30 5 29-20 16Z" fill="url(#bark)" stroke="#d8c491" stroke-width="3"/><path d="M703 209v-32m-15 19 15 14 16-14" stroke="#cbd99b" stroke-width="3"/><use href="#lamp" x="703" y="226"/>
   <path d="M530 345v-80m340 80v-80" fill="none" stroke="url(#bark)" stroke-width="8"/><use href="#lamp" x="529" y="270"/><use href="#lamp" x="870" y="270"/>
   <use href="#mushroom" x="54" y="432"/><use href="#mushroom" x="526" y="503"/><use href="#mushroom" x="878" y="501"/><use href="#mushroom" x="1359" y="448"/>
+  <path d="m111 471 36-25 36 17-13 23-31 8Zm1120-14 37-20 37 20-16 22-36 3Z" fill="url(#bark)" stroke="#a5ac7c" stroke-width="2"/>
+  <path d="m110 472 30 8 43-17m1048-6 32 11 42-11" stroke="#cfbe8c" stroke-opacity=".52" stroke-width="2" fill="none"/>
   <path d="m83 431 19-32m250 83 18-28m695 27 18-24m230-38 20-22" stroke="#a4bd84" stroke-width="3" opacity=".6"/>
   <path d="M0 0h1400v560H0Z" fill="none" stroke="#102321" stroke-width="18" opacity=".28"/>
 </svg>

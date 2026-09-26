@@ -7,45 +7,68 @@
     <linearGradient id="lava" x2="0" y2="1"><stop stop-color="#ffa65d"/><stop offset=".27" stop-color="#c74745"/><stop offset=".7" stop-color="#712a3c"/><stop offset="1" stop-color="#3f2539"/></linearGradient>
     <linearGradient id="pave" x2=".3" y2="1"><stop stop-color="#7f6470"/><stop offset="1" stop-color="#392f46"/></linearGradient>
     <radialGradient id="ember"><stop stop-color="#ffe2ad" stop-opacity=".85"/><stop offset=".3" stop-color="#ed7963" stop-opacity=".47"/><stop offset="1" stop-color="#bb384e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="riftHaze" x2="0" y2="1"><stop stop-color="#ad5865" stop-opacity="0"/><stop offset=".53" stop-color="#de846c" stop-opacity=".22"/><stop offset="1" stop-color="#b24d5e" stop-opacity="0"/></linearGradient>
+    <radialGradient id="riftGlow"><stop stop-color="#ff8f73" stop-opacity=".5"/><stop offset=".36" stop-color="#d45669" stop-opacity=".19"/><stop offset="1" stop-color="#b33263" stop-opacity="0"/></radialGradient>
     <pattern id="stonework" width="50" height="25" patternUnits="userSpaceOnUse"><path d="M0 0h50M0 25h50M25 0v12M0 12h50M0 12v13M50 12v13" stroke="#d7abba" stroke-opacity=".18" stroke-width="1.5" fill="none"/></pattern>
     <pattern id="slabs" width="62" height="37" patternUnits="userSpaceOnUse" patternTransform="skewX(-23)"><path d="M0 0h62M0 37h62M31 0v18M0 18h62M0 18v19M62 18v19" fill="none" stroke="#d3a5aa" stroke-opacity=".17" stroke-width="2"/></pattern>
     <g id="brazier"><circle r="51" fill="url(#ember)"/><path d="M-14 3q-4-18 0-27l9 15 6-25 9 23 7-14q5 20-2 30Z" fill="url(#lava)" stroke="#ffc494" stroke-width="2"/><path d="m-18 4 36 0-7 14H-11Z" fill="url(#obsidian)" stroke="#c9a39e" stroke-width="3"/><path d="M-3 18v11m-14 0h34" stroke="#9f8190" stroke-width="4"/></g>
-    <g id="window"><path d="M0 29V7Q9-7 18 7v22Z" fill="#211d2e" stroke="#ae8a8c" stroke-width="3"/><path d="M4 26V9Q9 1 14 9v17Z" fill="#ff9c75"/><path d="M9 4v23M4 17h10" stroke="#643c4c" stroke-width="2"/></g>
+    <g id="window"><circle cx="9" cy="14" r="47" fill="url(#ember)" opacity=".74"/><path d="M0 29V7Q9-7 18 7v22Z" fill="#211d2e" stroke="#ae8a8c" stroke-width="3"/><path d="M4 26V9Q9 1 14 9v17Z" fill="#ff9c75"/><path d="M9 4v23M4 17h10" stroke="#643c4c" stroke-width="2"/></g>
     <g id="shelter"><ellipse cy="5" rx="102" ry="23" fill="#0e1422" opacity=".6"/><path d="m-82-70 75-49 93 45v72L12 25-82-8Z" fill="url(#obsidian)" stroke="#a68891" stroke-width="3"/><path d="m-96-71 86-64 107 62-84 27Z" fill="url(#canvas)" stroke="#d7a394" stroke-width="4"/><path d="m-96-71 86-64 107 62-84 27Z" fill="url(#slabs)" opacity=".5"/><path d="m-88-69 101 24 84-28M-83-5 11 25l75-27M12-45v70m-65-83v59" stroke="#bf9090" stroke-width="4" fill="none"/><path d="M-81-61v53L12 25l74-27v-72" fill="url(#stonework)" opacity=".65"/><path d="M-48-10v-35l31 8V1Z" fill="#251f2f" stroke="#ba8e8e" stroke-width="3"/><path d="m-41-37 17 5m-17 8 17 5" stroke="#805b69" stroke-width="2"/><use href="#window" x="31" y="-33"/><path d="m-89-70 73-53m22 70 70-27" stroke="#edb39b" stroke-opacity=".64" stroke-width="2"/></g>
   </defs>
   <path fill="url(#sky)" d="M0 0h1400v560H0Z"/>
+  <ellipse cx="1038" cy="124" rx="375" ry="169" fill="url(#riftGlow)"/><path d="m1008 0 24 89-12 41 22 57 29-69-9-33 17-85Z" fill="#e85865" opacity=".15"/>
+  <path d="m0 177 96-54 68 20 88-64 82 48 85-60 98 60 121-70 75 65 124-54 88 54 80-57 113 55 102-25 160 61v89H0Z" fill="#a06679" opacity=".2"/>
   <path d="m0 213 86-73 69 47 70-88 81 73 92-78 76 70 111-103 108 97 127-97 70 94 90-61 105 84 94-57 111 89v153H0Z" fill="#242135" stroke="#76565c" stroke-width="4"/>
   <path d="M0 241 72 182l87 57 81-64 84 75 102-70 81 48 111-94 91 68 116-67 77 87 91-37 104 71 82-37 141 51v290H0Z" fill="url(#cliff)"/>
+  <path d="M0 189q140-49 286-7 123-34 258-20 147-39 293 9 144-34 268 15 161-41 295 19v94H0Z" fill="url(#riftHaze)"/>
+  <path d="m30 200 86-49 50 16 90-46 70 31m565 9 63-35 84 18 78-44 80 42 72-27 69 27" stroke="#ad6771" stroke-opacity=".3" stroke-width="3" fill="none"/>
+  <path d="M0 237q180-23 323 10 174-30 331-6 144-33 291-4 239-23 455 10v53H0Z" fill="url(#riftHaze)" opacity=".6"/>
+  <path d="m1140 93q-15-31 7-50 15-16 4-40m16 101q29-29 11-47 3-17 15-29" fill="none" stroke="#c38991" stroke-opacity=".25" stroke-width="10"/>
   <!-- Lava remains beyond the defended border; warm light lives outside the safe paved camp -->
   <path d="M0 312q86-82 217-53 131-45 244 26 156-64 293-17 143-67 245 4 219-62 401 35v253H0Z" fill="url(#lava)" stroke="#ef906f" stroke-width="7"/>
   <path d="M0 352q97-37 175 16l109-42 153 30 110-18 113 23 98-34 112 35 133-27 129 39 97-29 171 57m-1359 12q150 32 228 10m106 29 170-12m124 9 134-23m122 10 185-21m106 21 193 9" fill="none" stroke="#f7ad78" stroke-opacity=".52" stroke-width="7"/>
   <path d="M0 451q84-52 191-17 70-48 169-2 76-39 157-1 122-41 207 0 147-39 257 2 144-46 254 4 93-37 165 16v107H0Z" fill="url(#cliff)"/>
+  <path d="M0 294q183-48 343 4 157-49 311-16 150-45 299 7 201-49 447 12v102H0Z" fill="url(#riftHaze)" opacity=".65"/>
+  <path d="m12 389 61-11 44 15m233-13 62-15 40 18m492-15 67 16 46-13m229 13 72 19" stroke="#f29a70" stroke-opacity=".37" stroke-width="3" fill="none"/>
   <!-- Black glass rampart separates inhabited town from the molten gorge -->
   <path d="M0 308 246 251 389 276l188-58 126 21 132-21 185 58 131-25 249 57v70l-251-48-136 30-180-51-130 25-127-24-184 55-141-26L0 380Z" fill="url(#obsidian)" stroke="#a17781" stroke-width="5"/>
   <path d="M0 308 246 251 389 276l188-58 126 21 132-21 185 58 131-25 249 57v70l-251-48-136 30-180-51-130 25-127-24-184 55-141-26L0 380Z" fill="url(#stonework)"/>
   <path d="M0 319 246 265l143 26 188-58 126 22 132-22 185 57 131-26 249 54" stroke="#d3a1a0" stroke-width="4" fill="none"/>
   <path d="m0 306 26-28 29 24 30-38 31 26 28-40 27 30 28-38 31 30 30-34 30 25 27-38 34 28 30-32 36 35m591-7 27-34 29 26 29-39 32 27 28-36 28 29 28-36 30 27 28-34 29 27 29-39 30 34 30-32 32 32" fill="url(#obsidian)" stroke="#ae8990" stroke-width="3"/>
+  <path d="m159 267 3 40 16 20 17-10 4-47m100-3 2 39 13 19 18-7 5-31m846-19-3 43 17 16 18-10 4-39m102-15-1 35 13 20 18-8 4-42" fill="url(#canvas)" stroke="#b08289" stroke-width="2"/>
+  <path d="m166 282 22 8m112-8 24 7m864 2 22 7m100-14 24 9" stroke="#e49d92" stroke-opacity=".52" stroke-width="2"/>
   <!-- Fortress gate with outward-pointed black towers -->
   <path d="m587 199 12-98 47-25 47 25 4 101-39 12Zm125 3 4-102 47-25 46 25 12 99-73 15Z" fill="url(#obsidian)" stroke="#bb9293" stroke-width="5"/><path d="m582 106 22-48 18 20 24-40 26 39 19-17 22 47-56-15Zm120 0 22-47 20 18 24-39 23 41 21-22 21 49-64-14Z" fill="url(#obsidian)" stroke="#cfa1a1" stroke-width="4"/><path d="m693 191-2-74 13-31 15 31-2 74" fill="#1a1b2d" stroke="#ae848c" stroke-width="4"/><path d="m684 197 18-92 20 92m-101-69 39 12m87-14 35 11" fill="none" stroke="#e2a8a0" stroke-width="3"/>
   <path d="m643 164-13-15m127 15 12-15" stroke="#e4aea6" stroke-width="4"/><use href="#brazier" x="648" y="159"/><use href="#brazier" x="755" y="159"/>
   <!-- Safe path extends from outer gate to central hero plaza -->
   <path d="M692 175 604 277l-11 68-294 77L0 457v103h1400V457l-307-36-292-77-12-66-97-103Z" fill="url(#pave)" stroke="#c4949b" stroke-width="5"/><path d="M692 175 604 277l-11 68-294 77L0 457v103h1400V457l-307-36-292-77-12-66-97-103Z" fill="url(#slabs)"/>
   <ellipse cx="699" cy="385" rx="254" ry="98" fill="#514257" stroke="#c3949d" stroke-width="9"/><ellipse cx="699" cy="385" rx="240" ry="86" fill="url(#slabs)" stroke="#806878" stroke-width="3"/>
+  <ellipse cx="700" cy="381" rx="178" ry="67" fill="url(#riftGlow)" opacity=".32"/>
+  <path d="M464 372q228-68 470 1M488 424q211 68 424 0" stroke="#ca8c92" stroke-opacity=".17" stroke-width="3" fill="none"/>
+  <ellipse cx="347" cy="374" rx="185" ry="88" fill="url(#ember)" opacity=".49"/><ellipse cx="1058" cy="383" rx="207" ry="89" fill="url(#ember)" opacity=".57"/>
+  <path d="m62 474 88-16 61 14m29-32 86-12 60 14m638-13 73 8 76 22m37-17 100 15" fill="none" stroke="#171c2d" stroke-opacity=".59" stroke-width="5"/>
   <path d="M0 467q152-26 296-35l301-76m803 111q-168-32-306-35l-290-75M473 428q224 94 454 0" stroke="#e5acaa" stroke-opacity=".3" stroke-width="4" fill="none" stroke-dasharray="39 17 68 18"/>
   <use href="#shelter" x="120" y="353"/><use href="#shelter" x="488" y="290" transform="translate(488 290) scale(.7) translate(-488 -290)"/><use href="#shelter" x="890" y="294" transform="translate(890 294) scale(.72) translate(-890 -294)"/><use href="#shelter" x="1280" y="357" transform="translate(1280 357) scale(1.08) translate(-1280 -357)"/>
+  <path d="m52 264 42-32 40 22m327-45 27-20 27 16m353-1 33-23 33 20m302 55 45-25 46 28" fill="none" stroke="#c2858a" stroke-opacity=".29" stroke-width="2.5"/>
   <!-- Outpost market: stitched wine-red awning, medicines and supplies -->
   <ellipse cx="350" cy="383" rx="145" ry="35" fill="#111425" opacity=".6"/>
   <path d="M230 299v90m239-90v90M269 262v95m157-95v97" stroke="url(#obsidian)" stroke-width="10"/>
   <path d="m221 302 59-69 143 2 58 67-132 24Z" fill="url(#canvas)" stroke="#e3a49b" stroke-width="4"/><path d="m221 302 128 24 132-24m-201-69 69 93m-1-91 34 87m41-86-40 86" stroke="#f0b3a5" stroke-width="3" fill="none"/><path d="m224 302 24 19 25-11 25 18 27-9 24 10 25-12 27 9 26-16 26 10 26-18" fill="url(#canvas)" stroke="#e5ada6" stroke-width="2"/>
+  <path d="m221 302 59-67 61 86-118-20Z" fill="#ffa28d" opacity=".11"/><path d="m350 326 131-24-58-67-75 0Z" fill="#171b2c" opacity=".28"/>
   <path d="m251 339 92 19 98-17v31l-96 25-94-22Z" fill="url(#obsidian)" stroke="#c69a9f" stroke-width="3"/><path d="m252 337 91 15 96-12-96 12Z" fill="#947b83"/><path d="m265 337 15-17 19 20m16 4 8-19 24 20" fill="url(#canvas)" stroke="#f0b9ab" stroke-width="2"/><path d="m371 342 5-18h21l7 18m-29-12h26" fill="url(#obsidian)" stroke="#e8b0a5" stroke-width="2"/><use href="#brazier" x="225" y="308"/><use href="#brazier" x="468" y="307"/>
+  <path d="m171 395 24-12 24 10v24l-24 10-24-11Zm288-1 23-11 25 12v24l-24 10-24-12Z" fill="url(#obsidian)" stroke="#c89698" stroke-width="2"/><path d="m171 395 24 8 24-10m-24 10v24m264-33 24 9 24-8m-24 8v26" fill="none" stroke="#473547" stroke-width="2"/>
   <!-- Reinforced forge with lava-fed but controlled furnace and safe working apron -->
   <ellipse cx="1059" cy="395" rx="154" ry="34" fill="#101522" opacity=".65"/>
   <path d="m935 259 74-51 144 12 58 71v89l-149 29-127-42Z" fill="url(#obsidian)" stroke="#bf9198" stroke-width="4"/><path d="m920 264 88-75 147 12 72 89-163-30Z" fill="url(#canvas)" stroke="#e1a6a0" stroke-width="5"/><path d="m920 264 88-75 147 12 72 89-163-30Z" fill="url(#slabs)" opacity=".4"/><path d="m951 271 112 20 159-1m-159 1v111m-105-117v81" stroke="#8b6879" stroke-width="8" fill="none"/>
   <path d="m1101 209 5-104 32-14 27 112" fill="url(#obsidian)" stroke="#c3989d" stroke-width="4"/><path d="m1100 109 38-18 32 13-9 16-55 3Z" fill="url(#canvas)" stroke="#e7aca2" stroke-width="3"/><path d="m1136 93 7-39 13-23 16 33" fill="#746472" opacity=".45"/>
+  <path d="m1063 290 163 0-17 92-145 29Z" fill="#101528" opacity=".32"/><path d="m937 263 69-72 54 68Z" fill="#f5a499" opacity=".11"/>
   <path d="m967 322 73 12v39l-73-15Z" fill="#201d2e" stroke="#e0a39d" stroke-width="5"/><ellipse cx="1004" cy="341" rx="70" ry="51" fill="url(#ember)"/><path d="m978 344 57 13-8-24-46-7Z" fill="url(#lava)" stroke="#ffe0a6" stroke-width="3"/><path d="m1051 381 45-18 34 17-45 18Z" fill="url(#obsidian)" stroke="#dfa7a1" stroke-width="3"/><path d="m1085 392 5 19 24-5 5-19" fill="url(#obsidian)"/><path d="m1147 381 12-31 25-3 15 32-25 12Z" fill="url(#obsidian)" stroke="#d8a29f" stroke-width="3"/><use href="#window" x="1174" y="295"/>
+  <ellipse cx="1006" cy="346" rx="111" ry="73" fill="url(#ember)" opacity=".36"/><path d="m935 368 126 42 146-29" fill="none" stroke="#100f1e" stroke-opacity=".63" stroke-width="9"/>
   <!-- Rear plaza fire monument and guardian lights -->
   <ellipse cx="701" cy="270" rx="55" ry="17" fill="#30283c" stroke="#c09399" stroke-width="6"/><path d="m657 269 42-16 47 16v23q-44 23-89 0Z" fill="url(#obsidian)" stroke="#bd949a" stroke-width="3"/><path d="M700 250v-70m-15 24 15-19 16 19" fill="none" stroke="#bd9499" stroke-width="5"/><use href="#brazier" x="700" y="210"/>
   <path d="M518 347v-82m362 83v-82" stroke="url(#obsidian)" stroke-width="9"/><use href="#brazier" x="518" y="267"/><use href="#brazier" x="880" y="267"/>
   <path d="m42 505 85 15 57-18m304 21 85-20m272 6 86 23m288-32 77 13 53-9" stroke="#b18b91" stroke-width="3" fill="none" opacity=".45"/><use href="#brazier" x="63" y="376"/><use href="#brazier" x="1344" y="381"/>
+  <path d="m103 488 27 7 22-15 23-4 42-16m951 12 32 22 20-9 34 21" stroke="#491f37" stroke-width="8" fill="none" opacity=".54"/>
+  <path d="m105 488 46-18 24 6 42-16m-88 16 11 18 29-7m981-15 31 22 25-9 34 21" stroke="#fb966b" stroke-opacity=".7" stroke-width="4" fill="none"/>
   <path d="M0 0h1400v560H0Z" fill="none" stroke="#0d1022" stroke-width="18" opacity=".32"/>
 </svg>

@@ -1,6 +1,6 @@
-import { ANIMATION, FLOATING_ART } from '../data/animation.js?v=e2c24a34ffa36256';
-import { CONFIG, ART } from '../data/config.js?v=d7680a4b1a250530';
-import { TerrainRenderer } from './terrain-renderer.js?v=178abb0478975a4d';
+import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=c3ef81ed43773a8b';
+import { CONFIG, ART } from '../data/config.js?v=dba7a118f0c64652';
+import { TerrainRenderer } from './terrain-renderer.js?v=63f122167516e404';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 
@@ -20,11 +20,25 @@ async function loadPart(svg) {
   }
 }
 
+function shadowTexture(stops) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = SHADOW.textureSize;
+  const context = canvas.getContext('2d');
+  const radius = SHADOW.textureSize / 2;
+  const gradient = context.createRadialGradient(radius, radius, 0, radius, radius, radius);
+  for (const [offset, alpha] of stops) gradient.addColorStop(offset, `rgba(${SHADOW.color},${alpha})`);
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, SHADOW.textureSize, SHADOW.textureSize);
+  return canvas;
+}
+
 export class Renderer {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d', { alpha: false });
     this.rigs = new Map();
+    // Baked once: per-actor radial gradients would cost too much with 300 enemies on screen.
+    this.shadows = [SHADOW.cast, SHADOW.contact].map(layer => ({ layer, texture: shadowTexture(layer.stops) }));
     this.motion = new WeakMap();
     this.terrain = new TerrainRenderer(this.ctx, (x, y) => this.screen(x, y));
     this.camera = { x: 0, y: 0 };
@@ -65,7 +79,6 @@ export class Renderer {
     const ctx = this.ctx;
     ctx.save();
     ctx.translate(x, y - size);
-    ctx.translate(size / 2, 0);
     ctx.scale(facing * size / ANIMATION.svgSize, size / ANIMATION.svgSize);
     ctx.translate(-ANIMATION.svgSize / 2, 0);
     for (const part of parts) {
@@ -93,6 +106,25 @@ export class Renderer {
       } else ctx.drawImage(part.image, 0, 0, ANIMATION.svgSize, ANIMATION.svgSize);
     }
     ctx.restore();
+  }
+  drawShadow(x, y, size, floatPhase) {
+    const ctx = this.ctx;
+    const floating = floatPhase !== null;
+    // Floating rigs sit lowest when sin(phase) is 1; the shadow shrinks and fades as they rise.
+    const lift = floating ? (1 - Math.sin(floatPhase)) / 2 : 0;
+    const scale = floating ? SHADOW.floatScale * (1 - lift * SHADOW.floatLiftShrink) : 1;
+    const fade = floating ? SHADOW.floatAlpha * (1 - lift * SHADOW.floatLiftFade) : 1;
+    for (const { layer, texture } of this.shadows) {
+      // Airborne units have no ground contact, only the diffuse cast shadow.
+      if (floating && layer === SHADOW.contact) continue;
+      const rx = layer.radiusX * size * scale, ry = layer.radiusY * size * scale;
+      ctx.save();
+      ctx.globalAlpha = layer.alpha * fade;
+      ctx.translate(x + layer.offsetX * size, y + layer.offsetY * size);
+      ctx.rotate(layer.angle);
+      ctx.drawImage(texture, -rx, -ry, rx * 2, ry * 2);
+      ctx.restore();
+    }
   }
   resize() {
     const rect = this.canvas.getBoundingClientRect();
@@ -177,10 +209,10 @@ export class Renderer {
         pose.x=worldX;pose.y=worldY;
         pose.floatPhase=state.time*ANIMATION.floatRate;
       }
-      ctx.fillStyle='#05070baa';ctx.beginPath();ctx.ellipse(point.x,point.y,CONFIG.shadowWidth*CONFIG.zoom,CONFIG.shadowHeight*CONFIG.zoom,0,0,Math.PI*2);ctx.fill();
-      if(entity===p || entity.elite){ctx.strokeStyle=entity===p?'#b5ab8055':'#d4af5daa';ctx.beginPath();ctx.ellipse(point.x,point.y,size/3,size/7,0,0,Math.PI*2);ctx.stroke();}
       const floating=FLOATING_ART.has(art);
       const phase=floating?pose.floatPhase:null;
+      this.drawShadow(point.x,point.y,size,phase);
+      if(entity===p || entity.elite){ctx.strokeStyle=entity===p?'#b5ab8055':'#d4af5daa';ctx.beginPath();ctx.ellipse(point.x,point.y,size/3,size/7,0,0,Math.PI*2);ctx.stroke();}
       this.drawRig(parts,point.x,point.y+(floating?Math.sin(phase)*ANIMATION.floatHeight:0),
         size,pose.facing,pose.moving?pose.phase:0,phase);
       if(entity.hp<entity.maxHp || entity.boss){ctx.fillStyle='#20151d';ctx.fillRect(point.x-CONFIG.barWidth/2,point.y-size-CONFIG.barHeight,CONFIG.barWidth,CONFIG.barHeight);ctx.fillStyle=entity===p?'#b25261':'#bd865a';ctx.fillRect(point.x-CONFIG.barWidth/2,point.y-size-CONFIG.barHeight,CONFIG.barWidth*Math.max(0,entity.hp/entity.maxHp),CONFIG.barHeight);}
