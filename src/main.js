@@ -12,6 +12,7 @@ import { Combat, createPlayer } from './systems/combat.js';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js';
 import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js';
 import { SaveStore } from './systems/save.js';
+import { revealExploration } from './systems/exploration.js';
 import { getLanguage, setLanguage, text } from './systems/i18n.js?v=05f50c421756c74c';
 
 const $ = id => document.getElementById(id);
@@ -105,6 +106,7 @@ function beginJourney() {
 function makeState(area) {
   player.x = area.start.x; player.y = area.start.y;
   player.prevX = player.x; player.prevY = player.y;
+  revealExploration(area, player.x, player.y);
   state = { player, area, paused: inTown, enemies: area.enemies, minions: [], projectiles: [], effects: [], corpses: [], time: 0 };
   combat = new Combat(state, {
     modifiers: getModifiers,
@@ -630,6 +632,7 @@ function update(dt) {
   if (inTown || state.paused) return;
   if (input.secondary) combat.cast(1, input.aim);
   combat.update(dt, input);
+  revealExploration(state.area, player.x, player.y);
   if (pendingDeath) { pendingDeath = false; returnTown(true); return; }
   saveElapsed += dt;
   if (saveElapsed >= CONFIG.saveInterval) { saveElapsed %= CONFIG.saveInterval; void persist(); }

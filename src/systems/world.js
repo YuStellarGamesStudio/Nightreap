@@ -1,90 +1,145 @@
 import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js';
+import { TERRAIN } from '../data/terrain.js';
 
 const choice = (items, rng) => items[Math.min(items.length - 1, Math.floor(rng() * items.length))];
-const center = room => ({ x: room.x + room.w / 2, y: room.y + room.h / 2 });
-const rect = (cx, cy, w, h) => ({ x: cx - w / 2, y: cy - h / 2, w, h });
-const roomCenter = (room, dx = 0, dy = 0) => {
-  const pos = center(room);
-  return { x: pos.x + dx, y: pos.y + dy };
-};
+const anchorPosition = ([column, row], dx = 0, dy = 0) => ({
+  x: TERRAIN.anchorOrigin + column * TERRAIN.anchorStep + dx,
+  y: TERRAIN.anchorOrigin + row * TERRAIN.anchorStep + dy,
+});
 
-// A path is made from overlapping axis-aligned segments, not a visual-only link.
-function connectRooms(rooms, links) {
-  const paths = [];
-  const width = WORLD.corridorWidth;
-  for (const [from, to, firstAxis] of links) {
-    const a = center(rooms[from]);
-    const b = center(rooms[to]);
-    if (firstAxis === 'x') {
-      paths.push(rect((a.x + b.x) / 2, a.y, Math.abs(b.x - a.x) + width, width));
-      paths.push(rect(b.x, (a.y + b.y) / 2, width, Math.abs(b.y - a.y) + width));
-    } else {
-      paths.push(rect(a.x, (a.y + b.y) / 2, width, Math.abs(b.y - a.y) + width));
-      paths.push(rect((a.x + b.x) / 2, b.y, Math.abs(b.x - a.x) + width, width));
-    }
+function packCenters(start, bounds, rng) {
+  const { packBorder, packColumns, packRows, packCount, packStartDistance } = TERRAIN;
+  const stepX = (bounds.width - packBorder * 2) / packColumns;
+  const stepY = (bounds.height - packBorder * 2) / packRows;
+  const sectors = Array.from({ length: packColumns * packRows }, (_, index) => index);
+  for (let i = sectors.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [sectors[i], sectors[j]] = [sectors[j], sectors[i]];
   }
-  return paths;
-}
-
-function authoredGeometry(mapData) {
-  const rooms = mapData.rooms.map(([col, row, shape]) => {
-    const [w, h] = WORLD.roomShapes[shape];
-    return rect(WORLD.gridOrigin + col * WORLD.gridStep, WORLD.gridOrigin + row * WORLD.gridStep, w, h);
-  });
-  return { rooms, paths: connectRooms(rooms, mapData.links) };
-}
-
-function dungeonGeometry(rng) {
-  const rooms = [];
-  const links = [];
-  const occupied = new Set();
-  const size = WORLD.dungeonGridSize;
-  const nodes = [{ col: 1, row: 1 }];
-  occupied.add(1 + size);
-  const count = WORLD.dungeonMinRooms + Math.floor(rng() * WORLD.dungeonRoomVariance);
-  while (nodes.length < count) {
-    const frontier = [];
-    for (let i = 0; i < nodes.length; i++) {
-      const { col, row } = nodes[i];
-      for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
-        const x = col + dx;
-        const y = row + dy;
-        if (x >= 0 && y >= 0 && x < size && y < size && !occupied.has(x + y * size)) {
-          frontier.push({ col: x, row: y, parent: i });
-        }
+  const centers = [];
+  for (const sector of sectors) {
+    const column = sector % packColumns, row = Math.floor(sector / packColumns);
+    for (let attempt = 0; attempt < TERRAIN.packPlacementAttempts; attempt++) {
+      const x = packBorder + (column + rng()) * stepX;
+      const y = packBorder + (row + rng()) * stepY;
+      if (Math.hypot(x - start.x, y - start.y) >= packStartDistance) {
+        centers.push({ x, y });
+        break;
       }
     }
-    const next = choice(frontier, rng);
-    occupied.add(next.col + next.row * size);
-    const previous = nodes[next.parent];
-    links.push([next.parent, nodes.length, next.col !== previous.col ? 'x' : 'y']);
-    nodes.push(next);
+    if (centers.length === packCount) break;
   }
-  const decorations = [];
-  const events = [];
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i];
-    const template = choice(WORLD.dungeonTemplates, rng);
-    rooms.push(rect(WORLD.gridOrigin + node.col * WORLD.gridStep, WORLD.gridOrigin + node.row * WORLD.gridStep, template.w, template.h));
-    if (i > 0) {
-      decorations.push({ ...roomCenter(rooms[i], -WORLD.portalOffset, WORLD.portalOffset), type: template.decor });
-      if (i < nodes.length - 1 && rng() < WORLD.dungeonEventChance) {
-        events.push({ ...roomCenter(rooms[i]), type: choice(WORLD.dungeonEvents, rng) });
-      }
-    }
+  if (centers.length < packCount) {
+    throw new Error('Not enough safe terrain sectors for enemy packs');
   }
-  return { rooms, paths: connectRooms(rooms, links), decorations, events };
+  return centers;
 }
 
-function safeSpawn(room, radius, start, rng) {
-  const padding = radius + WORLD.spawnPadding;
-  for (let attempt = 0; attempt < WORLD.spawnAttempts; attempt++) {
-    const x = room.x + padding + rng() * (room.w - 2 * padding);
-    const y = room.y + padding + rng() * (room.h - 2 * padding);
-    if (Math.hypot(x - start.x, y - start.y) >= WORLD.spawnDistance) return { x, y };
+function spawnSeparation(area, x, y, radius) {
+  if (x < radius + TERRAIN.navigation.cellSize || y < radius + TERRAIN.navigation.cellSize
+      || x > area.bounds.width - radius - TERRAIN.navigation.cellSize
+      || y > area.bounds.height - radius - TERRAIN.navigation.cellSize
+      || Math.hypot(x - area.start.x, y - area.start.y) < WORLD.spawnDistance + radius
+      || Math.hypot(x - area.exit.x, y - area.exit.y) < TERRAIN.enemyGateDistance + radius
+      || Math.hypot(x - area.portal.x, y - area.portal.y) < TERRAIN.enemyGateDistance + radius
+      || (area.sheepPortal && Math.hypot(x - area.sheepPortal.x, y - area.sheepPortal.y)
+        < TERRAIN.enemyGateDistance + radius)) return -Infinity;
+  let separation = Infinity;
+  for (const enemy of area.enemies) {
+    const gap = Math.hypot(x - enemy.x, y - enemy.y)
+      - Math.max(TERRAIN.enemySpacing, radius + enemy.radius);
+    if (gap < separation) separation = gap;
   }
-  // Non-start rooms always clear the separation; a deterministic center is safe for tiny rooms.
-  return center(room);
+  return separation;
+}
+
+function spawnPosition(area, center, radius, rng) {
+  let bestX = 0, bestY = 0, bestSeparation = -Infinity;
+  for (let attempt = 0; attempt < TERRAIN.enemyPlacementAttempts; attempt++) {
+    const angle = rng() * Math.PI * 2;
+    const distance = Math.sqrt(rng()) * TERRAIN.packRadius;
+    const x = center.x + Math.cos(angle) * distance;
+    const y = center.y + Math.sin(angle) * distance;
+    const separation = spawnSeparation(area, x, y, radius);
+    if (separation >= 0) return { x, y };
+    if (separation > bestSeparation) {
+      bestSeparation = separation;
+      bestX = x;
+      bestY = y;
+    }
+  }
+  // A constant or unlucky RNG must never put enemies on gates or start.
+  // Sweep reproducible points in the assigned pack, then alternate clearings.
+  for (let pack = 0; pack <= area.packs.length; pack++) {
+    const origin = pack ? area.packs[pack - 1] : center;
+    for (let sample = 0; sample < TERRAIN.fallbackSamples; sample++) {
+      const angle = (sample + area.enemies.length) * TERRAIN.fallbackAngle;
+      const distance = Math.sqrt((sample + 0.5) / TERRAIN.fallbackSamples) * TERRAIN.packRadius;
+      const x = origin.x + Math.cos(angle) * distance;
+      const y = origin.y + Math.sin(angle) * distance;
+      const separation = spawnSeparation(area, x, y, radius);
+      if (separation >= 0) return { x, y };
+      if (separation > bestSeparation) {
+        bestSeparation = separation;
+        bestX = x;
+        bestY = y;
+      }
+    }
+    if (bestSeparation > -Infinity) return { x: bestX, y: bestY };
+  }
+  throw new Error('No safe enemy spawn on continuous terrain');
+}
+
+function segmentDistanceSquared(x, y, a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const lengthSquared = dx * dx + dy * dy;
+  const fraction = lengthSquared ? Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / lengthSquared)) : 0;
+  const offsetX = x - a.x - fraction * dx, offsetY = y - a.y - fraction * dy;
+  return offsetX * offsetX + offsetY * offsetY;
+}
+
+function scatterObstacles(area, rng) {
+  const config = TERRAIN.obstacle;
+  const count = area.sheep ? config.sheepCount : area.depth ? config.dungeonCount : config.wildCount;
+  const types = config.types[area.theme];
+  const sites = [area.start, area.exit, area.portal, ...area.packs, ...area.landmarks,
+    ...area.hazards, ...area.events, ...area.decorations];
+  if (area.sheepPortal) sites.push(area.sheepPortal);
+  const fallbackCount = config.fallbackColumns * config.fallbackRows;
+  for (let i = 0; i < count; i++) {
+    for (let attempt = 0; attempt < config.placementAttempts + fallbackCount; attempt++) {
+      let x, y;
+      if (attempt < config.placementAttempts) {
+        x = config.edgeInset + rng() * (area.bounds.width - config.edgeInset * 2);
+        y = config.edgeInset + rng() * (area.bounds.height - config.edgeInset * 2);
+      } else {
+        const cell = (i + (attempt - config.placementAttempts) * (config.fallbackColumns + 2)) % fallbackCount;
+        x = config.edgeInset + (cell % config.fallbackColumns + 0.5)
+          * (area.bounds.width - config.edgeInset * 2) / config.fallbackColumns;
+        y = config.edgeInset + (Math.floor(cell / config.fallbackColumns) + 0.5)
+          * (area.bounds.height - config.edgeInset * 2) / config.fallbackRows;
+      }
+      const radius = config.minRadius + rng() * (config.maxRadius - config.minRadius);
+      const aspect = config.minAspect + rng() * (config.maxAspect - config.minAspect);
+      const rx = radius * aspect, ry = radius / aspect;
+      const extent = Math.max(rx, ry);
+      if (area.obstacles.some(other => Math.hypot(x - other.x, y - other.y)
+        < extent + Math.max(other.rx, other.ry) + config.separation)) continue;
+      if (sites.some(site => Math.hypot(x - site.x, y - site.y)
+        < extent + (site.radius || TERRAIN.navigation.playerRadius) + config.pointClearance)) continue;
+      if (area.enemies.some(enemy => Math.hypot(x - enemy.x, y - enemy.y)
+        < extent + enemy.radius + config.pointClearance)) continue;
+      // Reserved wide spokes and clearings guarantee player-sized travel to
+      // each pack, interaction point, boss and individual enemy.
+      const routeRadiusSquared = (extent + TERRAIN.navigation.playerRadius + config.routeClearance) ** 2;
+      if (sites.some(site => segmentDistanceSquared(x, y, area.start, site) < routeRadiusSquared)
+          || area.enemies.some((enemy, index) => !enemy.boss
+            && segmentDistanceSquared(x, y, area.packs[index % area.packs.length], enemy) < routeRadiusSquared)) continue;
+      area.obstacles.push({ x, y, rx, ry, type: choice(types, rng),
+        variant: Math.floor(rng() * config.variantCount) });
+      break;
+    }
+  }
 }
 
 function makeEnemy(speciesId, position, area, serial, elite = false) {
@@ -161,16 +216,16 @@ function populate(area, mapData, rng) {
     const id = shuffled[i % shuffled.length];
     const elite = i < elites;
     const radius = MONSTERS[id].radius * (elite ? WORLD.eliteSize : 1);
-    const room = area.rooms[1 + Math.floor(rng() * (area.rooms.length - 1))];
-    area.enemies.push(makeEnemy(id, safeSpawn(room, radius, area.start, rng), area, i, elite));
+    const position = spawnPosition(area, area.packs[i % area.packs.length], radius, rng);
+    area.enemies.push(makeEnemy(id, position, area, i, elite));
   }
   if (mapData.boss && !area.depth && !area.sheep) {
-    area.enemies.push(makeBoss(mapData.boss, roomCenter(area.rooms.at(-1)), area));
+    area.enemies.push(makeBoss(mapData.boss, area.exit, area));
   }
   area.requiredKills = area.enemies.length;
 }
 
-/** Build the campaign map, an independent sheep realm, or one procedural dungeon floor. */
+/** Build a continuous campaign wilderness, sheep realm or procedural dungeon floor. */
 export function createArea({ act = 0, map = 0, difficulty = 0, depth = 0, sheep = false } = {}, rng = Math.random) {
   if (!Number.isInteger(act) || !ACTS[act] || !Number.isInteger(map) || !ACTS[act].maps[map]
       || !Number.isInteger(difficulty) || !DIFFICULTIES[difficulty]
@@ -178,83 +233,107 @@ export function createArea({ act = 0, map = 0, difficulty = 0, depth = 0, sheep 
     throw new RangeError('Invalid area coordinates');
   }
   const mapData = ACTS[act].maps[map];
-  const geometry = depth > 0 && !sheep ? dungeonGeometry(rng) : authoredGeometry(mapData);
-  const { rooms, paths } = geometry;
-  const start = roomCenter(rooms[0]);
-  const exit = roomCenter(rooms.at(-1));
-  const portal = roomCenter(rooms[1], -WORLD.portalOffset, 0);
-  const theme = sheep ? 'sheep' : depth ? 'dungeon' : ACTS[act].theme;
+  const dungeon = depth > 0 && !sheep;
+  const anchors = dungeon ? TERRAIN.dungeonAnchors : mapData.anchors;
+  const start = anchorPosition(anchors[0]);
+  const exit = anchorPosition(anchors.at(-1));
+  const portal = anchorPosition(anchors[1], -TERRAIN.portalOffset);
+  const theme = sheep ? 'sheep' : dungeon ? 'dungeon' : ACTS[act].theme;
   const name = sheep ? { en: 'Dread Sheep Realm', zh: '夢魘綿羊秘境' }
-    : depth ? { en: `Endless Dungeon · ${depth}`, zh: `無盡地下城 · ${depth}` } : mapData.name;
+    : dungeon ? { en: `Endless Dungeon · ${depth}`, zh: `無盡地下城 · ${depth}` } : mapData.name;
   const area = {
     act, map, difficulty, depth, sheep, theme, name, bounds: WORLD.bounds,
-    rooms, paths, start, exit, portal, enemies: [],
-    decorations: geometry.decorations || [], landmarks: [], hazards: [], events: geometry.events || [],
+    start, exit, portal, enemies: [], obstacles: [], packs: [],
+    decorations: [], landmarks: [], hazards: [], events: [],
     killed: 0, requiredKills: 0, cleared: false,
   };
-  if (!depth && !sheep) {
+  if (dungeon) {
+    for (let i = 1; i < anchors.length; i++) {
+      const position = anchorPosition(anchors[i], -TERRAIN.portalOffset, -TERRAIN.portalOffset);
+      area.decorations.push({ ...position, type: choice(WORLD.dungeonDecor, rng) });
+    }
+  } else if (!sheep) {
     const feature = mapData.landmark;
-    area.landmarks.push({ ...roomCenter(rooms[feature.room], feature.dx, feature.dy), type: feature.type, name: feature.name });
-    area.decorations.push(...(mapData.decor || []).map(([room, type, dx, dy]) => ({
-      ...roomCenter(rooms[room], dx, dy), type,
+    area.landmarks.push({ ...anchorPosition(anchors[feature.anchor], feature.dx, feature.dy),
+      type: feature.type, name: feature.name });
+    area.decorations.push(...(mapData.decor || []).map(([anchor, type, dx, dy]) => ({
+      ...anchorPosition(anchors[anchor], dx, dy), type,
     })));
     area.hazards.push(...(mapData.hazards || []).map(hazard => ({
-      ...roomCenter(rooms[hazard.room], hazard.dx, hazard.dy),
+      ...anchorPosition(anchors[hazard.anchor], hazard.dx, hazard.dy),
       type: hazard.type, radius: WORLD.hazardRadius, damage: WORLD.hazardDamage, tick: WORLD.hazardTick,
     })));
-    if (act === WORLD.sheepGateAct) area.sheepPortal = roomCenter(rooms[1], WORLD.portalOffset, 0);
+    if (act === WORLD.sheepGateAct) area.sheepPortal = anchorPosition(anchors[1], TERRAIN.portalOffset);
+  } else {
+    area.landmarks.push({ ...anchorPosition(anchors[2]), type: 'sheep-stone',
+      name: {en:'Dread Shepherd Stone',zh:'夢魘牧羊碑'} });
   }
-  if (sheep) {
-    area.landmarks.push({ ...roomCenter(rooms[2]), type: 'sheep-stone', name: {en:'Dread Shepherd Stone',zh:'夢魘牧羊碑'} });
+  if (!dungeon) {
+    const decor = WORLD.themeDecor[theme];
+    for (let i = 1; i < anchors.length; i++) {
+      area.decorations.push({ ...anchorPosition(anchors[i], -TERRAIN.portalOffset, -TERRAIN.portalOffset),
+        type: decor[i % decor.length] });
+    }
   }
-  const decor = WORLD.themeDecor[theme] || WORLD.themeDecor.crypt;
-  for (let i = 1; i < rooms.length; i++) {
-    const room = rooms[i];
-    area.decorations.push({ ...roomCenter(room, -WORLD.portalOffset, -WORLD.portalOffset), type: decor[i % decor.length] });
-  }
-  populate(area, mapData, rng);
-  return area;
-}
-
-/** A circular character must fit entirely inside at least one room or corridor. */
-export function isWalkable(area, x, y, radius = 0) {
-  if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(radius) || radius < 0) return false;
-  if (x - radius < 0 || y - radius < 0 || x + radius > area.bounds.width || y + radius > area.bounds.height) return false;
-  for (const tile of area.rooms) {
-    if (x - radius >= tile.x && y - radius >= tile.y
-        && x + radius <= tile.x + tile.w && y + radius <= tile.y + tile.h) return true;
-  }
-  for (const tile of area.paths) {
-    if (x - radius >= tile.x && y - radius >= tile.y
-        && x + radius <= tile.x + tile.w && y + radius <= tile.y + tile.h) return true;
-  }
-  return false;
-}
-
-/** Graph over genuinely overlapping walkable rectangles, including every enemy and exit. */
-export function connected(area) {
-  const tiles = [...area.rooms, ...area.paths];
-  if (!tiles.length || !isWalkable(area, area.start.x, area.start.y)
-      || !isWalkable(area, area.exit.x, area.exit.y)
-      || !isWalkable(area, area.portal.x, area.portal.y)
-      || (area.sheepPortal && !isWalkable(area, area.sheepPortal.x, area.sheepPortal.y))) return false;
-  const seen = new Uint8Array(tiles.length);
-  const queue = [0];
-  seen[0] = 1;
-  for (let index = 0; index < queue.length; index++) {
-    const a = tiles[queue[index]];
-    for (let i = 0; i < tiles.length; i++) {
-      if (seen[i]) continue;
-      const b = tiles[i];
-      if (Math.min(a.x + a.w, b.x + b.w) > Math.max(a.x, b.x)
-          && Math.min(a.y + a.h, b.y + b.h) > Math.max(a.y, b.y)) {
-        seen[i] = 1;
-        queue.push(i);
+  area.packs = packCenters(start, area.bounds, rng);
+  if (dungeon) {
+    for (let i = 0; i < TERRAIN.dungeonEventSites; i++) {
+      if (rng() < WORLD.dungeonEventChance) {
+        area.events.push({ ...area.packs[i], type: choice(WORLD.dungeonEvents, rng) });
       }
     }
   }
-  if (seen.some(value => !value)) return false;
-  return area.enemies.every(enemy => isWalkable(area, enemy.x, enemy.y, enemy.radius));
+  populate(area, mapData, rng);
+  scatterObstacles(area, rng);
+  return area;
+}
+
+/** A circle must fit in the bounds and outside each visible ground ellipse. */
+export function isWalkable(area, x, y, radius = 0) {
+  if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(radius) || radius < 0) return false;
+  if (x - radius < 0 || y - radius < 0 || x + radius > area.bounds.width || y + radius > area.bounds.height) return false;
+  for (const obstacle of area.obstacles) {
+    const dx = x - obstacle.x, dy = y - obstacle.y;
+    // Inflating both axes separately misses some diagonal circle/ellipse overlaps.
+    // Uniform inflation by the short axis conservatively contains the Minkowski sum.
+    const scale = 1 + radius / Math.min(obstacle.rx, obstacle.ry);
+    const rx = obstacle.rx * scale, ry = obstacle.ry * scale;
+    if (Math.abs(dx) < rx && Math.abs(dy) < ry && (dx / rx) ** 2 + (dy / ry) ** 2 < 1) return false;
+  }
+  return true;
+}
+
+/** Flood player-sized cells, including the half-cell margin so grid edges stay clear. */
+export function connected(area) {
+  const { cellSize, playerRadius } = TERRAIN.navigation;
+  const columns = Math.ceil(area.bounds.width / cellSize), rows = Math.ceil(area.bounds.height / cellSize);
+  const margin = playerRadius + cellSize * Math.SQRT2 / 2;
+  const open = new Uint8Array(columns * rows);
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      open[row * columns + col] = +isWalkable(area, (col + 0.5) * cellSize, (row + 0.5) * cellSize, margin);
+    }
+  }
+  const locate = point => Math.floor(point.y / cellSize) * columns + Math.floor(point.x / cellSize);
+  const first = locate(area.start);
+  if (!open[first]) return false;
+  const reached = new Uint8Array(open.length);
+  const queue = new Int32Array(open.length);
+  let front = 0, back = 0;
+  queue[back++] = first;
+  reached[first] = 1;
+  while (front < back) {
+    const index = queue[front++];
+    const column = index % columns, row = (index - column) / columns;
+    if (column > 0 && open[index - 1] && !reached[index - 1]) { reached[index - 1] = 1; queue[back++] = index - 1; }
+    if (column + 1 < columns && open[index + 1] && !reached[index + 1]) { reached[index + 1] = 1; queue[back++] = index + 1; }
+    if (row > 0 && open[index - columns] && !reached[index - columns]) { reached[index - columns] = 1; queue[back++] = index - columns; }
+    if (row + 1 < rows && open[index + columns] && !reached[index + columns]) { reached[index + columns] = 1; queue[back++] = index + columns; }
+  }
+  const targets = [area.exit, area.portal, ...area.packs, ...area.landmarks, ...area.events, ...area.enemies];
+  if (area.sheepPortal) targets.push(area.sheepPortal);
+  return targets.every(target => isWalkable(area, target.x, target.y, target.radius || playerRadius)
+    && !!reached[locate(target)]);
 }
 
 /** Call once for each killed enemy before loot; regular loot is owned by Gear. */

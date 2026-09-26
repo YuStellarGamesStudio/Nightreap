@@ -1,5 +1,7 @@
 import { ANIMATION, FLOATING_ART } from '../data/animation.js';
 import { CONFIG, ART } from '../data/config.js';
+import { TerrainRenderer } from './terrain-renderer.js';
+import { isExplored } from '../systems/exploration.js';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
 
@@ -23,6 +25,7 @@ export class Renderer {
     this.ctx = canvas.getContext('2d', { alpha: false });
     this.rigs = new Map();
     this.motion = new WeakMap();
+    this.terrain = new TerrainRenderer(this.ctx, (x, y) => this.screen(x, y));
     this.camera = { x: 0, y: 0 };
     this.width = 0; this.height = 0;
     this.observer = new ResizeObserver(() => this.resize());
@@ -30,6 +33,7 @@ export class Renderer {
     this.resize();
   }
   async load() {
+    await this.terrain.load();
     await Promise.all([...new Set(Object.values(ART))].map(async name => {
       const url = `assets/${name}.svg`;
       const response = await fetch(url);
@@ -103,24 +107,6 @@ export class Renderer {
     const point = project(x, y);
     return { x: (point.x - this.camera.x) * CONFIG.zoom + this.width / 2, y: (point.y - this.camera.y) * CONFIG.zoom + this.height / 2 };
   }
-  floor(rect, path = false) {
-    const ctx = this.ctx;
-    const corners = [[rect.x,rect.y],[rect.x+rect.w,rect.y],[rect.x+rect.w,rect.y+rect.h],[rect.x,rect.y+rect.h]].map(([x,y]) => this.screen(x,y));
-    ctx.beginPath(); corners.forEach((p,i) => i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y)); ctx.closePath();
-    const gradient = ctx.createLinearGradient(corners[0].x,corners[0].y,corners[2].x,corners[2].y);
-    gradient.addColorStop(0,path?'#262530':'#302c32'); gradient.addColorStop(0.5,'#1a1d25'); gradient.addColorStop(1,'#28252c');
-    ctx.fillStyle = gradient; ctx.fill(); ctx.strokeStyle = '#50433e'; ctx.lineWidth = 1; ctx.stroke();
-    ctx.save(); ctx.clip(); ctx.strokeStyle = '#77706818';
-    for (let x=rect.x; x<rect.x+rect.w; x+=CONFIG.groundTile) {
-      const a=this.screen(x,rect.y),b=this.screen(x,rect.y+rect.h);
-      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-    }
-    for (let y=rect.y; y<rect.y+rect.h; y+=CONFIG.groundTile) {
-      const a=this.screen(rect.x,y),b=this.screen(rect.x+rect.w,y);
-      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-    }
-    ctx.restore();
-  }
   gate(point,color,label) {
     if (!point) return;
     const ctx=this.ctx,p=this.screen(point.x,point.y);
@@ -137,8 +123,7 @@ export class Renderer {
     this.camera.x += (target.x-this.camera.x)*CONFIG.cameraEase;
     this.camera.y += (target.y-this.camera.y)*CONFIG.cameraEase;
     ctx.fillStyle='#0d1017';ctx.fillRect(0,0,this.width,this.height);
-    for (const path of state.area.paths || []) this.floor(path,true);
-    for (const room of state.area.rooms || []) this.floor(room);
+    this.terrain.drawGround(state.area);
     this.gate(state.area.exit,state.area.cleared?'#d5b976':'#685d70','EXIT');
     this.gate(state.area.portal,'#9174bf','DEPTH');
     this.gate(state.area.sheepPortal,'#c5aa6b','?');
@@ -146,9 +131,11 @@ export class Renderer {
       const h=this.screen(hazard.x,hazard.y);
       ctx.fillStyle='#90526430';ctx.strokeStyle='#9f786c60';ctx.beginPath();ctx.ellipse(h.x,h.y,hazard.radius*CONFIG.zoom,hazard.radius*CONFIG.zoom/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();
     }
-    const actors=[...(state.enemies||[]),...(state.minions||[]),p];
+    const actors=[...state.area.obstacles,...(state.enemies||[]),...(state.minions||[]),p];
     actors.sort((a,b) => (a.x+a.y)-(b.x+b.y));
     for (const entity of actors) {
+      if (entity.rx != null) { this.terrain.drawObstacle(entity, state.area.theme); continue; }
+      if (entity !== p && !isExplored(state.area, entity.x, entity.y)) continue;
       if (entity.hp<=0) continue;
       let art=entity===p ? (p.form && p.form!=='human' ? p.form : p.classId) : ART[entity.kind] || ART[entity.family] || 'demon';
       if (entity.boss) art='boss';
@@ -197,16 +184,13 @@ export class Renderer {
       ctx.fillStyle=projectile.side==='enemy'?'#e47563':'#d8c69a';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=CONFIG.shadowWidth;
       ctx.beginPath();ctx.ellipse(q.x,q.y-CONFIG.playerRadius,r*2,r,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
     }
+    this.terrain.drawFog(state.area, this.width, this.height);
     const vignette=ctx.createRadialGradient(this.width/2,this.height/2,this.height/4,this.width/2,this.height/2,this.width/1.5);
     vignette.addColorStop(0,'#07090c00');vignette.addColorStop(1,'#050609bb');ctx.fillStyle=vignette;ctx.fillRect(0,0,this.width,this.height);
     this.minimap(state);
   }
   minimap(state){
-    const ctx=this.ctx,size=CONFIG.miniSize,offset=this.width-size-CONFIG.playerRadius,scale=size/state.area.bounds.width;
-    ctx.save();ctx.translate(offset,CONFIG.playerRadius);ctx.fillStyle='#0b0e16d9';ctx.fillRect(0,0,size,size);ctx.strokeStyle='#85734f';ctx.strokeRect(0,0,size,size);ctx.fillStyle='#555365';
-    for(const rect of [...state.area.paths,...state.area.rooms])ctx.fillRect(rect.x*scale,rect.y*scale,rect.w*scale,rect.h*scale);
-    ctx.fillStyle='#d4bd83';ctx.beginPath();ctx.arc(state.player.x*scale,state.player.y*scale,CONFIG.barHeight,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#8e75c0';if(state.area.portal)ctx.fillRect(state.area.portal.x*scale,state.area.portal.y*scale,CONFIG.barHeight,CONFIG.barHeight);
-    ctx.fillStyle='#afd8b2';if(state.area.exit)ctx.fillRect(state.area.exit.x*scale,state.area.exit.y*scale,CONFIG.barHeight,CONFIG.barHeight);ctx.restore();
+    this.terrain.drawMinimap(state.area, state.player,
+      this.width-CONFIG.miniSize-CONFIG.playerRadius, CONFIG.playerRadius, CONFIG.miniSize);
   }
 }

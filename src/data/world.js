@@ -1,4 +1,4 @@
-// All world tuning lives here; geometry and names follow the five-act campaign in DESIGN.md.
+// Campaign identities and combat progression live here; terrain spacing is in terrain.js.
 export const DIFFICULTIES = [
   { id: 'normal', name: { en: 'Normal', zh: '普通' }, health: 1, damage: 1, reward: 1 },
   { id: 'hard', name: { en: 'Hard', zh: '困難' }, health: 2.5, damage: 1.6, reward: 1.35 },
@@ -6,52 +6,52 @@ export const DIFFICULTIES = [
   { id: 'hell', name: { en: 'Hell', zh: '地獄' }, health: 14, damage: 4, reward: 2.4 },
 ];
 
-// Each map has an authored room silhouette, explicit links, characteristic hazards and landmarks.
-// Room coordinates are [grid column, grid row, room shape]; links are [room, room, bend axis].
-const map = (en, zh, rooms, links, monsters, landmark, extras = {}) => ({
-  name: { en, zh }, rooms, links, monsters, landmark, ...extras,
+// Authored anchors locate landmarks, hazards and gates across an open landscape.
+// Anchor coordinates are [column, row], not a room footprint or a walkability mask.
+const map = (en, zh, anchors, monsters, landmark, extras = {}) => ({
+  name: { en, zh }, anchors, monsters, landmark, ...extras,
 });
-const mark = (room, type, en, zh, dx = 0, dy = 0) => ({ room, type, name: { en, zh }, dx, dy });
+const mark = (anchor, type, en, zh, dx = 0, dy = 0) => ({ anchor, type, name: { en, zh }, dx, dy });
 
 export const ACTS = [
   {
     id: 'ember-village', name: { en: 'Ember Village', zh: '燼火村莊' }, theme: 'ember',
     maps: [
-      map('Burning Village Road', '燃燒村道', [[0,1,'wide'],[1,1,'wide'],[2,0,'standard'],[2,2,'wide'],[3,2,'standard']], [[0,1,'x'],[1,2,'y'],[1,3,'x'],[3,4,'x']], ['imp','hellhound','revenant'], mark(2,'burnt-watchtower','Burnt Watchtower','焚毀瞭望塔'), { decor: [[1,'charred-cart',-80,72],[3,'fallen-timber',70,-78]] }),
-      map('Blackened Farmland', '焦黑農田', [[0,2,'wide'],[1,2,'standard'],[1,0,'wide'],[2,1,'standard'],[3,0,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'y']], ['imp','cinderling','hellhound','revenant'], mark(3,'ash-silo','Ashen Silo','灰燼穀倉'), { decor: [[2,'scorched-harvest',-90,60],[4,'broken-plough',55,-85]], hazards: [{room:2,type:'ember-pit',dx:72,dy:50}] }),
-      map('Village Chapel', '村中禮拜堂', [[0,1,'standard'],[1,0,'wide'],[1,2,'standard'],[2,1,'wide'],[3,1,'wide']], [[0,1,'y'],[0,2,'x'],[1,3,'x'],[2,3,'x'],[3,4,'x']], ['imp','hellhound','revenant','cinderling'], mark(4,'ruined-chapel','Village Chapel','村中禮拜堂'), { decor: [[1,'grave',75,60],[3,'shattered-bell',-65,-80]], boss: 'pyre-warden' }),
+      map('Burning Village Road', '燃燒村道', [[0,1],[1,1],[2,0],[2,2],[3,2]], ['imp','hellhound','revenant'], mark(2,'burnt-watchtower','Burnt Watchtower','焚毀瞭望塔'), { decor: [[1,'charred-cart',-80,72],[3,'fallen-timber',70,-78]] }),
+      map('Blackened Farmland', '焦黑農田', [[0,2],[1,2],[1,0],[2,1],[3,0]], ['imp','cinderling','hellhound','revenant'], mark(3,'ash-silo','Ashen Silo','灰燼穀倉'), { decor: [[2,'scorched-harvest',-90,60],[4,'broken-plough',55,-85]], hazards: [{anchor:2,type:'ember-pit',dx:72,dy:50}] }),
+      map('Village Chapel', '村中禮拜堂', [[0,1],[1,0],[1,2],[2,1],[3,1]], ['imp','hellhound','revenant','cinderling'], mark(4,'ruined-chapel','Village Chapel','村中禮拜堂'), { decor: [[1,'grave',75,60],[3,'shattered-bell',-65,-80]], boss: 'pyre-warden' }),
     ],
   },
   {
     id: 'weeping-crypt', name: { en: 'Weeping Crypt', zh: '哭泣墓穴' }, theme: 'crypt',
     maps: [
-      map('Bone Passage', '骸骨迴廊', [[1,0,'standard'],[1,1,'narrow'],[0,2,'standard'],[2,2,'standard'],[2,3,'wide']], [[0,1,'y'],[1,2,'x'],[1,3,'x'],[3,4,'y']], ['skeletal-guard','ghost','void-tendril'], mark(2,'ossuary','Hall of Bones','骸骨堂'), { decor: [[1,'bone-pillar',60,-65],[4,'cracked-sarcophagus',-65,85]] }),
-      map('Burial Treasury', '陪葬寶庫', [[0,1,'standard'],[1,1,'wide'],[1,0,'standard'],[2,0,'wide'],[3,1,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'y']], ['skeletal-guard','zombie-mage','ghost','void-tendril'], mark(3,'sealed-vault','Sealed Treasury','封印寶庫'), { eliteBonus: 2, decor: [[1,'ossuary-urn',68,78],[4,'golden-casket',-80,-55]] }),
-      map('Ghost Well', '幽魂深井', [[0,0,'standard'],[1,0,'standard'],[1,2,'wide'],[2,2,'standard'],[3,3,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'y']], ['ghost','grave-burrower','zombie-mage','void-tendril'], mark(2,'ghost-well','Well of Lost Souls','失魂深井'), { decor: [[1,'hanging-chains',-65,65],[4,'bone-altar',68,-72]], boss: 'mourning-wraith' }),
+      map('Bone Passage', '骸骨迴廊', [[1,0],[1,1],[0,2],[2,2],[2,3]], ['skeletal-guard','ghost','void-tendril'], mark(2,'ossuary','Hall of Bones','骸骨堂'), { decor: [[1,'bone-pillar',60,-65],[4,'cracked-sarcophagus',-65,85]] }),
+      map('Burial Treasury', '陪葬寶庫', [[0,1],[1,1],[1,0],[2,0],[3,1]], ['skeletal-guard','zombie-mage','ghost','void-tendril'], mark(3,'sealed-vault','Sealed Treasury','封印寶庫'), { eliteBonus: 2, decor: [[1,'ossuary-urn',68,78],[4,'golden-casket',-80,-55]] }),
+      map('Ghost Well', '幽魂深井', [[0,0],[1,0],[1,2],[2,2],[3,3]], ['ghost','grave-burrower','zombie-mage','void-tendril'], mark(2,'ghost-well','Well of Lost Souls','失魂深井'), { decor: [[1,'hanging-chains',-65,65],[4,'bone-altar',68,-72]], boss: 'mourning-wraith' }),
     ],
   },
   {
     id: 'blighted-wood', name: { en: 'Blighted Wood', zh: '腐化林地' }, theme: 'wood',
     maps: [
-      map('Poison-Mist Trail', '毒霧林徑', [[0,1,'standard'],[1,1,'wide'],[1,2,'standard'],[2,2,'wide'],[3,2,'standard']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'x']], ['blighted-wolf','venom-spider','parasite','treant'], mark(3,'plague-pool','Blight Pool','瘟疫池'), { hazards: [{room:2,type:'poison-mist',dx:62,dy:-64},{room:3,type:'poison-mist',dx:-95,dy:85}], decor: [[1,'rotted-stump',-70,-60]] }),
-      map('Hollow of the Great Tree', '巨樹心窟', [[1,0,'standard'],[0,1,'standard'],[1,1,'wide'],[2,1,'standard'],[2,3,'wide']], [[0,2,'y'],[1,2,'x'],[2,3,'x'],[3,4,'y']], ['thorn-moth','venom-spider','parasite','treant'], mark(2,'heart-tree','Heart of the Great Tree','巨樹心臟'), { decor: [[1,'root-arch',-65,78],[3,'spore-lantern',65,-65]] }),
-      map('Beast Nest', '獸巢深穴', [[0,2,'wide'],[1,2,'standard'],[1,0,'wide'],[2,1,'standard'],[3,1,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'x']], ['blighted-wolf','venom-spider','parasite','thorn-moth'], mark(4,'wolf-den','Corrupted Den','腐化獸穴'), { decor: [[2,'gnarled-roots',-80,75],[3,'egg-cluster',78,-60]], boss: 'blight-matriarch' }),
+      map('Poison-Mist Trail', '毒霧林徑', [[0,1],[1,1],[1,2],[2,2],[3,2]], ['blighted-wolf','venom-spider','parasite','treant'], mark(3,'plague-pool','Blight Pool','瘟疫池'), { hazards: [{anchor:2,type:'poison-mist',dx:62,dy:-64},{anchor:3,type:'poison-mist',dx:-95,dy:85}], decor: [[1,'rotted-stump',-70,-60]] }),
+      map('Hollow of the Great Tree', '巨樹心窟', [[1,0],[0,1],[1,1],[2,1],[2,3]], ['thorn-moth','venom-spider','parasite','treant'], mark(2,'heart-tree','Heart of the Great Tree','巨樹心臟'), { decor: [[1,'root-arch',-65,78],[3,'spore-lantern',65,-65]] }),
+      map('Beast Nest', '獸巢深穴', [[0,2],[1,2],[1,0],[2,1],[3,1]], ['blighted-wolf','venom-spider','parasite','thorn-moth'], mark(4,'wolf-den','Corrupted Den','腐化獸穴'), { decor: [[2,'gnarled-roots',-80,75],[3,'egg-cluster',78,-60]], boss: 'blight-matriarch' }),
     ],
   },
   {
     id: 'frozen-sanctuary', name: { en: 'Frozen Sanctuary', zh: '冰封聖所' }, theme: 'frost',
     maps: [
-      map('Blizzard Steps', '暴雪石階', [[0,3,'wide'],[1,3,'standard'],[1,2,'standard'],[2,1,'standard'],[3,0,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'y']], ['ice-elemental','frost-knight','snow-beast'], mark(3,'frost-stairs','Blizzard Staircase','暴雪階梯'), { decor: [[1,'frozen-banner',-55,70],[4,'ice-statue',70,65]] }),
-      map('Frozen Chapel', '凍結禮拜堂', [[0,1,'standard'],[1,0,'standard'],[1,2,'standard'],[2,1,'wide'],[3,1,'wide']], [[0,1,'y'],[0,2,'x'],[1,3,'x'],[2,3,'x'],[3,4,'x']], ['ice-elemental','snow-oracle','frost-knight','snow-beast'], mark(3,'crystal-altar','Crystal Altar','水晶祭壇'), { decor: [[2,'ice-choir',-65,70],[4,'shattered-window',75,-70]] }),
-      map('Ice Abyss', '冰淵裂谷', [[0,0,'wide'],[1,0,'standard'],[1,1,'narrow'],[2,2,'standard'],[3,2,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'x']], ['ice-elemental','snow-oracle','frost-knight','snow-beast'], mark(3,'ice-rift','Ice Rift','冰淵裂隙'), { hazards: [{room:2,type:'ice-rift',dx:70,dy:48},{room:4,type:'ice-rift',dx:-95,dy:75}], decor: [[1,'frozen-column',-65,75]], boss: 'glacial-herald' }),
+      map('Blizzard Steps', '暴雪石階', [[0,3],[1,3],[1,2],[2,1],[3,0]], ['ice-elemental','frost-knight','snow-beast'], mark(3,'frost-stairs','Blizzard Staircase','暴雪階梯'), { decor: [[1,'frozen-banner',-55,70],[4,'ice-statue',70,65]] }),
+      map('Frozen Chapel', '凍結禮拜堂', [[0,1],[1,0],[1,2],[2,1],[3,1]], ['ice-elemental','snow-oracle','frost-knight','snow-beast'], mark(3,'crystal-altar','Crystal Altar','水晶祭壇'), { decor: [[2,'ice-choir',-65,70],[4,'shattered-window',75,-70]] }),
+      map('Ice Abyss', '冰淵裂谷', [[0,0],[1,0],[1,1],[2,2],[3,2]], ['ice-elemental','snow-oracle','frost-knight','snow-beast'], mark(3,'ice-rift','Ice Rift','冰淵裂隙'), { hazards: [{anchor:2,type:'ice-rift',dx:70,dy:48},{anchor:4,type:'ice-rift',dx:-95,dy:75}], decor: [[1,'frozen-column',-65,75]], boss: 'glacial-herald' }),
     ],
   },
   {
     id: 'hell-rift', name: { en: 'Hell Rift', zh: '地獄裂口' }, theme: 'abyss',
     maps: [
-      map('Lava Battlefield', '熔岩戰場', [[0,1,'wide'],[1,1,'wide'],[1,0,'wide'],[2,1,'wide'],[2,2,'wide'],[3,1,'wide']], [[0,1,'x'],[1,2,'y'],[1,3,'x'],[3,4,'y'],[3,5,'x']], ['infernal','hellhound','cinderling','frost-knight','parasite'], mark(3,'war-crater','Infernal War Crater','煉獄戰坑'), { countBonus: 12, hazards: [{room:2,type:'lava',dx:70,dy:65},{room:4,type:'lava',dx:-85,dy:70}], decor: [[1,'fallen-standard',-70,-75],[5,'obsidian-spike',80,-65]] }),
-      map('Void Corridor', '虛空迴廊', [[0,0,'standard'],[1,0,'wide'],[1,1,'standard'],[2,1,'wide'],[2,2,'standard'],[3,2,'wide']], [[0,1,'x'],[1,2,'y'],[2,3,'x'],[3,4,'y'],[4,5,'x']], ['imp','ghost','infernal','skeletal-guard','blighted-wolf','ice-elemental','void-tendril','cinderling','frost-knight','grave-burrower'], mark(3,'void-mirror','Mirror of the Void','虛空之鏡'), { decor: [[2,'rune-slab',65,65],[5,'rift-torch',-70,-70]] }),
-      map('Abyss Throne', '深淵王座', [[0,1,'standard'],[1,1,'wide'],[1,0,'standard'],[2,1,'wide'],[3,1,'wide']], [[0,1,'x'],[1,2,'y'],[1,3,'x'],[3,4,'x']], ['infernal','hellhound','ice-elemental','ghost','parasite','void-tendril'], mark(4,'abyss-throne','Throne of the Abyss Lord','深淵之主王座'), { decor: [[1,'dark-obelisk',-85,72],[3,'fallen-crown',65,-70]], boss: 'abyss-lord' }),
+      map('Lava Battlefield', '熔岩戰場', [[0,1],[1,1],[1,0],[2,1],[2,2],[3,1]], ['infernal','hellhound','cinderling','frost-knight','parasite'], mark(3,'war-crater','Infernal War Crater','煉獄戰坑'), { countBonus: 12, hazards: [{anchor:2,type:'lava',dx:70,dy:65},{anchor:4,type:'lava',dx:-85,dy:70}], decor: [[1,'fallen-standard',-70,-75],[5,'obsidian-spike',80,-65]] }),
+      map('Void Corridor', '虛空迴廊', [[0,0],[1,0],[1,1],[2,1],[2,2],[3,2]], ['imp','ghost','infernal','skeletal-guard','blighted-wolf','ice-elemental','void-tendril','cinderling','frost-knight','grave-burrower'], mark(3,'void-mirror','Mirror of the Void','虛空之鏡'), { decor: [[2,'rune-slab',65,65],[5,'rift-torch',-70,-70]] }),
+      map('Abyss Throne', '深淵王座', [[0,1],[1,1],[1,0],[2,1],[3,1]], ['infernal','hellhound','ice-elemental','ghost','parasite','void-tendril'], mark(4,'abyss-throne','Throne of the Abyss Lord','深淵之主王座'), { decor: [[1,'dark-obelisk',-85,72],[3,'fallen-crown',65,-70]], boss: 'abyss-lord' }),
     ],
   },
 ];
@@ -89,9 +89,7 @@ export const BOSSES = {
 };
 
 export const WORLD = {
-  bounds: { width: 2400, height: 2400 }, gridOrigin: 345, gridStep: 535,
-  roomShapes: { narrow: [340,340], standard: [390,390], wide: [450,450] }, corridorWidth: 170,
-  spawnPadding: 48, spawnDistance: 260, spawnAttempts: 12, portalOffset: 100,
+  bounds: { width: 2400, height: 2400 }, spawnDistance: 260,
   sheepGateAct: 1, maxEnemies: 300,
   baseHealth: 45, baseDamage: 8, baseSpeed: 65, baseXp: 12, baseGold: 8,
   baseLevel: 1, levelsPerAct: 5, levelsPerMap: 2, levelsPerDifficulty: 14, levelsPerDepth: 2,
@@ -106,14 +104,8 @@ export const WORLD = {
   firstBossGold: 500, deathGoldRate: 0.05, deathGoldCap: 80,
   sheepHealth: 60, sheepXpMultiplier: 3, sheepDropChance: 0.65,
   hazardRadius: 54, hazardDamage: 5, hazardTick: 1,
-  dungeonGridSize: 4, dungeonMinRooms: 5, dungeonRoomVariance: 4, dungeonEventChance: 0.55,
-  dungeonTemplates: [
-    {id:'crypt', w:380, h:380, decor:'sarcophagus'},
-    {id:'shrine', w:410, h:410, decor:'dark-shrine'},
-    {id:'barracks', w:440, h:390, decor:'broken-armory'},
-    {id:'cavern', w:395, h:445, decor:'stalagmites'},
-    {id:'vault', w:445, h:425, decor:'sealed-coffer'},
-  ],
+  dungeonEventChance: 0.55,
+  dungeonDecor: ['sarcophagus', 'dark-shrine', 'broken-armory', 'stalagmites', 'sealed-coffer'],
   dungeonEvents: ['treasure','ambush','altar','trap'],
   dungeonMonsters: ['skeletal-guard','zombie-mage','grave-burrower','ghost','void-tendril','parasite','infernal','ice-elemental'],
   themeDecor: {
