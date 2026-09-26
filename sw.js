@@ -1,5 +1,5 @@
 /* Asset list and its import hash are refreshed together for each release. */
-importScripts('./sw-assets.js?v=88f6bc0ee82ccf76');
+importScripts('./sw-assets.js?v=496f4f183f01624d');
 
 const CACHE_PREFIX = 'nightreap-assets-';
 const CACHE_NAME = CACHE_PREFIX + RELEASE.version;
