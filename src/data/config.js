@@ -32,7 +32,7 @@ export const UI = {
   sanctuary:{en:'Sanctuary',zh:'永夜庇護所'}, character:{en:'Choose your oath',zh:'選擇你的誓約'},
   save:{en:'Save',zh:'存檔'}, load:{en:'Load',zh:'讀檔'}, export:{en:'Export',zh:'匯出'}, import:{en:'Import',zh:'匯入'},
   restore:{en:'Restore backup',zh:'還原備份'}, confirmImport:{en:'Back up & import',zh:'備份並匯入'}, cancel:{en:'Cancel',zh:'取消'},
-  music:{en:'Music',zh:'音樂'}, sfx:{en:'Sound effects',zh:'音效'}, close:{en:'Close',zh:'關閉'},
+  music:{en:'Music',zh:'音樂'}, sfx:{en:'Sound effects',zh:'音效'}, fullscreen:{en:'Fullscreen',zh:'啟動全螢幕'}, close:{en:'Close',zh:'關閉'},
   equip:{en:'Equip',zh:'裝備'}, unequip:{en:'Unequip',zh:'卸下'}, sell:{en:'Sell',zh:'出售'},
   reroll:{en:'Reroll',zh:'重鑄'}, reforge:{en:'Reforge',zh:'洗詞綴'}, upgrade:{en:'Upgrade',zh:'升級詞綴'},
   repair:{en:'Repair all',zh:'全部修理'}, health:{en:'Health potion',zh:'生命藥水'}, resource:{en:'Resource potion',zh:'資源藥水'}, gamble:{en:'Gamble',zh:'賭裝'},

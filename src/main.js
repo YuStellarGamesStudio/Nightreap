@@ -1,15 +1,15 @@
-import { CONFIG, UI, ART } from './data/config.js?v=cd5d8d477f8af273';
+import { CONFIG, UI, ART } from './data/config.js?v=717cc8651159a6d8';
 import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
 import { CLASSES, COMBAT } from './data/combat.js?v=fdc1129299fc0d36';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
 import { ACT_MUSIC } from './data/audio.js?v=c5e4578c00cd424f';
-import { Renderer } from './core/renderer.js?v=d19342dc5ffc2400';
+import { Renderer } from './core/renderer.js?v=5b5bae0cb019f4d5';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=b1c05ff8179f76b6';
+import { GameLoop } from './core/loop.js?v=91bfe918d00a4b1e';
 import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
-import { Combat, createPlayer } from './systems/combat.js?v=32c07296c25cbb73';
+import { Combat, createPlayer } from './systems/combat.js?v=12e0e4dd7a7b481b';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
@@ -753,7 +753,11 @@ function openSettings() {
   content.append(bindings);
   const actions = node('div', 'modal-actions');
   actions.append(button(message(UI.load), () => void showSlots()), button(message(UI.export), () => void exportSaves()), button(message(UI.import), () => $('import-file').click()),
-    button(message(UI.restore), () => void restoreBackup()));
+    button(message(UI.restore), () => void restoreBackup()),
+    button(message(UI.fullscreen), () => {
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+      else void document.documentElement.requestFullscreen().catch(() => {});
+    }));
   content.append(actions);
 }
 async function showSlots() {

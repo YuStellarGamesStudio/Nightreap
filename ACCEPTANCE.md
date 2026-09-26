@@ -267,3 +267,7 @@
 - 資料核對：`ATTACK_VFX` 涵蓋 `MONSTERS` 全部 25 個物種及骷髏、石像、狼三種召喚物，沒有遺漏；所有 `spell` 都有 `impact` 配方。
 - Node 以實際 `Combat` 驗證：焦骨亡者走 `enemyAction` 近戰路徑，警示圈引爆時產生亡靈色 `monsterSlash`，距離 50。燼火爆怪自爆時產生 `procExplosion`。煉獄獵犬接觸攻擊產生惡魔色 `monsterBite`，無對應的首領召喚物預設為虛空色 `monsterClaw`，骷髏召喚物為骨白色 `monsterSlash`。警示圈引爆前不會提早產生特效。
 - Chromium 以實際 `VfxRenderer` 繪製 4 種樣式，每種各畫預設與 9 種族系色（共 40 組），畫面無錯誤。未在實際戰鬥中逐一目視每種怪物。
+
+### 啟動全螢幕按鈕
+
+- Chromium 實測：設定面板操作列顯示「Fullscreen／啟動全螢幕」按鈕，按一次進入全螢幕、再按一次離開，無頁面錯誤；不寫入設定。Firefox／Safari 未測。
