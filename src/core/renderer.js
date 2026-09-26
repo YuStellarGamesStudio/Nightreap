@@ -1,8 +1,10 @@
-import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=4d35e4a0e061f8d9';
+import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=10a39b3874379afb';
 import { CONFIG, ART } from '../data/config.js?v=cd5d8d477f8af273';
 import { TerrainRenderer } from './terrain-renderer.js?v=f80ebf0560569bd3';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
+import { VfxRenderer } from './vfx-renderer.js?v=5aa8f7232f9b4626';
+import { visualRecipe } from '../data/vfx.js?v=a956e5f214ab820d';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
 
@@ -41,6 +43,7 @@ export class Renderer {
     this.shadows = [SHADOW.cast, SHADOW.contact].map(layer => ({ layer, texture: shadowTexture(layer.stops) }));
     this.motion = new WeakMap();
     this.terrain = new TerrainRenderer(this.ctx, (x, y) => this.screen(x, y));
+    this.vfx = new VfxRenderer(this.ctx, (x, y) => this.screen(x, y), this.shadows[1].texture);
     this.camera = { x: 0, y: 0 };
     this.width = 0; this.height = 0;
     this.rasterRatio = 0;
@@ -176,6 +179,11 @@ export class Renderer {
       const h=this.screen(hazard.x,hazard.y);
       ctx.fillStyle='#90526430';ctx.strokeStyle='#9f786c60';ctx.beginPath();ctx.ellipse(h.x,h.y,hazard.radius*CONFIG.zoom,hazard.radius*CONFIG.zoom/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();
     }
+    const follow={ x:(p.prevX??p.x)+(p.x-(p.prevX??p.x))*alpha, y:(p.prevY??p.y)+(p.y-(p.prevY??p.y))*alpha };
+    const effects=state.effects||[], visuals=state.visuals||[];
+    this.vfx.drawFields(effects,state.time,true,follow);
+    this.vfx.drawVisuals(visuals,state.time,true);
+    this.vfx.drawOverlays(p,follow,state.time,true);
     const actors=[...state.area.obstacles,...(state.enemies||[]),...(state.minions||[]),p];
     actors.sort((a,b) => (a.x+a.y)-(b.x+b.y));
     for (const entity of actors) {
@@ -195,6 +203,7 @@ export class Renderer {
       if (!pose || pose.art!==art) {
         pose={ art, x:worldX, y:worldY, phase:0, facing:1, moving:false, floatPhase:state.time*ANIMATION.floatRate };
         this.motion.set(entity,pose);
+        this.faceAttack(entity,pose,worldX,worldY,state.time);
       } else if (!state.paused) {
         const dx=worldX-pose.x,dy=worldY-pose.y;
         const distance=Math.hypot(dx,dy);
@@ -208,6 +217,7 @@ export class Renderer {
         }
         pose.x=worldX;pose.y=worldY;
         pose.floatPhase=state.time*ANIMATION.floatRate;
+        this.faceAttack(entity,pose,worldX,worldY,state.time);
       }
       const floating=FLOATING_ART.has(art);
       const phase=floating?pose.floatPhase:null;
@@ -218,14 +228,21 @@ export class Renderer {
       if(entity.hp<entity.maxHp || entity.boss){ctx.fillStyle='#20151d';ctx.fillRect(point.x-CONFIG.barWidth/2,point.y-size-CONFIG.barHeight,CONFIG.barWidth,CONFIG.barHeight);ctx.fillStyle=entity===p?'#b25261':'#bd865a';ctx.fillRect(point.x-CONFIG.barWidth/2,point.y-size-CONFIG.barHeight,CONFIG.barWidth*Math.max(0,entity.hp/entity.maxHp),CONFIG.barHeight);}
       if(entity.status && Object.values(entity.status).some(v=>v>0||v?.duration>0)){ctx.strokeStyle=entity.status.frozen?'#9bdded':'#ca7657';ctx.beginPath();ctx.arc(point.x,point.y-size/2,size/2,0,Math.PI*2);ctx.stroke();}
     }
-    for(const effect of state.effects || []){
+    for(const effect of effects){
+      if (effect.vfx && visualRecipe(effect.vfx,'field',effect.vfxPart)) continue;
       const q=this.screen(effect.x,effect.y),r=(effect.radius||CONFIG.playerRadius)*CONFIG.zoom;
       ctx.globalAlpha=Math.min(1,Math.max(0,effect.life/(effect.maxLife||effect.life||1)))*CONFIG.effectOpacity;
       ctx.strokeStyle=effect.color||'#d9ae72';ctx.fillStyle=effect.color||'#a55241';ctx.lineWidth=2;
       ctx.beginPath();ctx.ellipse(q.x,q.y,r,r/2,0,0,Math.PI*2);ctx.stroke();ctx.globalAlpha*=0.2;ctx.fill();ctx.globalAlpha=1;
     }
+    this.vfx.drawFields(effects,state.time,false,follow);
+    this.vfx.drawVisuals(visuals,state.time,false);
+    this.vfx.drawOverlays(p,follow,state.time,false);
     for(const projectile of state.projectiles || []){
-      const q=this.screen(projectile.x,projectile.y),r=(projectile.radius||CONFIG.barHeight)*CONFIG.zoom;
+      const px=(projectile.prevX??projectile.x)+(projectile.x-(projectile.prevX??projectile.x))*alpha;
+      const py=(projectile.prevY??projectile.y)+(projectile.y-(projectile.prevY??projectile.y))*alpha;
+      if (projectile.side!=='enemy' && this.vfx.drawProjectile(projectile,px,py,state.time)) continue;
+      const q=this.screen(px,py),r=(projectile.radius||CONFIG.barHeight)*CONFIG.zoom;
       ctx.fillStyle=projectile.side==='enemy'?'#e47563':'#d8c69a';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=CONFIG.shadowWidth;
       ctx.beginPath();ctx.ellipse(q.x,q.y-CONFIG.playerRadius,r*2,r,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
     }
@@ -233,6 +250,14 @@ export class Renderer {
     const vignette=ctx.createRadialGradient(this.width/2,this.height/2,this.height/4,this.width/2,this.height/2,this.width/1.5);
     vignette.addColorStop(0,'#07090c00');vignette.addColorStop(1,'#050609bb');ctx.fillStyle=vignette;ctx.fillRect(0,0,this.width,this.height);
     this.minimap(state);
+  }
+  // Attack facing wins over movement facing briefly so strikes visibly point at their target.
+  faceAttack(entity,pose,x,y,time){
+    const aim=entity.attackAim;
+    // A new area restarts state.time, so aims stamped in a previous map are ignored.
+    if(!aim || time<aim.time || time-aim.time>ANIMATION.attackFacingHold) return;
+    const sideways=(aim.x-x)-(aim.y-y);
+    if(Math.abs(sideways)>ANIMATION.facingThreshold) pose.facing=sideways<0?-1:1;
   }
   minimap(state){
     this.terrain.drawMinimap(state.area, state.player,

@@ -16,6 +16,8 @@ export const ANIMATION = Object.freeze({
   floatRate: 2.6,
   floatHeight: 2.5,
   floatArmAngle: 0.14,
+  // Attackers mirror toward their target for this long, overriding movement facing.
+  attackFacingHold: 0.45,
 });
 
 // Grounding shadows are baked soft textures; radii/offsets scale with the drawn sprite size.

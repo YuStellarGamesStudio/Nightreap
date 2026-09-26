@@ -1,5 +1,6 @@
 import { CLASSES, COMBAT } from '../data/combat.js?v=936ca80f602c3b09';
 import { AUDIO } from '../data/audio.js?v=c5e4578c00cd424f';
+import { VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=a956e5f214ab820d';
 import { SpatialGrid } from '../core/spatial.js?v=aea79118b961517e';
 import { isWalkable } from './world.js?v=5c31f3b40f67ee3b';
 
@@ -49,8 +50,11 @@ export class Combat {
     state.minions ||= [];
     state.projectiles ||= [];
     state.effects ||= [];
+    state.visuals ||= [];
     state.corpses ||= [];
     state.time ||= 0;
+    this.visualKey = null;
+    this.visualPart = 0;
     const p = state.player;
     p.status ||= {};
     p.cooldowns ||= {};
@@ -139,7 +143,7 @@ export class Combat {
     if (!p.potions?.[type] || p[field] >= p[cap] || p.hp <= 0) return false;
     p.potions[type]--;
     p[field] = Math.min(p[cap], p[field] + p[cap] * B.potionFraction);
-    this.flash(p.x, p.y, p.radius, 'heal');
+    if (!this.visual('potion', 'cast', { x: p.x, y: p.y, radius: p.radius, variant: type })) this.flash(p.x, p.y, p.radius, 'heal');
     this.onEvent('potion');
     return true;
   }
@@ -162,8 +166,36 @@ export class Combat {
       / this.attackSpeed();
     const rank = Math.max(1, p.skillRanks[skill.id] || 1);
     const power = 1 + (rank - 1) * B.rankDamage;
-    for (const effect of skill.effects) this.execute(effect, target, power);
+    if (target !== p) this.aim(p, target);
+    this.visualKey = skill.id;
+    try {
+      this.visual(skill.id, 'launch', { x: p.x, y: p.y, x2: target.x, y2: target.y,
+        angle: Math.atan2(target.y - p.y, target.x - p.x), radius: p.radius });
+      skill.effects.forEach((effect, part) => { this.visualPart = part; this.execute(effect, target, power); });
+    } finally {
+      this.visualKey = null;
+      this.visualPart = 0;
+    }
     this.onEvent(index === 0 ? 'attack' : index === 7 ? 'ultimate' : 'skill');
+    return true;
+  }
+
+  // Renderers mirror the attacker toward this point for a short hold; purely cosmetic.
+  aim(entity, target) {
+    if (!target || (target.x === entity.x && target.y === entity.y)) return;
+    entity.attackAim = { x: target.x, y: target.y, time: this.state.time };
+  }
+
+  // Cosmetic event for the VFX renderer. Returns whether a recipe (even a silent one) exists.
+  visual(key, kind, data = {}) {
+    const part = data.part ?? this.visualPart;
+    const recipe = visualRecipe(key, kind, part, data.variant);
+    if (!recipe) return false;
+    if (!recipe.layers.length) return true;
+    const list = this.state.visuals;
+    if (list.length >= VFX_LIMITS.maxVisuals) list.shift();
+    list.push({ ...data, key, kind, part, life: recipe.life, maxLife: recipe.life,
+      seed: Math.floor(Math.random() * VFX_LIMITS.seedRange) });
     return true;
   }
 
@@ -240,7 +272,7 @@ export class Combat {
         if (roll(m.poisonOnHit || 0)) this.applyStatus(enemy, 'poisoned', 0, amount);
         if (roll(m.freezeOnHit || 0)) this.applyStatus(enemy, 'frozen');
         if (critical && roll(m.chainLightning || 0))
-          this.chain(enemy, B.procChainTargets, B.procChainRange, B.procChainDamage, { proc: false, element: 'lightning' });
+          this.chain(enemy, B.procChainTargets, B.procChainRange, B.procChainDamage, { proc: false, element: 'lightning', vfx: 'procChain' });
       }
     }
     if (enemy.hp <= 0) this.kill(enemy);
@@ -263,8 +295,8 @@ export class Combat {
     this.onEvent(enemy.boss ? 'bossKill' : 'kill');
     // Proc damage is explicitly non-triggering: explosions never recursively chain.
     if (roll(m.explosion || 0)) this.area(enemy.x, enemy.y, B.procExplosionRadius,
-      B.procExplosionDamage, { proc: false, element: 'fire' });
-    if (roll(m.skeletonOnKill || 0)) this.summon('skeleton', 1, B.skeletonLife);
+      B.procExplosionDamage, { proc: false, element: 'fire', vfx: 'procExplosion' });
+    if (roll(m.skeletonOnKill || 0)) this.summon('skeleton', 1, B.skeletonLife, 0, null, 'skeletonProc');
   }
 
   damagePlayer(amount, element = 'physical', attacker = null) {
@@ -277,7 +309,7 @@ export class Combat {
     if (actual >= p.hp && this.traits.cheatDeath && !p.cooldowns.cheatDeath) {
       p.hp = 1;
       p.cooldowns.cheatDeath = B.cheatDeathCooldown;
-      this.flash(p.x, p.y, p.radius, 'heal');
+      if (!this.visual('cheatDeath', 'cast', { x: p.x, y: p.y, radius: p.radius })) this.flash(p.x, p.y, p.radius, 'heal');
       return actual;
     }
     p.hp -= actual;
@@ -288,7 +320,7 @@ export class Combat {
       if (attacker && has(attacker, 'vampiric')) attacker.hp = Math.min(attacker.maxHp,
         attacker.hp + actual * B.eliteLeech);
       if (roll(this.traits.frostNova || 0)) this.area(p.x, p.y, B.procFrostRadius, 0,
-        { status: 'frozen', proc: false, element: 'frost' });
+        { status: 'frozen', proc: false, element: 'frost', vfx: 'procFrost' });
       this.onEvent('hurt');
     }
     if (p.hp <= 0 && !this.dead) { this.dead = true; this.onDeath(); }
@@ -308,7 +340,9 @@ export class Combat {
       else if (options.status) this.applyStatus(enemy, options.status, options.statusTime);
       hits++;
     }
-    this.flash(x, y, radius, options.element || options.status || 'physical');
+    if (!this.visual(options.vfx ?? this.visualKey, options.vfxKind ?? 'impact',
+      { x, y, radius, variant: options.element, part: options.vfxPart }))
+      this.flash(x, y, radius, options.element || options.status || 'physical');
     return hits;
   }
 
@@ -323,8 +357,10 @@ export class Combat {
     }
     if (hits >= (effect.crowd || Infinity)) this.player.resource = Math.min(this.player.maxResource,
       this.player.resource + effect.rage);
-    this.flash(origin.x + facing.x * effect.range / 2, origin.y + facing.y * effect.range / 2,
-      effect.range / 2, effect.element || 'physical');
+    if (!this.visual(this.visualKey, 'cast', { x: origin.x, y: origin.y, angle: Math.atan2(facing.y, facing.x),
+      range: effect.range, arc: effect.arc }))
+      this.flash(origin.x + facing.x * effect.range / 2, origin.y + facing.y * effect.range / 2,
+        effect.range / 2, effect.element || 'physical');
   }
 
   line(origin, target, effect, power) {
@@ -336,16 +372,18 @@ export class Combat {
       if (along >= 0 && along <= effect.range && side <= effect.width + enemy.radius)
         this.damageEnemy(enemy, power * effect.power, effect);
     }
-    this.flash(endpoint.x, endpoint.y, effect.width, effect.element || 'physical');
+    if (!this.visual(this.visualKey, 'cast', { x: origin.x, y: origin.y, angle: Math.atan2(facing.y, facing.x),
+      range: effect.range, width: effect.width, radius: effect.width }))
+      this.flash(endpoint.x, endpoint.y, effect.width, effect.element || 'physical');
   }
 
   chain(first, jumps, range, power, options = {}) {
-    const visited = new Set();
+    const visited = new Set(), points = options.from ? [{ x: options.from.x, y: options.from.y }] : [];
     let current = first;
     for (let i = 0; current && i < jumps; i++) {
       visited.add(current);
+      points.push({ x: current.x, y: current.y });
       this.damageEnemy(current, power, options);
-      this.flash(current.x, current.y, current.radius * 2, 'lightning');
       let next = null, closest = Infinity;
       for (const enemy of this.nearby(current.x, current.y, range)) {
         const dist = distance(current, enemy);
@@ -353,15 +391,17 @@ export class Combat {
       }
       current = next;
     }
+    if (!this.visual(options.vfx ?? this.visualKey, 'cast', { x: points[0].x, y: points[0].y, points }))
+      for (const point of points) this.flash(point.x, point.y, first.radius * 2, 'lightning');
   }
 
-  summon(kind, count, duration, taunt = 0) {
+  summon(kind, count, duration, taunt = 0, at = null, vfx = null) {
     const s = this.state, p = this.player;
     for (let i = 0; i < count && s.minions.length < B.maxMinions; i++) {
       if (kind === 'golem' && s.minions.some(minion => minion.kind === 'golem')) break;
       const angle = Math.random() * Math.PI * 2;
-      const x = p.x + Math.cos(angle) * B.minionRadius * 2;
-      const y = p.y + Math.sin(angle) * B.minionRadius * 2;
+      const x = at ? at.x : p.x + Math.cos(angle) * B.minionRadius * 2;
+      const y = at ? at.y : p.y + Math.sin(angle) * B.minionRadius * 2;
       const minion = {
         id: `minion-${++this.nextMinionId}`, kind, family: kind, side: 'player',
         x: isWalkable(s.area, x, y, B.minionRadius) ? x : p.x,
@@ -374,7 +414,8 @@ export class Combat {
         life: duration, attackTime: 0, taunt, status: {},
       };
       s.minions.push(minion);
-      this.flash(minion.x, minion.y, minion.radius * 2, kind === 'wolf' ? 'heal' : 'arcane');
+      if (!this.visual(vfx ?? this.visualKey, 'summon', { x: minion.x, y: minion.y, radius: minion.radius }))
+        this.flash(minion.x, minion.y, minion.radius * 2, kind === 'wolf' ? 'heal' : 'arcane');
     }
   }
 
@@ -395,7 +436,8 @@ export class Combat {
             power: effect.power * power, speed: B.projectileSpeed, range: effect.range,
             radius: B.projectileRadius, homing: effect.homing, pierce: effect.pierce,
             blast: effect.blast, status: effect.status, statusTime: effect.statusTime,
-            knockback: effect.knockback, element: effect.element });
+            knockback: effect.knockback, element: effect.element,
+            vfx: this.visualKey, vfxPart: this.visualPart });
         }
         break;
       }
@@ -406,7 +448,7 @@ export class Combat {
           if (dist < best) { nearest = enemy; best = dist; }
         }
         if (nearest) this.chain(nearest, effect.jumps, effect.jumpRange, effect.power * power,
-          { element: effect.element });
+          { element: effect.element, from: p });
         break;
       }
       case 'zone': {
@@ -417,7 +459,8 @@ export class Combat {
           maxLife: (effect.delay || 0) + (effect.duration || 0) + B.effectFlashLife,
           delay: effect.delay || 0, active: effect.duration || 0, interval: effect.interval || 0,
           pulse: 0, pulses: effect.pulses || 0, power: power * effect.power,
-          element: effect.element, status: effect.status, statusTime: effect.statusTime, side: 'player' });
+          element: effect.element, status: effect.status, statusTime: effect.statusTime, side: 'player',
+          ...this.fieldVisual(effect.delay) });
         break;
       }
       case 'aura':
@@ -426,23 +469,32 @@ export class Combat {
           maxLife: effect.duration, interval: effect.interval, pulse: 0,
           follow: effect.follow, pull: effect.pull, reflect: effect.reflect,
           randomElement: effect.randomElement, power: effect.power * power,
-          element: effect.element, side: 'player' });
+          element: effect.element, side: 'player', ...this.fieldVisual() });
         break;
-      case 'buff': p.buffs[effect.key] = { ...effect, life: effect.duration
-        * (p.classId === 'druid' && effect.key === 'stormavatar' ? 1 + B.passiveDruidForm : 1) }; break;
+      case 'buff':
+        p.buffs[effect.key] = { ...effect, life: effect.duration
+          * (p.classId === 'druid' && effect.key === 'stormavatar' ? 1 + B.passiveDruidForm : 1) };
+        p.buffs[effect.key].duration = p.buffs[effect.key].life;
+        this.visual(this.visualKey, 'cast', { x: p.x, y: p.y, radius: p.radius });
+        break;
       case 'buffMinions':
-        for (const minion of s.minions) minion.buff = { life: effect.duration,
-          damage: effect.damage, speed: effect.speed }; break;
+        for (const minion of s.minions) {
+          minion.buff = { life: effect.duration, damage: effect.damage, speed: effect.speed };
+          this.visual(this.visualKey, 'minion', { x: minion.x, y: minion.y, radius: minion.radius });
+        }
+        break;
       case 'blink':
       case 'dash': {
         const dest = this.destination(target, effect.range);
         if (dest) {
+          const from = { x: p.x, y: p.y };
           if (effect.type === 'dash') {
             const d = direction(p, dest);
             this.move(p, d.x * distance(p, dest), d.y * distance(p, dest));
           } else { p.x = dest.x; p.y = dest.y; }
           if (effect.invulnerable) p.buffs.invulnerable = { life: effect.invulnerable };
-          this.flash(p.x, p.y, p.radius * 2, 'arcane');
+          if (!this.visual(this.visualKey, 'cast', { x: from.x, y: from.y, x2: p.x, y2: p.y, radius: p.radius }))
+            this.flash(p.x, p.y, p.radius * 2, 'arcane');
         }
         break;
       }
@@ -450,6 +502,7 @@ export class Combat {
         const dest = this.destination(target, effect.range);
         if (!dest) break;
         const d = direction(p, dest), length = distance(p, dest), hit = new Set();
+        const from = { x: p.x, y: p.y };
         for (let step = 0; step < length; step += B.collisionStep) {
           this.move(p, d.x * B.collisionStep, d.y * B.collisionStep);
           for (const enemy of this.nearby(p.x, p.y, effect.radius)) {
@@ -458,6 +511,7 @@ export class Combat {
             this.damageEnemy(enemy, effect.power * power, { ...effect, origin: p });
           }
         }
+        this.visual(this.visualKey, 'cast', { x: from.x, y: from.y, x2: p.x, y2: p.y, radius: effect.radius });
         if (effect.finishRadius) this.area(p.x, p.y, effect.finishRadius, effect.finishPower * power,
           { element: 'physical', knockback: effect.knockback });
         if (effect.invulnerable) p.buffs.invulnerable = { life: effect.invulnerable };
@@ -467,16 +521,15 @@ export class Combat {
         p.form = effect.form;
         this.refreshPlayer();
         if (effect.taunt) for (const enemy of this.nearby(p.x, p.y, effect.taunt)) enemy.tauntedBy = p;
-        this.flash(p.x, p.y, p.radius * 3, 'heal');
+        if (!this.visual(this.visualKey, 'cast', { x: p.x, y: p.y, radius: p.radius * 3 }))
+          this.flash(p.x, p.y, p.radius * 3, 'heal');
         break;
       case 'raise': {
         let raised = 0;
         for (let i = s.corpses.length - 1; i >= 0 && raised < effect.count; i--) {
           if (distance(s.corpses[i], p) > effect.range || s.minions.length >= B.maxMinions) continue;
           const corpse = s.corpses.splice(i, 1)[0];
-          this.summon(effect.kind, 1, B.skeletonLife);
-          const minion = s.minions.at(-1);
-          minion.x = corpse.x; minion.y = corpse.y;
+          this.summon(effect.kind, 1, B.skeletonLife, 0, corpse);
           raised++;
         }
         break;
@@ -506,7 +559,9 @@ export class Combat {
           enemy.prison = { x: point.x, y: point.y, radius: effect.radius, life: effect.duration };
         }
         s.effects.push({ x: point.x, y: point.y, radius: effect.radius,
-          type: 'prison', color: colors.physical, life: effect.duration, maxLife: effect.duration });
+          type: 'prison', color: colors.physical, life: effect.duration, maxLife: effect.duration,
+          ...this.fieldVisual() });
+        this.visual(this.visualKey, 'cast', { x: point.x, y: point.y, radius: effect.radius });
         break;
       }
       case 'trap': {
@@ -514,7 +569,8 @@ export class Combat {
         s.effects.push({ x: point.x, y: point.y, radius: effect.triggerRadius,
           blastRadius: effect.radius, type: 'trap', color: colors.fire,
           power: effect.power * power, element: effect.element,
-          life: effect.duration, maxLife: effect.duration });
+          life: effect.duration, maxLife: effect.duration, ...this.fieldVisual() });
+        this.visual(this.visualKey, 'cast', { x: point.x, y: point.y, radius: effect.triggerRadius });
         break;
       }
       case 'tornado': {
@@ -523,11 +579,17 @@ export class Combat {
           type: 'tornado', color: colors.frost, life: effect.duration,
           maxLife: effect.duration, speed: effect.speed, pulse: 0,
           interval: effect.interval, power: effect.power * power, pull: effect.pull,
-          side: 'player' });
+          side: 'player', ...this.fieldVisual() });
         break;
       }
       case 'summon': this.summon(effect.kind, effect.count, effect.duration, effect.taunt); break;
     }
+  }
+
+  // Persistent effects carry their skill id so the renderer can draw the matching field recipe.
+  fieldVisual(delay = 0) {
+    return { vfx: this.visualKey, vfxPart: this.visualPart, windup: delay || 0,
+      seed: Math.floor(Math.random() * VFX_LIMITS.seedRange) };
   }
 
   targetPoint(target, range) {
@@ -561,14 +623,21 @@ export class Combat {
       for (let step = 0; step < steps && !struck; step++) {
         shot.x += shot.dx * shot.speed * dt / steps;
         shot.y += shot.dy * shot.speed * dt / steps;
-        if (!isWalkable(s.area, shot.x, shot.y, shot.radius)) { struck = true; break; }
+        if (!isWalkable(s.area, shot.x, shot.y, shot.radius)) {
+          if (shot.side === 'player') this.visual(shot.vfx, 'hit', { x: shot.x, y: shot.y, angle: Math.atan2(shot.dy, shot.dx), part: shot.vfxPart });
+          struck = true; break;
+        }
         if (shot.side === 'player') {
           for (const enemy of this.nearby(shot.x, shot.y, shot.radius + B.projectileHitPadding)) {
             if (shot.hit.has(enemy)) continue;
             shot.hit.add(enemy);
             if (shot.blast) this.area(shot.x, shot.y, shot.blast, shot.power,
-              { status: shot.status, statusTime: shot.statusTime, element: shot.element });
-            else this.damageEnemy(enemy, shot.power, shot);
+              { status: shot.status, statusTime: shot.statusTime, element: shot.element,
+                vfx: shot.vfx, vfxPart: shot.vfxPart });
+            else {
+              this.damageEnemy(enemy, shot.power, shot);
+              this.visual(shot.vfx, 'hit', { x: shot.x, y: shot.y, angle: Math.atan2(shot.dy, shot.dx), part: shot.vfxPart });
+            }
             if (!shot.pierce) { struck = true; break; }
           }
         } else if (p.hp > 0 && distance(shot, p) < shot.radius + p.radius) {
@@ -576,7 +645,7 @@ export class Combat {
             this.damagePlayer(shot.damage, shot.element, shot.source);
             if (shot.status) this.applyStatus(p, shot.status, shot.statusTime);
           } else this.area(shot.x, shot.y, B.procExplosionRadius, B.procExplosionDamage,
-            { element: 'physical', proc: false });
+            { element: 'physical', proc: false, vfx: 'reflect' });
           struck = true;
         } else {
           for (const minion of s.minions) {
@@ -602,7 +671,8 @@ export class Combat {
         this.move(effect, effect.dx * effect.speed * dt, effect.dy * effect.speed * dt);
       }
       if (effect.type === 'trap' && this.nearby(effect.x, effect.y, effect.radius).length) {
-        this.area(effect.x, effect.y, effect.blastRadius, effect.power, { element: effect.element });
+        this.area(effect.x, effect.y, effect.blastRadius, effect.power,
+          { element: effect.element, vfx: effect.vfx, vfxPart: effect.vfxPart });
         effect.life = 0;
       }
       if (effect.type === 'zone' || effect.type === 'telegraph' || effect.type === 'aura'
@@ -628,7 +698,8 @@ export class Combat {
               this.area(effect.x, effect.y, effect.radius, effect.power,
                 { element, status: effect.status || (effect.randomElement && element === 'frost' ? 'frozen' :
                   effect.randomElement && element === 'fire' ? 'burning' : null),
-                statusTime: effect.statusTime, proc: effect.type === 'trail' ? false : undefined });
+                statusTime: effect.statusTime, proc: effect.type === 'trail' ? false : undefined,
+                vfx: effect.vfx, vfxPart: effect.vfxPart, vfxKind: 'pulse' });
             }
             if (effect.pulses > 0) effect.pulses--;
           }
@@ -680,6 +751,7 @@ export class Combat {
         this.damageEnemy(target, m.damage / this.player.damage * (1 + (m.buff?.damage || 0)),
           { proc: false, element: 'physical' });
         m.attackTime = B.minionAttackInterval;
+        this.aim(m, target);
       }
     }
   }
@@ -888,10 +960,14 @@ export class Combat {
           this.onEvent('monsterRoar');
         }
         if (enemy.boss) {
-          if (enemy.attackTime <= 0 && distance(enemy, enemy.target) < B.enemyLeash)
+          if (enemy.attackTime <= 0 && distance(enemy, enemy.target) < B.enemyLeash) {
             this.bossAction(enemy, enemy.target);
-        } else if (enemy.attackTime <= 0 && distance(enemy, enemy.target) < B.enemyAggro)
+            this.aim(enemy, enemy.target);
+          }
+        } else if (enemy.attackTime <= 0 && distance(enemy, enemy.target) < B.enemyAggro) {
           this.enemyAction(enemy, enemy.target);
+          if (enemy.attackTime > 0) this.aim(enemy, enemy.target);
+        }
       }
       const target = enemy.target || p, dist = distance(enemy, target);
       if (dist > B.enemyLeash) continue;
@@ -930,7 +1006,7 @@ export class Combat {
       p.buffs.stormavatar.lightningTime = (p.buffs.stormavatar.lightningTime || 0) - dt;
       if (p.buffs.stormavatar.lightningTime <= 0) {
         p.buffs.stormavatar.lightningTime = B.stormInterval;
-        this.area(p.x, p.y, B.stormRadius, B.stormDamage, { element: 'lightning' });
+        this.area(p.x, p.y, B.stormRadius, B.stormDamage, { element: 'lightning', vfx: 'stormStrike' });
       }
     }
     this.tickStatuses(p, dt);
@@ -961,7 +1037,8 @@ export class Combat {
         s.effects.push({ x: p.x, y: p.y, radius: B.trailRadius, type: 'trail',
           color: colors.fire, life: B.trailLife, maxLife: B.trailLife,
           interval: B.fireTrailTick, pulse: 0, power: p.damage * B.trailDamage / p.damage,
-          element: 'fire', side: 'player' });
+          element: 'fire', side: 'player', vfx: 'fireTrail', vfxPart: 0,
+          seed: Math.floor(Math.random() * VFX_LIMITS.seedRange) });
       }
     }
     this.attackTime = Math.max(0, this.attackTime - dt);
@@ -978,6 +1055,10 @@ export class Combat {
     this.grid.rebuild(s.enemies);
     this.tickProjectiles(dt);
     this.tickEffects(dt);
+    for (let i = s.visuals.length - 1; i >= 0; i--) {
+      s.visuals[i].life -= dt;
+      if (s.visuals[i].life <= 0) s.visuals.splice(i, 1);
+    }
     this.tickMinions(dt);
     for (let i = s.corpses.length - 1; i >= 0; i--) {
       s.corpses[i].life -= dt;
