@@ -1,7 +1,7 @@
 import {
   CLASS_IDS, DATABASE_NAME, DATABASE_VERSION, DEFAULT_SETTINGS,
   GEAR_SLOTS, ITEM_RARITIES, SAVE_LIMITS, SAVE_SCHEMA_VERSION,
-} from '../data/save.js?v=459c3b474f9babff';
+} from '../data/save.js?v=3f0d6ba9d81adfbd';
 import { AFFIXES } from '../data/gear.js?v=dd3a72133bbc3a05';
 
 const classes = new Set(CLASS_IDS);
@@ -47,13 +47,18 @@ function label(value, path) {
 }
 
 function settingsValue(value) {
-  object(value, 'settings', ['language', 'musicEnabled', 'sfxEnabled', 'musicVolume', 'sfxVolume']);
+  object(value, 'settings', ['language', 'musicEnabled', 'sfxEnabled', 'musicVolume', 'sfxVolume'],
+    ['leftMouseSkill', 'rightMouseSkill']);
   if (value.language !== 'en' && value.language !== 'zh') fail('settings.language');
   if (typeof value.musicEnabled !== 'boolean' || typeof value.sfxEnabled !== 'boolean') fail('settings.enabled');
   return {
     language: value.language, musicEnabled: value.musicEnabled, sfxEnabled: value.sfxEnabled,
     musicVolume: number(value.musicVolume, 'settings.musicVolume', 0, SAVE_LIMITS.volume, false),
     sfxVolume: number(value.sfxVolume, 'settings.sfxVolume', 0, SAVE_LIMITS.volume, false),
+    leftMouseSkill: Object.hasOwn(value, 'leftMouseSkill')
+      ? number(value.leftMouseSkill, 'settings.leftMouseSkill', 0, SAVE_LIMITS.mouseSkill) : DEFAULT_SETTINGS.leftMouseSkill,
+    rightMouseSkill: Object.hasOwn(value, 'rightMouseSkill')
+      ? number(value.rightMouseSkill, 'settings.rightMouseSkill', 0, SAVE_LIMITS.mouseSkill) : DEFAULT_SETTINGS.rightMouseSkill,
   };
 }
 

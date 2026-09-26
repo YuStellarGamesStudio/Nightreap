@@ -25,8 +25,8 @@
 
 ### 本輪介面與探索
 
-- 開始畫面提供開始／繼續旅程、讀取、設定及語言切換；五幕各有獨立村落式庇護所，商人與鍛造僅在城鎮可用。
-- 背包按需開啟，裝備以人形九槽呈現；技能圖示列位於下方。角色與怪物採分件 SVG 步態。
+- 開始畫面提供開始／繼續旅程、設定及語言切換；讀檔移入設定，存檔直接保存目前角色。五幕各有獨立村落式庇護所，商人與鍛造僅在城鎮可用。
+- 背包按需開啟，每頁依可用高度填滿物品列，裝備以人形九槽呈現；設定可分別指定滑鼠左右鍵技能，下方技能列標示 LMB／RMB。角色與怪物採分件 SVG 步態。
 - 野外與地下城為連續大地圖，包含實體地形障礙、隨機怪群及探索黑霧。
 
 ### 安裝與離線
@@ -66,8 +66,8 @@ Core loop: **Explore → Slay and loot → Combine affixes → Prepare in town �
 
 ### Current interface and exploration
 
-- A title screen offers start/continue, loading, settings and language selection. Each act has a distinct sanctuary village; trading and forging are town-only.
-- Inventory opens on demand with nine anatomical equipment slots; the bottom skill bar uses icons. Actors use articulated SVG movement.
+- A title screen offers start/continue, settings and language selection. Load is inside Settings; Save immediately saves the current character. Each act has a distinct sanctuary village; trading and forging are town-only.
+- Inventory fills each page with as many complete item rows as fit; equipment uses nine anatomical slots. Settings assigns left/right mouse skills independently, marked LMB/RMB on the bottom skill bar. Actors use articulated SVG movement.
 - Continuous wilderness and dungeon maps feature solid obstacles, random monster packs and exploration fog.
 
 ### Installation and offline play

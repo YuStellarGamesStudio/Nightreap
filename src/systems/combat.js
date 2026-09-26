@@ -1,7 +1,7 @@
 import { CLASSES, COMBAT } from '../data/combat.js?v=936ca80f602c3b09';
 import { AUDIO } from '../data/audio.js?v=09b125992cee5872';
-import { SpatialGrid } from '../core/spatial.js?v=74cbf7213b824da4';
-import { isWalkable } from './world.js?v=51b61829a8005c30';
+import { SpatialGrid } from '../core/spatial.js?v=39592db5ad528eff';
+import { isWalkable } from './world.js?v=29b0bb86fb9a7f41';
 
 const B = COMBAT.base;
 const colors = COMBAT.colors;
@@ -965,7 +965,10 @@ export class Combat {
       }
     }
     this.attackTime = Math.max(0, this.attackTime - dt);
-    if (input.attack && this.attackTime <= 0 && this.cast(0, input.aim))
+    const leftSkill = input.attackSkill ?? 0, rightSkill = input.secondarySkill ?? 1;
+    if (input.attack && (leftSkill !== 0 || this.attackTime <= 0) && this.cast(leftSkill, input.aim) && leftSkill === 0)
+      this.attackTime = B.attackInterval / this.attackSpeed();
+    if (input.secondary && (rightSkill !== 0 || this.attackTime <= 0) && this.cast(rightSkill, input.aim) && rightSkill === 0)
       this.attackTime = B.attackInterval / this.attackSpeed();
     this.enemyThought += dt;
     const think = this.enemyThought >= B.enemyThink;

@@ -26,6 +26,7 @@ export const SAVE_LIMITS = Object.freeze({
   skillRanks: 100,
   rank: 100,
   volume: 100,
+  mouseSkill: 7,
   durability: 100,
 });
 export const DEFAULT_SETTINGS = Object.freeze({
@@ -34,4 +35,6 @@ export const DEFAULT_SETTINGS = Object.freeze({
   sfxEnabled: true,
   musicVolume: 35,
   sfxVolume: 60,
+  leftMouseSkill: 0,
+  rightMouseSkill: 1,
 });

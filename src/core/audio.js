@@ -1,5 +1,5 @@
 import { AUDIO, SFX } from '../data/audio.js?v=09b125992cee5872';
-import { DEFAULT_SETTINGS } from '../data/save.js?v=459c3b474f9babff';
+import { DEFAULT_SETTINGS } from '../data/save.js?v=3f0d6ba9d81adfbd';
 
 export class AudioManager {
   constructor() {

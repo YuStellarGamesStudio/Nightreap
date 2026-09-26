@@ -90,7 +90,7 @@ export const BOSSES = {
 
 export const WORLD = {
   bounds: { width: 2400, height: 2400 }, spawnDistance: 260,
-  sheepGateAct: 1, maxEnemies: 300,
+  sheepGateAct: 1, maxEnemies: 300, enemyCountMultiplier: 1.75,
   baseHealth: 45, baseDamage: 8, baseSpeed: 65, baseXp: 12, baseGold: 8,
   baseLevel: 1, levelsPerAct: 5, levelsPerMap: 2, levelsPerDifficulty: 14, levelsPerDepth: 2,
   mapEnemies: 23, mapEnemiesPerMap: 3, dungeonEnemies: 20, dungeonEnemiesPerDepth: 2,

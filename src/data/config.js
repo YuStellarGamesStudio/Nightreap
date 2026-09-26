@@ -5,7 +5,7 @@ export const CONFIG = Object.freeze({
   cameraEase: 0.12, zoom: 0.85, spriteSize: 70, minionScale: 0.7, eliteScale: 1.35,
   groundTile: 160, renderMargin: 140, shadowWidth: 22, shadowHeight: 9,
   barWidth: 40, barHeight: 4, effectOpacity: 0.65, miniSize: 120,
-  uiInterval: 0.12, messageDuration: 5, inventoryPage: 6, notificationLimit: 4,
+  uiInterval: 0.12, messageDuration: 5, notificationLimit: 4,
   saveInterval: 10, maxEnemies: 300, maxMinions: 12,
   healthPotionFraction: 0.5, resourcePotionFraction: 0.5,
   start: { x: 1200, y: 1200 },

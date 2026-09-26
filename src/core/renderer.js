@@ -1,6 +1,6 @@
 import { ANIMATION, FLOATING_ART } from '../data/animation.js?v=ee8f6f7a081853ea';
-import { CONFIG, ART } from '../data/config.js?v=0bc99017d137590b';
-import { TerrainRenderer } from './terrain-renderer.js?v=5ecc32122c67f2b0';
+import { CONFIG, ART } from '../data/config.js?v=f3cc84c4d8c3fc5c';
+import { TerrainRenderer } from './terrain-renderer.js?v=3258d0c7db7d939a';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 

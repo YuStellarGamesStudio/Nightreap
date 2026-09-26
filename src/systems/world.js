@@ -1,4 +1,4 @@
-import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js?v=bea1f47a1d00e4e4';
+import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js?v=40cb852ed18520b2';
 import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
 
 const choice = (items, rng) => items[Math.min(items.length - 1, Math.floor(rng() * items.length))];
@@ -202,7 +202,8 @@ function populate(area, mapData, rng) {
   const amount = area.sheep ? WORLD.sheepEnemies : area.depth
     ? WORLD.dungeonEnemies + Math.floor(Math.sqrt(area.depth)) * WORLD.dungeonEnemiesPerDepth
     : WORLD.mapEnemies + area.map * WORLD.mapEnemiesPerMap + (mapData.countBonus || 0);
-  const count = Math.min(amount, WORLD.maxEnemies - (mapData.boss && !area.depth && !area.sheep ? 1 : 0));
+  const count = Math.min(Math.round(amount * WORLD.enemyCountMultiplier),
+    WORLD.maxEnemies - (mapData.boss && !area.depth && !area.sheep ? 1 : 0));
   const elites = area.sheep ? WORLD.sheepElites
     : WORLD.eliteBase + (mapData.eliteBonus || 0) + area.difficulty * WORLD.eliteBonus
       + Math.floor(area.depth * WORLD.eliteChanceByDepth);

@@ -1,17 +1,17 @@
-import { CONFIG, UI } from './data/config.js?v=0bc99017d137590b';
-import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=459c3b474f9babff';
+import { CONFIG, UI } from './data/config.js?v=f3cc84c4d8c3fc5c';
+import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=3f0d6ba9d81adfbd';
 import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
-import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=bea1f47a1d00e4e4';
+import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=40cb852ed18520b2';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
-import { Renderer } from './core/renderer.js?v=dc15259262893062';
+import { Renderer } from './core/renderer.js?v=beadc8db319fdef6';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=d6afbf4fc767ffde';
-import { AudioManager } from './core/audio.js?v=89a6cff3fc1a0229';
-import { Combat, createPlayer } from './systems/combat.js?v=816d5bab3bd095be';
-import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=51b61829a8005c30';
+import { GameLoop } from './core/loop.js?v=599b3dbb0b923c3b';
+import { AudioManager } from './core/audio.js?v=66b34d3e37d4bee5';
+import { Combat, createPlayer } from './systems/combat.js?v=62657ab5c8c2ba63';
+import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=29b0bb86fb9a7f41';
 import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js?v=eb46dd9db95cfb0f';
-import { SaveStore } from './systems/save.js?v=0fc28909b3cdaba8';
+import { SaveStore } from './systems/save.js?v=3ce6aea573ea9d07';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
 import { getLanguage, setLanguage, text } from './systems/i18n.js?v=05f50c421756c74c';
@@ -211,12 +211,13 @@ function renderSkills() {
   skillForm = player.form;
   const skills = combat.skills;
   $('skills').replaceChildren(...skills.map((skill, index) => {
-    const hotkey = index === 0 ? 'L' : index === 7 ? 'R' : String(index);
+    const hotkey = index === 0 ? '' : index === 7 ? 'R' : String(index);
+    const bindings = [hotkey, settings.leftMouseSkill === index ? 'LMB' : '', settings.rightMouseSkill === index ? 'RMB' : ''].filter(Boolean).join(' · ');
     const tile = button(null, () => { if (!inTown && !state.paused) combat.cast(index, input.aim); }, 'skill-button');
     const icon = node('img', 'skill-icon'); icon.src = `assets/skills.svg?v=59750d7c3dbfe6f5#${skill.id}`; icon.alt = '';
     tile.append(icon);
-    tile.title = `${index === 0 ? message(WORDS.primary) : index === 1 ? message(WORDS.secondary) : hotkey} · ${message(skill.description)}`;
-    tile.append(node('span', 'skill-key', hotkey), node('span', 'skill-name', message(skill.name)),
+    tile.title = `${bindings} · ${message(skill.description)}`;
+    tile.append(node('span', 'skill-key', bindings), node('span', 'skill-name', message(skill.name)),
       node('small', 'skill-cost', `${skill.cost} ${message(role().resourceName)}`));
     const remaining = player.cooldowns[skill.id] || 0;
     const cooldown = node('span', 'skill-cooldown', remaining > 0 ? `${remaining.toFixed(1)} ${message(WORDS.seconds)}` : '');
@@ -277,6 +278,13 @@ function itemIcon(slot, className = 'slot-icon') {
   icon.alt = '';
   return icon;
 }
+function inventoryPageSize() {
+  const grid = $('items'), style = getComputedStyle(grid);
+  const height = grid.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+  const gap = parseFloat(style.rowGap);
+  const rows = Math.max(1, Math.floor((height + gap) / (parseFloat(style.gridAutoRows) + gap)));
+  return rows * style.gridTemplateColumns.split(' ').length;
+}
 function renderInventory() {
   $('tab-inventory').setAttribute('aria-selected', String(activePanel === 'inventory'));
   $('tab-equipment').setAttribute('aria-selected', String(activePanel === 'equipment'));
@@ -303,12 +311,13 @@ function renderInventory() {
       return tile;
     }));
   } else {
-    const pages = Math.max(1, Math.ceil(player.inventory.length / CONFIG.inventoryPage));
-    page = Math.min(page, pages - 1);
+    const pageSize = inventoryPageSize();
+    const pages = Math.max(1, Math.ceil(player.inventory.length / pageSize));
+    page = Math.max(0, Math.min(page, pages - 1));
     $('page-number').textContent = `${page + 1} / ${pages}`;
     $('previous-page').disabled = page === 0;
     $('next-page').disabled = page >= pages - 1;
-    $('items').replaceChildren(...player.inventory.slice(page * CONFIG.inventoryPage, (page + 1) * CONFIG.inventoryPage).map(item => {
+    $('items').replaceChildren(...player.inventory.slice(page * pageSize, (page + 1) * pageSize).map(item => {
       const tile = button(null, () => { selectedItemId = item.id; renderItemDetail(); updateItemSelection(); }, 'item-button');
       tile.dataset.itemId = item.id;
       tile.dataset.rarity = item.rarity;
@@ -377,7 +386,7 @@ function renderTranslations() {
   document.documentElement.lang = language;
   for (const [id, key] of Object.entries({ 'brand-title':'title', 'brand-subtitle':'subtitle',
     'inventory-button':'inventory', 'sanctuary-title':'character', 'sanctuary-hint':'sanctuaryHint',
-    'save-button':'save', 'load-button':'load', 'settings-button':'settings',
+    'save-button':'save', 'settings-button':'settings',
     'town-button':'town', 'difficulty-caption':'difficulty',
     'next-button':'next', 'dungeon-button':'dungeon', 'sheep-button':'sheep',
     'resume-button':'resume', 'tab-inventory':'inventory', 'tab-equipment':'equipment',
@@ -390,7 +399,6 @@ function renderTranslations() {
   $('title-eyebrow').textContent = message(UI.subtitle);
   $('title-tagline').textContent = message(label('The night is endless. Your flame is not.', '長夜無盡，你的火光卻並非永恆。'));
   $('title-start').textContent = message(hasSavedCharacter ? label('Continue journey', '繼續旅程') : label('Begin your journey', '開始旅程'));
-  $('title-load').textContent = message(UI.load);
   $('title-settings').textContent = message(UI.settings);
   $('title-language').textContent = language === 'en' ? '中文' : 'English';
   $('title-footnote').textContent = message(label('A sanctuary waits beyond the dark.', '黑暗彼端，仍有庇護你的燈火。'));
@@ -503,45 +511,62 @@ function openSettings() {
   const content = openModal(UI.settings);
   for (const [prefix, name] of [['music', UI.music], ['sfx', UI.sfx]]) {
     const field = node('div', 'setting-row');
+    const caption = node('label', 'setting-toggle');
     const toggle = node('input'); toggle.type = 'checkbox'; toggle.checked = settings[`${prefix}Enabled`];
     const slider = node('input'); slider.type = 'range'; slider.min = '0'; slider.max = String(SAVE_LIMITS.volume); slider.value = String(settings[`${prefix}Volume`]);
+    slider.setAttribute('aria-label', `${message(name)} ${message(label('volume', '音量'))}`);
     const level = node('span', '', slider.value);
     toggle.addEventListener('change', () => { settings[`${prefix}Enabled`] = toggle.checked; audio.setSettings(settings); void persistSettings(); });
     slider.addEventListener('input', () => { settings[`${prefix}Volume`] = Number(slider.value); level.textContent = slider.value; audio.setSettings(settings); void persistSettings(); });
-    const caption = node('label', '', message(name)); caption.prepend(toggle);
+    caption.append(toggle, node('span', 'setting-track'), node('span', 'setting-caption', message(name)));
     field.append(caption, slider, level); content.append(field);
   }
+  const bindings = node('div', 'mouse-bindings');
+  bindings.append(node('p', '', message(label('Mouse skills · follows the skill slot when changing class or form.', '滑鼠技能 · 切換職業或形態時沿用技能欄位置。'))));
+  for (const [key, name] of [['leftMouseSkill', label('Left mouse', '滑鼠左鍵')], ['rightMouseSkill', label('Right mouse', '滑鼠右鍵')]]) {
+    const caption = node('label', 'setting-row', message(name));
+    const select = node('select');
+    select.id = key;
+    combat.skills.forEach((skill, index) => {
+      const option = node('option', '', message(skill.name));
+      option.value = String(index); select.append(option);
+    });
+    select.value = String(settings[key]);
+    select.addEventListener('change', () => {
+      settings[key] = Number(select.value);
+      renderSkills(); void persistSettings();
+    });
+    caption.append(select); bindings.append(caption);
+  }
+  content.append(bindings);
   const actions = node('div', 'modal-actions');
-  actions.append(button(message(UI.export), () => void exportSaves()), button(message(UI.import), () => $('import-file').click()),
+  actions.append(button(message(UI.load), () => void showSlots()), button(message(UI.export), () => void exportSaves()), button(message(UI.import), () => $('import-file').click()),
     button(message(UI.restore), () => void restoreBackup()));
   content.append(actions);
 }
-async function showSlots(load = false) {
+async function showSlots() {
   try {
     const entries = await saves.list();
-    const content = openModal(load ? UI.load : UI.save);
+    const content = openModal(UI.load);
     const grid = node('div', 'modal-grid'); content.append(grid);
     for (const entry of entries) {
       const name = message(CLASSES.find(character => character.id === entry.classId).name);
       const detail = entry.exists ? `${message(UI.level)} ${entry.level} · ${message(ACTS[entry.progress.act].name)}` : message(WORDS.newCharacter);
       const choice = button(`${name} · ${detail}`, async () => {
         try {
-          if (load) {
-            if (!entry.exists) { notify(UI.noSave); return; }
-            const restored = await saves.load(entry.classId);
-            if (!restored) { notify(UI.noSave); return; }
-            player = Object.assign(createPlayer(entry.classId), restored);
-            inTown = true; selectedItemId = null; page = 0;
-            makeState(createArea(player.progress));
-            hasSavedCharacter = true;
-            if (titleOpen) beginJourney();
-            notify(WORDS.loaded);
-          } else if (entry.classId === player.classId) await persist(true);
-          else { notify(label('Select that class at the sanctuary to save it.', '請先在庇護所選擇該職業才能存檔。')); return; }
+          if (!entry.exists) { notify(UI.noSave); return; }
+          const restored = await saves.load(entry.classId);
+          if (!restored) { notify(UI.noSave); return; }
+          player = Object.assign(createPlayer(entry.classId), restored);
+          inTown = true; selectedItemId = null; page = 0;
+          makeState(createArea(player.progress));
+          hasSavedCharacter = true;
+          if (titleOpen) beginJourney();
+          notify(WORDS.loaded);
           closeModal();
         } catch (error) { failure(error); }
       });
-      choice.disabled = !load && entry.classId !== player.classId;
+      choice.disabled = !entry.exists;
       grid.append(choice);
     }
     content.append(button(message(UI.export), () => void exportSaves()), button(message(UI.import), () => $('import-file').click()),
@@ -632,7 +657,8 @@ function action(key) {
 }
 function update(dt) {
   if (inTown || state.paused) return;
-  if (input.secondary) combat.cast(1, input.aim);
+  input.attackSkill = settings.leftMouseSkill;
+  input.secondarySkill = settings.rightMouseSkill;
   combat.update(dt, input);
   revealExploration(state.area, player.x, player.y);
   if (pendingDeath) { pendingDeath = false; returnTown(true); return; }
@@ -657,11 +683,9 @@ $('modal-close').addEventListener('click', closeModal);
 $('inventory-button').addEventListener('click', () => setInventoryOpen($('inventory-panel').hidden));
 $('inventory-close').addEventListener('click', () => setInventoryOpen(false));
 $('title-start').addEventListener('click', beginJourney);
-$('title-load').addEventListener('click', () => void showSlots(true));
 $('title-settings').addEventListener('click', openSettings);
 $('title-language').addEventListener('click', () => $('language-button').click());
-$('save-button').addEventListener('click', () => void showSlots());
-$('load-button').addEventListener('click', () => void showSlots(true));
+$('save-button').addEventListener('click', () => void persist(true));
 $('settings-button').addEventListener('click', openSettings);
 $('language-button').addEventListener('click', () => {
   closeModal();
@@ -699,6 +723,9 @@ $('tab-inventory').addEventListener('click', () => { activePanel = 'inventory'; 
 $('tab-equipment').addEventListener('click', () => { activePanel = 'equipment'; page = 0; renderInventory(); });
 $('previous-page').addEventListener('click', () => { page--; renderInventory(); });
 $('next-page').addEventListener('click', () => { page++; renderInventory(); });
+new ResizeObserver(() => {
+  if (!$('inventory-panel').hidden && activePanel === 'inventory') renderInventory();
+}).observe($('items'));
 $('shop-button').addEventListener('click', openShop);
 $('forge-button').addEventListener('click', () => openForge());
 $('health-potion').addEventListener('click', () => { if (!inTown) combat.usePotion('health'); });
@@ -729,7 +756,7 @@ async function boot() {
   makeState(createArea(player.progress));
   show('pause-overlay', false);
   show('desktop-warning', window.innerWidth < CONFIG.minWidth || window.innerHeight < CONFIG.minHeight);
-  $('title-start').disabled = $('title-load').disabled = $('title-settings').disabled = false;
+  $('title-start').disabled = $('title-settings').disabled = false;
   $('title-start').focus();
   void registerPWA({
     beforeUpdate: () => titleOpen ? Promise.resolve(true) : persist(),
