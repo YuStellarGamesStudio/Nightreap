@@ -1,20 +1,21 @@
-import { CONFIG, UI } from './data/config.js?v=f3cc84c4d8c3fc5c';
-import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=3f0d6ba9d81adfbd';
+import { CONFIG, UI } from './data/config.js?v=f28e6c5b4673f66a';
+import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
 import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
-import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=40cb852ed18520b2';
+import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
-import { Renderer } from './core/renderer.js?v=beadc8db319fdef6';
+import { Renderer } from './core/renderer.js?v=d92da5f9ff2e2756';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=599b3dbb0b923c3b';
-import { AudioManager } from './core/audio.js?v=66b34d3e37d4bee5';
-import { Combat, createPlayer } from './systems/combat.js?v=62657ab5c8c2ba63';
-import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=29b0bb86fb9a7f41';
-import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js?v=eb46dd9db95cfb0f';
-import { SaveStore } from './systems/save.js?v=3ce6aea573ea9d07';
+import { GameLoop } from './core/loop.js?v=6475da9477cdfb10';
+import { AudioManager } from './core/audio.js?v=3f8b4fd401f6503f';
+import { Combat, createPlayer } from './systems/combat.js?v=3f2d9f692e326157';
+import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
+import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
+import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
 import { getLanguage, setLanguage, text } from './systems/i18n.js?v=05f50c421756c74c';
+import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
 
 const $ = id => document.getElementById(id);
 const label = (en, zh) => ({ en, zh });
@@ -31,6 +32,13 @@ const WORDS = {
   noAffixes: label('No affixes on this item.', '這件裝備沒有詞綴。'),
   primary: label('LMB · Primary', '左鍵 · 普攻'), secondary: label('RMB · Secondary', '右鍵 · 次要攻擊'),
   sanctuaryOnly: label('Available in the sanctuary only.', '僅能在庇護所使用。'),
+  equipBest: label('Equip best', '一鍵換裝'),
+  saleFilter: label('Sell filter', '出售篩選'),
+  saleFilterActive: label('Sell filter · Auto ON', '出售篩選 · 自動開'),
+  screenshot: label('Screenshot', '截圖'),
+  screenshotReady: label('Screenshot download started.', '已開始下載截圖。'),
+  equipBestHint: label('Compare all inventory items by the sum of affix values / their T1 maximums. Skip broken items; keep equipped items on ties. Not a build-specific recommendation.',
+    '比較整個背包：各詞綴數值 ÷ 該詞綴 T1 上限後加總。略過損壞裝備，同分保留原裝；不代表特定流派最佳搭配。'),
 };
 const node = (tag, className, value) => {
   const element = document.createElement(tag);
@@ -61,7 +69,6 @@ let hasSavedCharacter = false;
 let activePanel = 'inventory';
 let page = 0;
 let selectedItemId = null;
-let notifyUntil = 0;
 let lastUi = 0;
 let saveElapsed = 0;
 let swapping = false;
@@ -78,8 +85,22 @@ function notify(value, sound) {
   const container = $('notifications');
   const notice = node('div', 'notice', message(value));
   container.prepend(notice);
-  while (container.childElementCount > CONFIG.notificationLimit) container.lastElementChild.remove();
-  notifyUntil = performance.now() + CONFIG.messageDuration * 1000;
+  // UI notices follow wall-clock time, independently of town or paused simulation.
+  const animation = notice.animate([
+    { opacity: 1, transform: 'translateX(0)' },
+    { opacity: 0, transform: 'translateX(100%)' },
+  ], {
+    delay: CONFIG.messageDuration * 1000,
+    duration: CONFIG.notificationExitDuration * 1000,
+    easing: 'ease-in',
+    fill: 'forwards',
+  });
+  animation.onfinish = () => notice.remove();
+  while (container.childElementCount > CONFIG.notificationLimit) {
+    const oldest = container.lastElementChild;
+    for (const active of oldest.getAnimations()) active.cancel();
+    oldest.remove();
+  }
 }
 function failure(error) {
   console.error(error);
@@ -113,7 +134,7 @@ function makeState(area) {
     modifiers: getModifiers,
     onKill(enemy) {
       const result = recordKill(player, area, enemy);
-      for (const event of grantLoot(player, enemy, area)) notify(event);
+      for (const event of grantLoot(player, enemy, area, settings.autoSell ? settings.saleFilter : null)) notify(event);
       if (result.cleared) notify(UI.cleared, 'portal');
       if (result.finalBoss) void persist();
       if (enemy.boss) setScene();
@@ -291,6 +312,9 @@ function renderInventory() {
   $('gold-value').textContent = `${player.gold} ${message(UI.gold)}`;
   $('materials-value').textContent = `${player.materials} ${message(UI.materials)} · ${player.tickets} ${message(UI.tickets)}`;
   const equipment = activePanel === 'equipment';
+  $('equip-best').disabled = !player.inventory.length;
+  $('sale-filter-button').textContent = message(settings.autoSell ? WORDS.saleFilterActive : WORDS.saleFilter);
+  $('sale-filter-button').dataset.autoSell = String(settings.autoSell);
   show('items', !equipment);
   show('inventory-pagination', !equipment);
   show('equipment-body', equipment);
@@ -384,6 +408,7 @@ function renderHud() {
 }
 function renderTranslations() {
   document.documentElement.lang = language;
+  $('screenshot-button').textContent = message(WORDS.screenshot);
   for (const [id, key] of Object.entries({ 'brand-title':'title', 'brand-subtitle':'subtitle',
     'inventory-button':'inventory', 'sanctuary-title':'character', 'sanctuary-hint':'sanctuaryHint',
     'save-button':'save', 'settings-button':'settings',
@@ -408,6 +433,8 @@ function renderTranslations() {
   $('modal-close').setAttribute('aria-label', message(UI.close));
   $('inventory-close').setAttribute('aria-label', message(UI.close));
   $('inventory-panel').setAttribute('aria-label', `${message(UI.inventory)} · ${message(UI.equipment)}`);
+  $('equip-best').textContent = message(WORDS.equipBest);
+  $('equip-best').title = message(WORDS.equipBestHint);
   $('shop-button').title = $('forge-button').title = inTown ? '' : message(WORDS.sanctuaryOnly);
 }
 function renderAll() { renderTranslations(); renderClassChoice(); renderProgress(); renderSkills(); renderInventory(); renderHud(); }
@@ -443,6 +470,98 @@ function rowButton(container, title, detail, callback) {
   container.append(row);
   return row;
 }
+function openSaleFilter() {
+  const content = openModal(WORDS.saleFilter);
+  const form = node('div', 'sale-filter');
+  form.append(node('p', 'sale-help', message(label(
+    'Match a selected rarity AND slot, up to the item level below. No selection means no sales.',
+    '稀有度、部位與等級上限須同時符合；同類可複選，未選擇則不出售。'))));
+  const groups = {};
+  const addGroup = (key, title, entries) => {
+    const field = node('fieldset', 'sale-group');
+    field.append(node('legend', '', message(title)));
+    const choices = node('div', 'sale-choices');
+    groups[key] = entries.map(([value, name]) => {
+      const caption = node('label', 'sale-choice');
+      const check = node('input');
+      check.type = 'checkbox'; check.value = value; check.id = `sale-${key}-${value}`;
+      check.checked = settings.saleFilter[key].includes(value);
+      const copy = node('span', '', message(name));
+      if (key === 'rarities') copy.dataset.rarity = value;
+      caption.append(check, copy); choices.append(caption);
+      return check;
+    });
+    field.append(choices); form.append(field);
+  };
+  addGroup('rarities', label('Rarity', '稀有度'), [
+    ['common', label('Common · White', '普通 · 白色')],
+    ['magic', label('Magic · Blue', '魔法 · 藍色')],
+    ['rare', label('Rare · Gold', '稀有 · 金色')],
+    ['legendary', label('Legendary · Orange', '傳說 · 橘色')],
+  ]);
+  addGroup('slots', label('Equipment slots', '裝備部位'),
+    Object.entries(SLOT_NAMES).filter(([slot]) => slot !== 'ring2'));
+  const levelLabel = node('label', 'sale-level', message(label('Maximum item level (inclusive)', '物品等級上限（含）')));
+  const level = node('input');
+  level.type = 'number'; level.id = 'sale-max-level'; level.min = '1';
+  level.max = String(SAVE_LIMITS.itemLevel); level.step = '1'; level.required = true;
+  level.value = String(settings.saleFilter.maxLevel);
+  levelLabel.append(level); form.append(levelLabel);
+  const summary = node('p', 'sale-summary'); summary.id = 'sale-summary'; summary.setAttribute('role', 'status');
+  form.append(summary);
+  const actions = node('div', 'sale-actions');
+  const manual = button('', () => {
+    if (!inTown || !level.reportValidity()) return;
+    const result = sellMatching(player, settings.saleFilter);
+    if (result.ok && result.count) {
+      renderInventory(); renderHud(); void persist();
+    }
+    refresh();
+    summary.textContent = `${message(result.message)} ${summary.textContent}`;
+  });
+  manual.id = 'sell-matching';
+  const automatic = button('', () => {
+    if (!settings.autoSell && !level.reportValidity()) return;
+    settings.autoSell = !settings.autoSell;
+    refresh(); renderInventory(); void persistSettings();
+  });
+  automatic.id = 'auto-sell-toggle';
+  actions.append(manual, automatic); form.append(actions);
+  form.append(node('p', 'sale-help', message(label(
+    'Manual sales: sanctuary only. Auto-sell: new drops only, even with a full bag. Equipped gear is never sold. Sales cannot be undone.',
+    '手動出售僅限庇護所；自動售出只處理新掉落，背包滿仍可售出。不出售身上裝備，售出後無法復原。'))));
+  content.append(form);
+  function refresh() {
+    const valid = level.validity.valid;
+    if (valid) {
+      settings.saleFilter = {
+        rarities: groups.rarities.filter(check => check.checked).map(check => check.value),
+        slots: groups.slots.filter(check => check.checked).map(check => check.value),
+        maxLevel: level.valueAsNumber,
+      };
+    }
+    const selected = settings.saleFilter.rarities.length && settings.saleFilter.slots.length;
+    if (!selected) settings.autoSell = false;
+    const preview = salePreview(player, settings.saleFilter);
+    summary.textContent = message(valid
+      ? label(`${preview.count} matching items · ${preview.gold} gold`, `符合 ${preview.count} 件 · 共 ${preview.gold} 金幣`)
+      : label(`Enter a whole level from 1 to ${SAVE_LIMITS.itemLevel}; this edit is not applied.`,
+        `請輸入 1–${SAVE_LIMITS.itemLevel} 的整數等級；此修改尚未套用。`));
+    manual.textContent = message(label(`Sell matching (${preview.count})`, `一鍵出售（${preview.count} 件）`));
+    manual.disabled = !inTown || !valid || !preview.count;
+    manual.title = inTown ? '' : message(WORDS.sanctuaryOnly);
+    automatic.textContent = message(settings.autoSell
+      ? label('Auto-sell: ON', '自動售出：開啟') : label('Auto-sell: OFF', '自動售出：關閉'));
+    automatic.setAttribute('aria-pressed', String(settings.autoSell));
+    automatic.disabled = !settings.autoSell && (!valid || !selected);
+  }
+  form.addEventListener('input', () => {
+    refresh(); renderInventory();
+    if (level.validity.valid) void persistSettings();
+  });
+  refresh();
+}
+
 function openShop() {
   if (!inTown) return;
   const content = openModal(UI.shop);
@@ -573,6 +692,21 @@ async function showSlots() {
       button(message(UI.restore), () => void restoreBackup()));
   } catch (error) { failure(error); }
 }
+async function downloadScreenshot() {
+  const control = $('screenshot-button');
+  if (control.disabled) return;
+  const filename = screenshotFilename();
+  try {
+    // Snapshot before disabling the control so the image preserves the clicked view.
+    const pending = captureViewport();
+    control.disabled = true;
+    const url = URL.createObjectURL(await pending);
+    const link = node('a'); link.href = url; link.download = filename; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), CONFIG.messageDuration * 1000);
+    notify(WORDS.screenshotReady);
+  } catch (error) { failure(error); }
+  finally { control.disabled = false; }
+}
 async function exportSaves() {
   try {
     if (!await persist()) return;
@@ -670,7 +804,6 @@ function update(dt) {
     if (player.form !== skillForm) renderSkills();
     else updateSkillAvailability();
     updateAreaStatus();
-    if (notifyUntil && performance.now() > notifyUntil) { $('notifications').replaceChildren(); notifyUntil = 0; }
   }
 }
 function render(alpha) { renderer.draw(state, alpha); }
@@ -681,7 +814,17 @@ $('modal').addEventListener('close', () => {
 });
 $('modal-close').addEventListener('click', closeModal);
 $('inventory-button').addEventListener('click', () => setInventoryOpen($('inventory-panel').hidden));
+$('screenshot-button').addEventListener('click', () => void downloadScreenshot());
 $('inventory-close').addEventListener('click', () => setInventoryOpen(false));
+$('equip-best').addEventListener('click', () => {
+  const result = equipBest(player);
+  notify(result.message, result.changed ? 'equip' : null);
+  if (result.changed) {
+    combat.refreshPlayer();
+    renderInventory(); renderSkills(); renderHud(); void persist();
+  }
+});
+$('sale-filter-button').addEventListener('click', openSaleFilter);
 $('title-start').addEventListener('click', beginJourney);
 $('title-settings').addEventListener('click', openSettings);
 $('title-language').addEventListener('click', () => $('language-button').click());

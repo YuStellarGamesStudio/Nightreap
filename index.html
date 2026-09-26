@@ -29,7 +29,7 @@
   <link rel="icon" href="assets/icon-16.svg?v=8a427d37f106e15f" type="image/svg+xml" sizes="16x16">
   <link rel="apple-touch-icon" href="assets/icon-180.svg?v=ceb7273a32a293b5" sizes="180x180">
   <link rel="manifest" href="manifest.webmanifest?v=29a0d84bf2256812">
-  <link rel="stylesheet" href="css/game.css?v=4f6860ccc883bc18">
+  <link rel="stylesheet" href="css/game.css?v=41b14576a6a7dd93">
 </head>
 <body>
   <div id="desktop-warning" role="alert"></div>
@@ -50,7 +50,7 @@
   <header class="topbar">
     <a class="brand" href="./" aria-label="Nightreap"><img src="assets/icon.svg?v=7b41c761a5cf9f2b" alt="" width="42" height="42"><span><strong id="brand-title">NIGHTREAP</strong><small id="brand-subtitle">BENEATH THE LAST MOON</small></span></a>
     <div class="character-line"><span id="character-name">Wanderer</span><span id="character-level">I</span><span class="separator">/</span><span id="difficulty-label">Normal</span></div>
-    <nav class="top-actions"><button id="inventory-button" type="button" aria-controls="inventory-panel" aria-expanded="false">Inventory</button><button id="save-button" type="button">Save</button><button id="settings-button" type="button">Settings</button><button id="language-button" type="button">中文</button></nav>
+    <nav class="top-actions"><button id="screenshot-button" type="button">Screenshot</button><button id="inventory-button" type="button" aria-controls="inventory-panel" aria-expanded="false">Inventory</button><button id="save-button" type="button">Save</button><button id="settings-button" type="button">Settings</button><button id="language-button" type="button">中文</button></nav>
   </header>
   <main class="layout">
     <section class="viewport" aria-label="Game world">
@@ -87,6 +87,7 @@
         <div class="inventory-inspector">
           <div id="item-detail" class="item-detail"><span class="eyebrow">RELICS OF A FALLEN WORLD</span><p id="empty-hint">No relics yet. The night will provide.</p></div>
           <div id="item-actions" class="item-actions"></div>
+          <div class="inventory-tools"><button id="sale-filter-button" type="button">Sell filter</button><button id="equip-best" type="button">Equip best</button></div>
         </div>
       </div>
     </aside>
@@ -105,6 +106,6 @@
   <dialog id="modal"><div class="modal-heading"><h2 id="modal-title"></h2><button id="modal-close" aria-label="Close">×</button></div><div id="modal-content"></div></dialog>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
   <button id="update-button" class="update-button" type="button" hidden>Update ready · Save &amp; reload</button>
-  <script type="module" src="src/main.js?v=285e5a02fc7b676c"></script>
+  <script type="module" src="src/main.js?v=c13ce77a38f1013c"></script>
 </body>
 </html>
