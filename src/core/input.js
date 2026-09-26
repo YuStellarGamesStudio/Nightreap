@@ -24,7 +24,7 @@ export class Input {
     });
     canvas.addEventListener('contextmenu', event => event.preventDefault());
     window.addEventListener('keydown', event => {
-      if (event.target.matches('input, select, textarea') || event.target.closest('dialog[open]')) return;
+      if (canvas.closest('[inert]') || event.target.matches('input, select, textarea') || event.target.closest('dialog[open]')) return;
       const key = event.key.toLowerCase();
       if (['tab',' ','arrowup','arrowdown'].includes(key)) event.preventDefault();
       this.keys.add(key);

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 560" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="cavern"><stop stop-color="#344850"/><stop offset=".55" stop-color="#1b3038"/><stop offset="1" stop-color="#0b141f"/></radialGradient>
+    <linearGradient id="rock" x2=".2" y2="1"><stop stop-color="#637476"/><stop offset=".43" stop-color="#3b5358"/><stop offset="1" stop-color="#18272f"/></linearGradient>
+    <linearGradient id="masonry" x2=".7" y2="1"><stop stop-color="#87918a"/><stop offset=".45" stop-color="#56676a"/><stop offset="1" stop-color="#283940"/></linearGradient>
+    <linearGradient id="roof" x2=".7" y2="1"><stop stop-color="#9ca8a0"/><stop offset=".4" stop-color="#546c6d"/><stop offset="1" stop-color="#1e353c"/></linearGradient>
+    <linearGradient id="pavement" x2=".3" y2="1"><stop stop-color="#61736e"/><stop offset="1" stop-color="#2a4044"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#bdf8de" stop-opacity=".75"/><stop offset=".3" stop-color="#76dcbf" stop-opacity=".4"/><stop offset="1" stop-color="#50b8b5" stop-opacity="0"/></radialGradient>
+    <pattern id="block" width="46" height="24" patternUnits="userSpaceOnUse"><path d="M0 0h46M0 24h46M23 0v12M0 12h46M0 12v12M46 12v12" fill="none" stroke="#c9dbcc" stroke-opacity=".18" stroke-width="2"/></pattern>
+    <pattern id="floor" width="76" height="35" patternUnits="userSpaceOnUse" patternTransform="skewX(-27)"><path d="M0 0h76M0 35h76M38 0v18M0 18h76M0 18v17M76 18v17" fill="none" stroke="#d2e5d2" stroke-opacity=".14" stroke-width="2"/></pattern>
+    <g id="candle"><ellipse rx="42" ry="27" fill="url(#glow)"/><path d="M-5 7v-16h10V7Z" fill="#cae7c8"/><path d="M0-19Q-11-10 0-8q10-4 0-11Z" fill="#b7fff1"/><path d="M-8 9H8" stroke="#d9e9d6" stroke-width="2"/></g>
+    <g id="niche"><path d="M0 56V19Q0-9 25-12q25 3 25 31v37Z" fill="#122831" stroke="#9baaa0" stroke-width="5"/><path d="M5 55V21Q5-2 25-5q20 3 20 26v34" fill="none" stroke="#3c5859" stroke-width="3"/><path d="M9 52h32M13 42h24" stroke="#829b92" stroke-width="3"/><path d="m18 42 4-9 7 0 4 9m-12-19 3-6 5 6" fill="url(#masonry)" stroke="#bbc9b4" stroke-width="1.5"/></g>
+    <g id="ossuary"><ellipse rx="99" ry="20" fill="#091a23" opacity=".6"/><path d="M-78-55-34-92 37-93 78-56v54L25 20l-103-21Z" fill="url(#masonry)" stroke="#aab9a8" stroke-width="3"/><path d="m-91-57 55-48 82-1 45 50-67 19-60-13Z" fill="url(#roof)" stroke="#c3d0bb" stroke-width="4"/><path d="m-91-57 55-48 82-1 45 50-67 19-60-13Z" fill="url(#block)" opacity=".6"/><path d="m-76-52 44 12v43m109-60-53 20v56m-59-60 59 3" stroke="#acc0af" stroke-width="4" fill="none"/><path d="M-78-48V0l103 20 53-22v-54" fill="url(#block)" opacity=".8"/><path d="M-49-17v-21q13-17 25 8v20Z" fill="#193a3d" stroke="#becfbd" stroke-width="3"/><path d="M-45-21v-10q8-8 17 3v12Z" fill="#97e6bd"/><path d="M29 7v-30q16-22 30-5v30" fill="#142c36" stroke="#b9c8b5" stroke-width="3"/><path d="M43-26v27" stroke="#8ea49a" stroke-width="3"/><path d="m-55-2 16 2m3 4 13 3m51-27 39-10" stroke="#a7b8a5" stroke-width="2"/></g>
+  </defs>
+  <path fill="url(#cavern)" d="M0 0h1400v560H0Z"/>
+  <!-- Vault ribs and roots above the inhabited crypt -->
+  <path d="M0 203Q157 25 337 76q120 26 222-35Q696-44 834 43q102 50 206 12 205-59 360 148V0H0Z" fill="#131e29" stroke="#4a5d61" stroke-width="12"/>
+  <path d="M0 244Q200 39 390 130q88 37 170-28 134-95 270-10 91 54 170 14 227-103 400 159" fill="none" stroke="#5b6e70" stroke-width="24" opacity=".6"/>
+  <path d="M0 254Q197 80 390 146q94 37 167-25 135-92 265-9 90 57 191 19 195-81 387 121" fill="none" stroke="#a2b0a4" stroke-width="3" opacity=".5"/>
+  <path d="M12 88 33 151 56 69 86 160 110 118l32 74 17-90m343-18 24 74 30-100 22 94 21-80 31 95m483-97 18 86 25-110 21 99 26-63 37 85" fill="#273740" stroke="#526367" stroke-width="3"/>
+  <path d="M0 246 113 201l93 22 105-36 137 30 127-35 111 43 133-35 113 37 155-30 105 24 108-23v362H0Z" fill="url(#rock)"/>
+  <path d="M0 293q164-84 334-35 135 27 270-1 99-13 192-28 179-8 297 25 166-19 307 41v265H0Z" fill="#263a40" stroke="#667d78" stroke-width="5"/>
+  <!-- Carved ring road and stepped approaches -->
+  <path d="M640 158 594 267 594 321 283 407 0 444v116h1400V446l-292-44-315-81V267l-44-109Z" fill="url(#pavement)" stroke="#aec0ac" stroke-opacity=".5" stroke-width="5"/>
+  <path d="M640 158 594 267 594 321 283 407 0 444v116h1400V446l-292-44-315-81V267l-44-109Z" fill="url(#floor)"/>
+  <ellipse cx="700" cy="382" rx="255" ry="101" fill="#33494b" stroke="#a6b8a6" stroke-width="9"/><ellipse cx="700" cy="382" rx="241" ry="88" fill="url(#floor)" stroke="#657b77" stroke-width="3"/>
+  <path d="m614 273 88-20 86 21m-187 11 100-16 98 17m-210 12 113-10 112 10" fill="none" stroke="#b2c3b3" stroke-opacity=".6" stroke-width="4"/>
+  <!-- Exit gate: pointed stone portal overlooking stairs -->
+  <path d="M599 178V96l99-79 105 80v81l-33 14V104l-70-54-69 54v88Z" fill="url(#masonry)" stroke="#d4d8bb" stroke-width="6"/><path d="M635 178v-73l64-50 69 50v73" fill="#0a1b27" stroke="#8aaca5" stroke-width="5"/><path d="m607 89 92-66 96 70m-88-52 15-14m-73 18 19-13" fill="none" stroke="#d5e1c5" stroke-width="4"/><path d="m636 178 64-16 68 16m-142 13 73-19 77 19" fill="none" stroke="#9eb1a6" stroke-width="5"/><path d="m659 97 39-25 44 25" fill="none" stroke="#84aaa1" stroke-width="2"/>
+  <path d="M688 142v-28m0-1-15-10m15 10 18-10" stroke="#b9d5bc" stroke-width="4"/>
+  <path d="M0 298 162 230l252 28 141-45m290 3 163 42 190-24 202 62" fill="none" stroke="url(#masonry)" stroke-width="17" stroke-dasharray="45 8"/>
+  <!-- Homes and ossuary arcades -->
+  <use href="#ossuary" x="118" y="337"/><use href="#ossuary" x="481" y="271" transform="translate(481 271) scale(.75) translate(-481 -271)"/><use href="#ossuary" x="910" y="274" transform="translate(910 274) scale(.75) translate(-910 -274)"/><use href="#ossuary" x="1288" y="347" transform="translate(1288 347) scale(1.06) translate(-1288 -347)"/>
+  <path d="M202 235v-54q29-70 63-65 39-6 68 63v53" fill="url(#masonry)" stroke="#b6c6b1" stroke-width="5"/><path d="M224 227v-44q25-46 43-46 27 0 44 46v46Z" fill="#162c36" stroke="#859e97" stroke-width="4"/><use href="#niche" x="240" y="168" transform="translate(240 168) scale(.85) translate(-240 -168)"/><path d="M207 233h128" stroke="#bfd0ba" stroke-width="6"/>
+  <path d="M1058 231v-53q38-76 80-73 46 0 79 75v55" fill="url(#masonry)" stroke="#b6c6b1" stroke-width="5"/><path d="M1081 226v-43q27-57 58-57 31 0 57 57v43Z" fill="#1a333b" stroke="#829e98" stroke-width="4"/><use href="#niche" x="1107" y="159" transform="translate(1107 159) scale(.85) translate(-1107 -159)"/><path d="M1058 231h159" stroke="#bfd0ba" stroke-width="6"/>
+  <!-- Stone merchants' stalls, fabric shades, ossuary wares -->
+  <ellipse cx="343" cy="377" rx="146" ry="35" fill="#101c25" opacity=".65"/>
+  <path d="M225 300v82m234-83v84M269 269v69m148-69v68" stroke="#90a69e" stroke-width="10"/>
+  <path d="m219 301 56-50 142-2 51 51-117 25Z" fill="url(#roof)" stroke="#c4d3b9" stroke-width="5"/><path d="m274 253 78 72m-1-74 29 68m37-68-38 67m-158-18 130 24 115-24" stroke="#b6d9c4" stroke-width="3" fill="none"/><path d="m245 338 100 18 94-19v31l-93 27-101-28Z" fill="url(#masonry)" stroke="#bec7b4" stroke-width="3"/><path d="m245 337 100 16 94-16-94 12Z" fill="#9baea3"/>
+  <path d="m270 338 14-21 15 23m9 4 12-22 12 23" fill="url(#rock)" stroke="#cbd5bb" stroke-width="2"/><path d="m375 341 5-18h24l6 16m-30-8h26" fill="#607f7d" stroke="#b5e4ca" stroke-width="2"/><use href="#candle" x="226" y="303"/><use href="#candle" x="455" y="302"/><use href="#candle" x="344" y="330"/>
+  <!-- Forge: an inhabited vaulted blacksmith alcove with turquoise fire -->
+  <ellipse cx="1066" cy="392" rx="141" ry="30" fill="#0a1923" opacity=".7"/>
+  <path d="M925 365V237q63-98 139-98 82 1 149 101v126l-144 40Z" fill="url(#masonry)" stroke="#b5c4b2" stroke-width="5"/><path d="M957 346v-99q47-73 108-73 64 2 117 76v104l-117 25Z" fill="#263d44" stroke="#8eaba1" stroke-width="6"/><path d="M985 343v-88q35-55 79-55 50 1 91 57v92l-91 19Z" fill="url(#rock)" stroke="#c0d3bb" stroke-width="4"/><path d="M925 365V237q63-98 139-98 82 1 149 101v126l-144 40Z" fill="url(#block)" opacity=".48"/><path d="m925 242 140-19 148 20M1065 142v80" fill="none" stroke="#bfd0bd" stroke-width="4"/>
+  <path d="m983 330 51 8v31l-51-10Z" fill="#14272e" stroke="#8ec7ba" stroke-width="5"/><ellipse cx="1008" cy="339" rx="70" ry="54" fill="url(#glow)"/><path d="m987 347 44 6-6-17-35-5Z" fill="#6ce7c7" stroke="#d9ffdf" stroke-width="3"/><path d="m1054 378 43-17 26 14-40 17Z" fill="url(#masonry)" stroke="#d1d8bc" stroke-width="3"/><path d="m1084 389 5 20 20-6 5-23" fill="url(#masonry)"/><path d="m1141 370 13-23 24-4 9 23-21 16Z" fill="url(#rock)" stroke="#aed6ba" stroke-width="3"/><use href="#candle" x="1189" y="345"/>
+  <!-- Commemorative well/fountain at rear of hero's open plaza -->
+  <ellipse cx="701" cy="273" rx="47" ry="17" fill="#132b32" stroke="#c1d4bc" stroke-width="5"/><path d="M655 272v19q44 27 92 0v-19" fill="url(#masonry)" stroke="#b1c9b8" stroke-width="3"/><path d="M698 251v-39l-13-15 14-19 14 19-13 15" fill="url(#masonry)" stroke="#d6dfc3" stroke-width="3"/><path d="m680 219 19 5 21-5" fill="none" stroke="#a9cab7" stroke-width="3"/><use href="#candle" x="654" y="260"/><use href="#candle" x="748" y="260"/>
+  <use href="#niche" x="17" y="352" transform="translate(17 352) scale(.85) translate(-17 -352)"/><use href="#niche" x="1336" y="347" transform="translate(1336 347) scale(.9) translate(-1336 -347)"/>
+  <path d="m72 462 84 20 55-14m266 40 93-23m260 4 79 23m296-43 91 9 69-17" fill="none" stroke="#acd1b7" stroke-opacity=".38" stroke-width="2"/><use href="#candle" x="513" y="341"/><use href="#candle" x="879" y="342"/><use href="#candle" x="132" y="392"/><use href="#candle" x="1296" y="386"/>
+  <path d="M0 0h1400v560H0Z" fill="none" stroke="#07131b" stroke-width="18" opacity=".35"/>
+</svg>

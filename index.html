@@ -7,10 +7,24 @@
   <meta name="description" content="Nightreap — a dark fantasy loot-driven action RPG beneath an endless night.">
   <title>Nightreap · 永夜收割</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/game.css?v=251a3e4fbfb83058">
+  <link rel="stylesheet" href="css/game.css?v=d970515421ac6427">
 </head>
 <body>
   <div id="desktop-warning" role="alert"></div>
+  <section id="title-screen" class="title-screen" aria-labelledby="title-logo">
+    <div class="title-content">
+      <p id="title-eyebrow" class="title-eyebrow">BENEATH THE LAST MOON</p>
+      <h1 id="title-logo">NIGHTREAP</h1>
+      <p id="title-tagline" class="title-tagline">The night is endless. Your flame is not.</p>
+      <div class="title-menu">
+        <button id="title-start" class="primary" type="button" disabled>Loading…</button>
+        <button id="title-load" type="button" disabled>Load character</button>
+        <button id="title-settings" type="button" disabled>Settings</button>
+        <button id="title-language" type="button">中文</button>
+      </div>
+      <p id="title-footnote" class="title-footnote">A sanctuary waits beyond the dark.</p>
+    </div>
+  </section>
   <header class="topbar">
     <a class="brand" href="./" aria-label="Nightreap"><img src="assets/icon.svg" alt="" width="42" height="42"><span><strong id="brand-title">NIGHTREAP</strong><small id="brand-subtitle">BENEATH THE LAST MOON</small></span></a>
     <div class="character-line"><span id="character-name">Wanderer</span><span id="character-level">I</span><span class="separator">/</span><span id="difficulty-label">Normal</span></div>
@@ -19,9 +33,17 @@
   <main class="layout">
     <section class="viewport" aria-label="Game world">
       <canvas id="game" tabindex="0" aria-label="Nightreap game world"></canvas>
+      <div id="village" class="village-scene">
+        <img id="village-art" class="village-art" alt="">
+        <img id="village-hero" class="village-hero" src="assets/warrior.svg" alt="">
+        <button id="shop-button" class="village-service village-merchant" type="button">Merchant</button>
+        <button id="forge-button" class="village-service village-forge" type="button">Forge</button>
+        <div class="village-actions"><button id="oath-button" type="button">Choose your oath</button><button id="depart-button" class="primary" type="button">Enter the night</button></div>
+      </div>
       <div class="world-heading"><span id="area-kicker">ACT I · THE ETERNAL NIGHT</span><h1 id="area-name">Sanctuary</h1><div id="area-progress"></div></div>
       <div id="notifications" class="notifications" role="status" aria-live="polite"></div>
-      <div id="sanctuary" class="sanctuary">
+      <div id="sanctuary" class="sanctuary" hidden>
+        <button id="oath-close" class="oath-close" type="button" aria-label="Close">×</button>
         <span class="eyebrow">THE FIRE STILL BURNS</span><h2 id="sanctuary-title">Choose your oath</h2>
         <p id="sanctuary-hint">Prepare your relics. Step beyond the flame.</p>
         <div id="class-select" class="class-select"></div>
@@ -45,7 +67,6 @@
           <div id="item-actions" class="item-actions"></div>
         </div>
       </div>
-      <div class="bottom-actions"><button id="shop-button">Merchant</button><button id="forge-button">Forge</button></div>
     </aside>
   </main>
   <section class="skill-panel panel" aria-label="Skills">
@@ -61,6 +82,6 @@
   </footer>
   <dialog id="modal"><div class="modal-heading"><h2 id="modal-title"></h2><button id="modal-close" aria-label="Close">×</button></div><div id="modal-content"></div></dialog>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
-  <script type="module" src="src/main.js?v=fd4c7807dab74da7"></script>
+  <script type="module" src="src/main.js?v=c9c9bdda2ddb6260"></script>
 </body>
 </html>

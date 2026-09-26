@@ -3,6 +3,7 @@ import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js';
 import { CLASSES, COMBAT } from './data/combat.js';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js';
+import { SANCTUARIES } from './data/sanctuary.js';
 import { Renderer } from './core/renderer.js';
 import { Input } from './core/input.js';
 import { GameLoop } from './core/loop.js';
@@ -52,6 +53,9 @@ let state;
 let combat;
 let skillForm = null;
 let inTown = true;
+let oathOpen = false;
+let titleOpen = true;
+let hasSavedCharacter = false;
 let activePanel = 'inventory';
 let page = 0;
 let selectedItemId = null;
@@ -89,6 +93,15 @@ async function persist(announce = false) {
 async function persistSettings() {
   try { await saves.saveSettings(settings); } catch (error) { failure(error); }
 }
+function beginJourney() {
+  titleOpen = false;
+  show('title-screen', false);
+  for (const element of document.querySelectorAll('.topbar, .layout, .skill-panel, .hud')) element.inert = false;
+  oathOpen = !hasSavedCharacter;
+  renderProgress();
+  $('oath-button').focus();
+  void audio.unlock().catch(failure);
+}
 function makeState(area) {
   player.x = area.start.x; player.y = area.start.y;
   player.prevX = player.x; player.prevY = player.y;
@@ -121,6 +134,7 @@ function enterArea(options) {
   closeModal();
   setInventoryOpen(false);
   inTown = false;
+  oathOpen = false;
   pendingDeath = false;
   input.clear();
   makeState(createArea(options));
@@ -144,7 +158,12 @@ function renderProgress() {
   $('character-level').textContent = `${message(UI.level)} ${p.level}`;
   $('difficulty-label').textContent = message(DIFFICULTIES[inTown ? p.progress.difficulty : area.difficulty].name);
   $('area-kicker').textContent = inTown ? message(UI.journey) : `${message(ACTS[area.act].name)} · ${message(DIFFICULTIES[area.difficulty].name)}`;
-  $('area-name').textContent = inTown ? message(UI.sanctuary) : message(area.name);
+  const sanctuary = SANCTUARIES[p.progress.act];
+  $('area-name').textContent = inTown ? message(sanctuary.name) : message(area.name);
+  const villageArt = `assets/sanctuary-${sanctuary.art}.svg`;
+  if ($('village-art').getAttribute('src') !== villageArt) $('village-art').src = villageArt;
+  $('village-art').alt = message(sanctuary.name);
+  $('village-hero').src = `assets/${p.classId}.svg`;
   $('area-progress').textContent = inTown
     ? `${message(ACTS[p.progress.act].name)} · ${message(ACTS[p.progress.act].maps[p.progress.map].name)}`
     : `${message(UI.kills)} ${area.killed} / ${area.requiredKills}${area.depth ? ` · ${message(UI.depth)} ${area.depth}` : ''}`;
@@ -156,7 +175,8 @@ function renderProgress() {
     options.add(option);
   });
   options.value = p.progress.difficulty;
-  show('sanctuary', inTown);
+  show('village', inTown);
+  show('sanctuary', inTown && oathOpen);
   show('travel-actions', !inTown);
   $('next-button').hidden = inTown || !area.cleared;
   $('dungeon-button').hidden = inTown || !!area.sheep;
@@ -361,6 +381,16 @@ function renderTranslations() {
     'shop-button':'shop', 'forge-button':'forge', 'desktop-warning':'desktop' }))
     $(id).textContent = message(UI[key]);
   $('enter-button').firstChild.textContent = `${message(UI.enter)} `;
+  $('depart-button').textContent = message(UI.enter);
+  $('oath-button').textContent = message(UI.character);
+  $('oath-close').setAttribute('aria-label', message(UI.close));
+  $('title-eyebrow').textContent = message(UI.subtitle);
+  $('title-tagline').textContent = message(label('The night is endless. Your flame is not.', '長夜無盡，你的火光卻並非永恆。'));
+  $('title-start').textContent = message(hasSavedCharacter ? label('Continue journey', '繼續旅程') : label('Begin your journey', '開始旅程'));
+  $('title-load').textContent = message(UI.load);
+  $('title-settings').textContent = message(UI.settings);
+  $('title-language').textContent = language === 'en' ? '中文' : 'English';
+  $('title-footnote').textContent = message(label('A sanctuary waits beyond the dark.', '黑暗彼端，仍有庇護你的燈火。'));
   $('controls-hint').textContent = `${message(UI.controls)} · ${message(WORDS.secondary)}`;
   $('language-button').textContent = language === 'en' ? '中文' : 'English';
   $('modal-close').setAttribute('aria-label', message(UI.close));
@@ -499,6 +529,8 @@ async function showSlots(load = false) {
             player = Object.assign(createPlayer(entry.classId), restored);
             inTown = true; selectedItemId = null; page = 0;
             makeState(createArea(player.progress));
+            hasSavedCharacter = true;
+            if (titleOpen) beginJourney();
             notify(WORDS.loaded);
           } else if (entry.classId === player.classId) await persist(true);
           else { notify(label('Select that class at the sanctuary to save it.', '請先在庇護所選擇該職業才能存檔。')); return; }
@@ -578,10 +610,12 @@ function tryTravel(kind) {
 }
 function action(key) {
   if (key === 'gesture') { void audio.unlock().catch(failure); return; }
+  if (titleOpen) return;
   if (key === 'tab') { setInventoryOpen($('inventory-panel').hidden); return; }
   if (key === 'escape') {
     if ($('modal').open) { closeModal(); return; }
     if (!$('inventory-panel').hidden) { setInventoryOpen(false); return; }
+    if (oathOpen) { oathOpen = false; renderProgress(); $('oath-button').focus(); return; }
     if (inTown) return;
     state.paused = !state.paused;
     show('pause-overlay', state.paused);
@@ -617,6 +651,10 @@ $('modal').addEventListener('close', () => {
 $('modal-close').addEventListener('click', closeModal);
 $('inventory-button').addEventListener('click', () => setInventoryOpen($('inventory-panel').hidden));
 $('inventory-close').addEventListener('click', () => setInventoryOpen(false));
+$('title-start').addEventListener('click', beginJourney);
+$('title-load').addEventListener('click', () => void showSlots(true));
+$('title-settings').addEventListener('click', openSettings);
+$('title-language').addEventListener('click', () => $('language-button').click());
 $('save-button').addEventListener('click', () => void showSlots());
 $('load-button').addEventListener('click', () => void showSlots(true));
 $('settings-button').addEventListener('click', openSettings);
@@ -638,6 +676,15 @@ $('difficulty-select').addEventListener('change', event => {
   }
 });
 $('enter-button').addEventListener('click', () => enterArea(player.progress));
+const depart = () => { if (inTown) enterArea(player.progress); };
+$('depart-button').addEventListener('click', depart);
+$('oath-button').addEventListener('click', () => {
+  if (!inTown) return;
+  oathOpen = true; renderProgress(); $('oath-close').focus();
+});
+$('oath-close').addEventListener('click', () => {
+  oathOpen = false; renderProgress(); $('oath-button').focus();
+});
 $('town-button').addEventListener('click', () => returnTown());
 $('next-button').addEventListener('click', () => tryTravel('next'));
 $('dungeon-button').addEventListener('click', () => tryTravel('dungeon'));
@@ -654,23 +701,31 @@ $('resource-potion').addEventListener('click', () => { if (!inTown) combat.usePo
 $('import-file').addEventListener('change', event => {
   void importFile(event.target.files?.[0]); event.target.value = '';
 });
-document.addEventListener('visibilitychange', () => { if (document.hidden) void persist(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && !titleOpen) void persist(); });
 window.addEventListener('resize', () => {
   show('desktop-warning', window.innerWidth < CONFIG.minWidth || window.innerHeight < CONFIG.minHeight);
 });
 
 async function boot() {
+  for (const element of document.querySelectorAll('.topbar, .layout, .skill-panel, .hud')) element.inert = true;
   try {
     await renderer.load();
     const stored = await saves.loadSettings();
     if (stored) settings = { ...stored, language };
     audio.setSettings(settings);
-    const saved = await saves.load(player.classId);
-    if (saved) player = Object.assign(createPlayer(player.classId), saved);
+    const slots = await saves.list();
+    const savedSlot = slots.find(entry => entry.exists);
+    const saved = savedSlot ? await saves.load(savedSlot.classId) : null;
+    if (saved) {
+      player = Object.assign(createPlayer(savedSlot.classId), saved);
+      hasSavedCharacter = true;
+    }
   } catch (error) { failure(error); }
   makeState(createArea(player.progress));
   show('pause-overlay', false);
   show('desktop-warning', window.innerWidth < CONFIG.minWidth || window.innerHeight < CONFIG.minHeight);
+  $('title-start').disabled = $('title-load').disabled = $('title-settings').disabled = false;
+  $('title-start').focus();
   new GameLoop(update, render).start();
 }
 void boot();

@@ -101,6 +101,24 @@ input[type="range"] { min-height: 36px; cursor: pointer; }
 }
 .viewport::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; box-shadow: inset 0 0 50px 15px #09090dbb, inset 0 0 0 2px #1c1b24; }
 #game { display: block; width: 100%; height: 100%; outline-offset: -5px; }
+.village-scene { position: absolute; inset: 0; overflow: hidden; background: #14151c; }
+.village-art { width: 100%; height: 100%; object-fit: fill; display: block; }
+.village-hero { position: absolute; left: 50%; top: 68%; width: 90px; height: 90px; transform: translate(-50%, -100%); filter: drop-shadow(0 7px 5px #000b); pointer-events: none; }
+.village-service { position: absolute; z-index: 2; top: 62%; min-width: 112px; transform: translateX(-50%); border-color: #cfaa6f; box-shadow: 0 5px 15px #000b, 0 0 12px #d1a76844; }
+.village-merchant { left: 25%; }
+.village-forge { left: 75%; }
+.village-actions { position: absolute; z-index: 2; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; }
+.village-actions button { min-width: 160px; }
+.oath-close { position: absolute; top: 8px; right: 8px; width: 44px; padding: 0; font-size: 22px; }
+.title-screen { position: fixed; z-index: 15; inset: 0; display: flex; align-items: center; background: linear-gradient(90deg, #080c17f2 0%, #0b1024a6 40%, #0c101522 75%), url("../assets/title-scene.svg") center / cover no-repeat; }
+.title-content { width: 650px; max-height: 100%; padding: 35px 60px 35px 8vw; text-shadow: 0 3px 15px #000; }
+.title-eyebrow { color: #bba88c; font: 12px Georgia, serif; letter-spacing: .3em; }
+#title-logo { margin: 18px 0 14px; color: #ead2aa; font: normal 64px/1 Georgia, serif; letter-spacing: .055em; text-shadow: 0 2px 0 #47333a, 0 0 36px #cf97602e; }
+.title-tagline { margin: 0 0 34px; color: #baafad; font: 16px/1.6 Georgia, serif; }
+.title-menu { width: 280px; display: grid; gap: 10px; }
+.title-menu button { min-height: 50px; font: 16px Georgia, serif; letter-spacing: .04em; background: linear-gradient(110deg, #282635eb, #141927d9); }
+.title-menu .primary { background: linear-gradient(110deg, #74523ce8, #342b35e8); border-color: #c99c65; color: #f6dfb5; }
+.title-footnote { margin: 28px 0 0; color: #8b858d; font: italic 12px/1.5 Georgia, serif; }
 .world-heading { position: absolute; z-index: 2; top: 14px; left: 18px; max-width: 55%; pointer-events: none; text-shadow: 0 2px 6px #050507, 0 0 12px #050507; }
 #area-kicker { color: #e3bc83; font: 700 10px Georgia, serif; letter-spacing: .15em; }
 .world-heading h1 { margin: 2px 0; font: normal 25px/1.1 Georgia, serif; color: #f9e9cf; }
