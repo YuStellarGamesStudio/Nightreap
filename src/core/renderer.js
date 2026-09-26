@@ -1,6 +1,6 @@
-import { ANIMATION, FLOATING_ART } from '../data/animation.js?v=92ad9e820da9416a';
-import { CONFIG, ART } from '../data/config.js?v=f28e6c5b4673f66a';
-import { TerrainRenderer } from './terrain-renderer.js?v=bcaf4c99ad9db2cf';
+import { ANIMATION, FLOATING_ART } from '../data/animation.js?v=e2c24a34ffa36256';
+import { CONFIG, ART } from '../data/config.js?v=d7680a4b1a250530';
+import { TerrainRenderer } from './terrain-renderer.js?v=178abb0478975a4d';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 
@@ -150,9 +150,9 @@ export class Renderer {
       if (entity.rx != null) { this.terrain.drawObstacle(entity, state.area.theme); continue; }
       if (entity !== p && !isExplored(state.area, entity.x, entity.y)) continue;
       if (entity.hp<=0) continue;
-      let art=entity===p ? (p.form && p.form!=='human' ? p.form : p.classId) : ART[entity.kind] || ART[entity.family] || 'demon';
-      if (entity.boss) art='boss';
-      const parts=this.rigs.get(art) || this.rigs.get('demon');
+      let art=entity===p ? ART[p.form && p.form!=='human' ? p.form : p.classId] : ART[entity.kind] || ART[entity.family] || ART.demon;
+      if (entity.boss) art=ART.boss;
+      const parts=this.rigs.get(art) || this.rigs.get(ART.demon);
       const prevX=entity.prevX??entity.x,prevY=entity.prevY??entity.y;
       let worldX=prevX+(entity.x-prevX)*alpha,worldY=prevY+(entity.y-prevY)*alpha;
       let pose=this.motion.get(entity);

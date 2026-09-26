@@ -1,14 +1,14 @@
-import { CONFIG, UI } from './data/config.js?v=f28e6c5b4673f66a';
+import { CONFIG, UI, ART } from './data/config.js?v=d7680a4b1a250530';
 import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
 import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
-import { Renderer } from './core/renderer.js?v=d92da5f9ff2e2756';
+import { Renderer } from './core/renderer.js?v=1ce0644e570d16ec';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=6475da9477cdfb10';
+import { GameLoop } from './core/loop.js?v=55bc0165a2a456b0';
 import { AudioManager } from './core/audio.js?v=3f8b4fd401f6503f';
-import { Combat, createPlayer } from './systems/combat.js?v=3f2d9f692e326157';
+import { Combat, createPlayer } from './systems/combat.js?v=a2a0e73bbd15aeb7';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
@@ -184,10 +184,10 @@ function renderProgress() {
   $('area-kicker').textContent = inTown ? message(UI.journey) : `${message(ACTS[area.act].name)} · ${message(DIFFICULTIES[area.difficulty].name)}`;
   const sanctuary = SANCTUARIES[p.progress.act];
   $('area-name').textContent = inTown ? message(sanctuary.name) : message(area.name);
-  const villageArt = `assets/sanctuary-${sanctuary.art}.svg`;
+  const villageArt = `assets/sanctuaries/sanctuary-${sanctuary.art}.svg`;
   if ($('village-art').getAttribute('src') !== villageArt) $('village-art').src = villageArt;
   $('village-art').alt = message(sanctuary.name);
-  $('village-hero').src = `assets/${p.classId}.svg`;
+  $('village-hero').src = `assets/${ART[p.classId]}.svg`;
   $('area-progress').textContent = inTown
     ? `${message(ACTS[p.progress.act].name)} · ${message(ACTS[p.progress.act].maps[p.progress.map].name)}`
     : `${message(UI.kills)} ${area.killed} / ${area.requiredKills}${area.depth ? ` · ${message(UI.depth)} ${area.depth}` : ''}`;
@@ -219,12 +219,12 @@ function renderClassChoice() {
   $('class-select').replaceChildren(...CLASSES.map(entry => {
     const card = button(null, () => void chooseClass(entry.id), 'class-card');
     card.setAttribute('aria-pressed', String(player.classId === entry.id));
-    const portrait = node('img'); portrait.src = `assets/${entry.id}.svg`; portrait.alt = '';
+    const portrait = node('img'); portrait.src = `assets/${ART[entry.id]}.svg`; portrait.alt = '';
     card.append(portrait, node('strong', '', message(entry.name)));
     return card;
   }));
   $('class-portrait').replaceChildren();
-  const image = node('img'); image.src = `assets/${player.classId}.svg`; image.alt = '';
+  const image = node('img'); image.src = `assets/${ART[player.classId]}.svg`; image.alt = '';
   $('class-portrait').append(image);
   $('class-name').textContent = message(role().name);
 }
@@ -235,7 +235,7 @@ function renderSkills() {
     const hotkey = index === 0 ? '' : index === 7 ? 'R' : String(index);
     const bindings = [hotkey, settings.leftMouseSkill === index ? 'LMB' : '', settings.rightMouseSkill === index ? 'RMB' : ''].filter(Boolean).join(' · ');
     const tile = button(null, () => { if (!inTown && !state.paused) combat.cast(index, input.aim); }, 'skill-button');
-    const icon = node('img', 'skill-icon'); icon.src = `assets/skills.svg?v=59750d7c3dbfe6f5#${skill.id}`; icon.alt = '';
+    const icon = node('img', 'skill-icon'); icon.src = `assets/ui/skills.svg?v=59750d7c3dbfe6f5#${skill.id}`; icon.alt = '';
     tile.append(icon);
     tile.title = `${bindings} · ${message(skill.description)}`;
     tile.append(node('span', 'skill-key', bindings), node('span', 'skill-name', message(skill.name)),
@@ -295,7 +295,7 @@ function findSelected() {
 }
 function itemIcon(slot, className = 'slot-icon') {
   const icon = node('img', className);
-  icon.src = `assets/equipment-slots.svg?v=f1d9f97bb18d82ae#${slot}`;
+  icon.src = `assets/ui/equipment-slots.svg?v=f1d9f97bb18d82ae#${slot}`;
   icon.alt = '';
   return icon;
 }
@@ -320,7 +320,7 @@ function renderInventory() {
   show('equipment-body', equipment);
   if (equipment) {
     const silhouette = node('img', 'equipment-silhouette');
-    silhouette.src = 'assets/equipment-body.svg?v=9df0b002845ff23c'; silhouette.alt = '';
+    silhouette.src = 'assets/ui/equipment-body.svg?v=9df0b002845ff23c'; silhouette.alt = '';
     $('equipment-body').replaceChildren(silhouette, ...Object.entries(SLOT_NAMES).map(([slot, name]) => {
       const item = player.equipment[slot];
       const tile = button(null, () => { selectedItemId = item?.id || null; renderItemDetail(); updateItemSelection(); },

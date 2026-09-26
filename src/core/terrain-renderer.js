@@ -1,6 +1,6 @@
 import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
 import { initializeExploration, isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
-import { CONFIG } from '../data/config.js?v=f28e6c5b4673f66a';
+import { CONFIG } from '../data/config.js?v=d7680a4b1a250530';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 
 const TAU = Math.PI * 2;
@@ -39,7 +39,7 @@ export class TerrainRenderer {
   }
 
   async load() {
-    const url = 'assets/terrain.svg';
+    const url = 'assets/terrain/terrain.svg';
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Cannot load ${url}: ${response.status}`);
     const svg = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');

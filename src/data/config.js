@@ -12,11 +12,15 @@ export const CONFIG = Object.freeze({
 });
 export const DEFAULT_SETTINGS = Object.freeze({ musicEnabled: true, sfxEnabled: true, musicVolume: 35, sfxVolume: 60 });
 export const ART = Object.freeze({
-  warrior: 'warrior', wizard: 'wizard', necromancer: 'necromancer', ranger: 'ranger', druid: 'druid',
-  demon: 'demon', undead: 'skeleton', beast: 'wolf', elemental: 'elemental', void: 'void', sheep: 'sheep',
-  skeleton: 'skeleton', wolf: 'wolf', golem: 'golem', bear: 'bear', boss: 'boss',
-  'ash-archer': 'ash-archer', 'crypt-scarab': 'crypt-scarab', 'spore-stalker': 'spore-stalker',
-  'frost-bat': 'frost-bat', 'void-colossus': 'void-colossus',
+  warrior: 'characters/warrior', wizard: 'characters/wizard', necromancer: 'characters/necromancer',
+  ranger: 'characters/ranger', druid: 'characters/druid',
+  demon: 'creatures/demon', undead: 'creatures/skeleton', beast: 'creatures/wolf',
+  elemental: 'creatures/elemental', void: 'creatures/void', sheep: 'creatures/sheep',
+  skeleton: 'creatures/skeleton', wolf: 'creatures/wolf', golem: 'creatures/golem',
+  bear: 'creatures/bear', boss: 'creatures/boss',
+  'ash-archer': 'creatures/ash-archer', 'crypt-scarab': 'creatures/crypt-scarab',
+  'spore-stalker': 'creatures/spore-stalker', 'frost-bat': 'creatures/frost-bat',
+  'void-colossus': 'creatures/void-colossus',
 });
 export const UI = {
   title:{en:'NIGHTREAP',zh:'永夜收割'}, subtitle:{en:'BENEATH THE LAST MOON',zh:'最後一輪月光之下'},
