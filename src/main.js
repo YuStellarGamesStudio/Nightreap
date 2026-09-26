@@ -674,6 +674,9 @@ async function showSlots() {
       const choice = button(`${name} · ${detail}`, async () => {
         try {
           if (!entry.exists) { notify(UI.noSave); return; }
+          if (!window.confirm(message(label(
+            `Load ${name} · ${detail}? Unsaved progress will be lost and you will return to the sanctuary.`,
+            `確定讀取「${name} · ${detail}」？目前未儲存的進度將會遺失，並返回庇護所。`)))) return;
           const restored = await saves.load(entry.classId);
           if (!restored) { notify(UI.noSave); return; }
           player = Object.assign(createPlayer(entry.classId), restored);
@@ -732,6 +735,9 @@ async function importFile(file) {
     const actions = node('div', 'modal-actions'); content.append(actions);
     actions.append(button(message(UI.confirmImport), async () => {
       try {
+        if (!window.confirm(message(label(
+          'Import this save? All character slots and settings will be replaced, including clearing slots absent from the file. Current saves will be backed up first.',
+          '確定匯入此存檔？所有角色槽與設定將被取代，檔案中沒有的角色槽也會清空。覆蓋前會先備份目前存檔。')))) return;
         if (!await persist()) return;
         await saves.importJSON(json);
         settings = { ...preview.settings };
@@ -748,6 +754,9 @@ async function importFile(file) {
 }
 async function restoreBackup() {
   try {
+    if (!window.confirm(message(label(
+      'Restore the backup? All character slots and settings will be replaced, and unsaved progress will be lost.',
+      '確定還原備份？所有角色槽與設定將被取代，目前未儲存的進度將會遺失。')))) return;
     const restored = await saves.restoreBackup();
     if (!restored) { notify(WORDS.noBackup); return; }
     settings = { ...await saves.loadSettings() };
