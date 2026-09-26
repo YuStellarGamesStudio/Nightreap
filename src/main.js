@@ -1,15 +1,15 @@
-import { CONFIG, UI, ART } from './data/config.js?v=dba7a118f0c64652';
+import { CONFIG, UI, ART } from './data/config.js?v=cd5d8d477f8af273';
 import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
 import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
-import { ACT_MUSIC } from './data/audio.js?v=2abfc8d355f88935';
-import { Renderer } from './core/renderer.js?v=7e9ad97ec54d1165';
+import { ACT_MUSIC } from './data/audio.js?v=c5e4578c00cd424f';
+import { Renderer } from './core/renderer.js?v=ca1058f849a5b019';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=b40248d3248ae163';
-import { AudioManager } from './core/audio.js?v=5ba7100882cc0802';
-import { Combat, createPlayer } from './systems/combat.js?v=8f40c21c338efe04';
+import { GameLoop } from './core/loop.js?v=b1c05ff8179f76b6';
+import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
+import { Combat, createPlayer } from './systems/combat.js?v=a54d999b789d8d56';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
@@ -34,6 +34,13 @@ const WORDS = {
   primary: label('LMB · Primary', '左鍵 · 普攻'), secondary: label('RMB · Secondary', '右鍵 · 次要攻擊'),
   sanctuaryOnly: label('Available in the sanctuary only.', '僅能在庇護所使用。'),
   equipBest: label('Equip best', '一鍵換裝'),
+  gambleRarities: {
+    common: label('Common', '普通'), magic: label('Magic', '魔法'),
+    rare: label('Rare', '稀有'), legendary: label('Legendary', '傳說'),
+  },
+  gambleRepeat: label('Gamble again', '再賭一次'),
+  gambleWaiting: label('The relic is being revealed…', '裝備即將現形……'),
+  gamblePrompt: label('An unknown relic waits in the dark.', '一件未知裝備靜候於黑暗中。'),
   saleFilter: label('Sell filter', '出售篩選'),
   saleFilterActive: label('Sell filter · Auto ON', '出售篩選 · 自動開'),
   screenshot: label('Screenshot', '截圖'),
@@ -78,6 +85,7 @@ let modalPaused = false;
 let modalOpen = false;
 let input;
 let inventoryReturnFocus = null;
+let shopSession = null;
 const role = () => CLASSES.find(entry => entry.id === player.classId);
 const show = (target, value) => { $(target).hidden = !value; };
 
@@ -363,16 +371,20 @@ function updateItemSelection() {
   for (const tile of $('inventory-panel').querySelectorAll('[data-item-id]'))
     tile.setAttribute('aria-pressed', String(!!selectedItemId && tile.dataset.itemId === selectedItemId));
 }
+function appendItemDescription(container, item) {
+  const title = node('h3', 'detail-name', message(item.name)); title.dataset.rarity = item.rarity;
+  container.append(title, node('p', 'detail-meta', `${message(SLOT_NAMES[item.slot])} · ${message(WORDS.itemLevel)} ${item.level} · ${message(WORDS.durability)} ${item.durability}/${item.maxDurability}`));
+  for (const entry of item.affixes) {
+    const affix = AFFIXES.find(definition => definition.id === entry.id);
+    container.append(node('div', 'affix-row', `${message(affix.name)} +${entry.value} · T${entry.tier}`));
+  }
+}
 function renderItemDetail() {
   const item = findSelected(), detail = $('item-detail'), actions = $('item-actions');
   detail.replaceChildren(); actions.replaceChildren();
   if (!item) { selectedItemId = null; detail.append(node('p', '', message(UI.empty))); return; }
-  const title = node('h3', 'detail-name', message(item.name)); title.dataset.rarity = item.rarity;
-  detail.append(itemIcon(item.slot, 'detail-icon'), title, node('p', 'detail-meta', `${message(SLOT_NAMES[item.slot])} · ${message(WORDS.itemLevel)} ${item.level} · ${message(WORDS.durability)} ${item.durability}/${item.maxDurability}`));
-  for (const entry of item.affixes) {
-    const affix = AFFIXES.find(definition => definition.id === entry.id);
-    detail.append(node('div', 'affix-row', `${message(affix.name)} +${entry.value} · T${entry.tier}`));
-  }
+  detail.append(itemIcon(item.slot, 'detail-icon'));
+  appendItemDescription(detail, item);
   const equippedSlot = Object.keys(player.equipment).find(slot => player.equipment[slot]?.id === item.id);
   const apply = (result, refresh = false) => {
     notify(result.message, result.ok ? 'equip' : null);
@@ -455,8 +467,17 @@ async function chooseClass(classId) {
   } catch (error) { failure(error); }
   finally { swapping = false; }
 }
-function closeModal() { if ($('modal').open) $('modal').close(); }
+function closeModal() {
+  invalidateShop();
+  if ($('modal').open) $('modal').close();
+}
+function invalidateShop() {
+  if (!shopSession) return;
+  for (const timer of shopSession.timers) clearTimeout(timer);
+  shopSession = null;
+}
 function openModal(title) {
+  invalidateShop();
   if (!$('modal').open) {
     modalPaused = state.paused;
     modalOpen = true;
@@ -569,22 +590,90 @@ function openSaleFilter() {
 function openShop() {
   if (!inTown) return;
   const content = openModal(UI.shop);
+  const session = { timers: new Set(), revealing: false };
+  shopSession = session;
+  const layout = node('div', 'shop-layout');
+  const controls = node('div', 'shop-controls');
+  const panel = node('div', 'gamble-panel');
+  const gold = node('p', 'shop-gold');
+  const status = node('p', 'shop-status');
+  status.setAttribute('role', 'status');
+  const repeat = button(`${message(WORDS.gambleRepeat)} · ${GEAR_BALANCE.gambleGold} ${message(UI.gold)}`,
+    gamble, 'gamble-repeat');
+  repeat.hidden = true;
+  panel.append(node('p', 'gamble-placeholder', message(WORDS.gamblePrompt)), repeat);
+  layout.append(controls, panel);
+  content.append(gold, layout, status);
+  const active = () => shopSession === session && $('modal').open && content.isConnected && inTown;
+  const refreshGold = () => { gold.textContent = `${message(UI.gold)}: ${player.gold}`; };
+  refreshGold();
   for (const [type, name, price] of [
     ['health', UI.health, GEAR_BALANCE.healthPotionGold],
     ['resource', UI.resource, GEAR_BALANCE.resourcePotionGold],
     ['gamble', UI.gamble, GEAR_BALANCE.gambleGold],
-  ]) rowButton(content, message(name), `${price} ${message(UI.gold)}`, () => {
-    if (!inTown) return;
-    const result = buy(player, type);
-    notify(result.message, result.ok ? 'loot' : null);
-    if (result.ok) { renderInventory(); renderHud(); void persist(); }
-  });
-  rowButton(content, message(UI.repair), `${message(UI.gold)}: ${player.gold}`, () => {
-    if (!inTown) return;
+  ]) {
+    const row = rowButton(controls, message(name), `${price} ${message(UI.gold)}`,
+      type === 'gamble' ? gamble : () => {
+        if (!active()) return;
+        const result = buy(player, type);
+        status.textContent = message(result.message);
+        refreshGold();
+        if (result.ok) { renderInventory(); renderHud(); void persist(); }
+      });
+    if (type === 'gamble') session.gambleButton = row.lastElementChild;
+  }
+  rowButton(controls, message(UI.repair), '', () => {
+    if (!active()) return;
     const result = repair(player);
-    notify(result.message);
-    if (result.ok) { combat.refreshPlayer(); renderInventory(); void persist(); }
+    status.textContent = message(result.message);
+    refreshGold();
+    if (result.ok) {
+      combat.refreshPlayer();
+      renderInventory(); renderHud(); void persist();
+    }
   });
+
+  function gamble() {
+    if (!active() || session.revealing) return;
+    const result = buy(player, 'gamble');
+    refreshGold();
+    if (!result.ok) { status.textContent = message(result.message); return; }
+    renderInventory(); renderHud(); void persist();
+    status.textContent = message(WORDS.gambleWaiting);
+    const item = result.item;
+    const card = node('div', 'gamble-card gamble-revealing');
+    card.dataset.rarity = item.rarity;
+    card.style.setProperty('--gamble-reveal-duration', `${CONFIG.gambleRevealDuration}s`);
+    const details = node('div', 'gamble-details');
+    details.setAttribute('aria-hidden', 'true');
+    details.append(node('span', 'gamble-rarity', message(WORDS.gambleRarities[item.rarity])));
+    appendItemDescription(details, item);
+    if (!item.affixes.length) details.append(node('p', 'gamble-no-affixes', message(WORDS.noAffixes)));
+    card.append(itemIcon(item.slot, 'gamble-icon'), details);
+    panel.querySelector('.gamble-card, .gamble-placeholder')?.remove();
+    panel.prepend(card);
+    repeat.hidden = false;
+    session.revealing = true;
+    session.gambleButton.disabled = true;
+    repeat.disabled = true;
+    const silhouetteTimer = setTimeout(() => {
+      session.timers.delete(silhouetteTimer);
+      if (!active() || !card.isConnected) return;
+      card.classList.remove('gamble-revealing');
+      details.removeAttribute('aria-hidden');
+      audio.play(`gamble${item.rarity[0].toUpperCase()}${item.rarity.slice(1)}`);
+      status.textContent = message(result.message);
+    }, CONFIG.gambleSilhouetteDuration * 1000);
+    const revealTimer = setTimeout(() => {
+      session.timers.delete(revealTimer);
+      if (!active() || !card.isConnected) return;
+      session.revealing = false;
+      session.gambleButton.disabled = false;
+      repeat.disabled = false;
+    }, (CONFIG.gambleSilhouetteDuration + CONFIG.gambleRevealDuration) * 1000);
+    session.timers.add(silhouetteTimer);
+    session.timers.add(revealTimer);
+  }
 }
 function openForge(itemId = selectedItemId, affixIndex = 0) {
   if (!inTown) return;
@@ -823,6 +912,7 @@ function render(alpha) { renderer.draw(state, alpha); }
 
 input = new Input($('game'), (x, y) => renderer.toWorld(x, y), action);
 $('modal').addEventListener('close', () => {
+  invalidateShop();
   if (modalOpen) { state.paused = modalPaused; modalOpen = false; renderSkills(); }
 });
 $('modal-close').addEventListener('click', closeModal);

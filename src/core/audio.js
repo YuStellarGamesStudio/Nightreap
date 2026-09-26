@@ -1,4 +1,4 @@
-import { AUDIO, SFX } from '../data/audio.js?v=2abfc8d355f88935';
+import { AUDIO, SFX } from '../data/audio.js?v=c5e4578c00cd424f';
 import { DEFAULT_SETTINGS } from '../data/save.js?v=2a952fa1ede7fff0';
 
 export class AudioManager {

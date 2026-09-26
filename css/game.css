@@ -304,6 +304,47 @@ input[type="range"] { min-height: 36px; cursor: pointer; }
 #modal-content .actions, #modal-content .modal-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 #modal-content .actions button, #modal-content .modal-actions button { flex: 1 1 auto; }
 #modal-content input[type="range"] { width: min(210px, 100%); }
+#modal:has(.shop-layout) { width: min(870px, calc(100vw - 50px)); }
+#modal-content:has(.shop-layout) { overflow: hidden; padding: 14px 16px 16px; }
+.shop-layout { display: grid; grid-template-columns: minmax(0, 235px) minmax(0, 1fr); gap: 14px; min-height: 0; }
+.shop-controls { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+#modal-content .shop-controls .modal-row { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 2px 8px; margin: 0; padding: 7px 8px; }
+.shop-controls .modal-row strong { grid-column: 1; font-size: 14px; line-height: 1.2; }
+.shop-controls .modal-row small { grid-column: 1; color: #d2b888; font-size: 13px; line-height: 1.25; }
+.shop-controls .modal-row button { grid-column: 2; grid-row: 1 / 3; min-width: 44px; padding: 0; }
+.shop-gold { min-height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border: 1px solid #977146; color: #f9d994; background: linear-gradient(120deg, #3a2a22, #211d23 70%); font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.shop-status { min-height: 50px; padding: 8px 10px; border-left: 2px solid #bd9864; background: linear-gradient(90deg, #4030267d, #191920); color: #f3e1c3; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.gamble-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 10px; padding: 12px; border: 1px solid #74563d; background: radial-gradient(ellipse at 50% 20%, #5943325c, transparent 57%), linear-gradient(160deg, #292126, #12151c 65%); box-shadow: inset 0 0 0 1px #c5a06d20, inset 0 14px 35px #130e13; }
+.gamble-panel > p { margin: 0; text-align: center; font: 17px/1.5 Georgia, serif; color: #d5bb99; }
+.gamble-card {
+  --relic-glow: #e0ddd092; --relic-edge: #bfb6a2; --relic-flare: #e0ddd044;
+  --gamble-reveal-duration: 0s;
+  position: relative; isolation: isolate; min-width: 0; overflow: hidden; display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 12px;
+  padding: 16px; border: 1px solid var(--relic-edge); border-radius: 4px;
+  background: radial-gradient(ellipse at 17% 28%, var(--relic-flare), transparent 50%), linear-gradient(135deg, #28252a, #171922 78%);
+  box-shadow: inset 0 0 0 1px #ffffff15, 0 0 23px var(--relic-flare), 0 12px 24px #0009;
+  transition: border-color var(--gamble-reveal-duration), box-shadow var(--gamble-reveal-duration), background var(--gamble-reveal-duration);
+}
+.gamble-card::before { content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none; opacity: .8; background: radial-gradient(ellipse at 18% 38%, var(--relic-glow), transparent 25%); transition: opacity var(--gamble-reveal-duration); }
+.gamble-card[data-rarity="magic"] { --relic-glow: #4590dbab; --relic-edge: #7aa9df; --relic-flare: #416ca466; }
+.gamble-card[data-rarity="rare"] { --relic-glow: #e5ad55bb; --relic-edge: #e5c178; --relic-flare: #a87a376b; }
+.gamble-card[data-rarity="legendary"] { --relic-glow: #ec7934c7; --relic-edge: #f8ad67; --relic-flare: #b7512d8f; }
+.gamble-icon { display: block; width: 90px; height: 90px; align-self: start; object-fit: contain; filter: drop-shadow(0 0 12px var(--relic-glow)); transition: filter var(--gamble-reveal-duration), opacity var(--gamble-reveal-duration), transform var(--gamble-reveal-duration); }
+.gamble-details { min-width: 0; opacity: 1; transform: translateY(0); transition: opacity var(--gamble-reveal-duration), transform var(--gamble-reveal-duration); overflow-wrap: anywhere; }
+.gamble-details .gamble-rarity { display: block; margin: 0 0 3px; color: var(--relic-edge); font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+#modal-content .gamble-details h3 { margin: 0 0 5px; color: #fff0d5; font: 20px/1.2 Georgia, serif; text-shadow: 0 1px 10px #000; }
+#modal-content .gamble-details .detail-meta { margin: 0 0 8px; font-size: 13px; line-height: 1.35; }
+.gamble-details .affix-row { padding: 5px 0; font-size: 14px; line-height: 1.3; }
+#modal-content .gamble-no-affixes { margin: 8px 0 0; font-size: 14px; }
+.gamble-card.gamble-revealing { border-color: #65594f; background: linear-gradient(135deg, #26232a, #15171e 78%); box-shadow: inset 0 0 0 1px #ffffff0b, 0 12px 24px #0009; }
+.gamble-card.gamble-revealing::before { opacity: 0; }
+.gamble-card.gamble-revealing .gamble-icon { filter: grayscale(1) brightness(.13) drop-shadow(0 2px 8px #000); transform: scale(.88); }
+.gamble-card.gamble-revealing .gamble-details { opacity: 0; transform: translateY(6px); }
+.gamble-repeat { align-self: stretch; min-height: 44px; border-color: #c8975a; color: #ffdfad; background: linear-gradient(135deg, #69412c, #33242a 62%, #1b1c25); }
+@media (prefers-reduced-motion: reduce) {
+  .gamble-card, .gamble-card::before, .gamble-icon, .gamble-details { transition: none; }
+  .gamble-card.gamble-revealing .gamble-icon, .gamble-card.gamble-revealing .gamble-details { transform: none; }
+}
 .sale-group { margin: 0 0 10px; padding: 5px 8px 8px; border: 1px solid #826345; border-radius: 3px; }
 .sale-group legend { padding: 0 6px; color: #f1d7ac; font-weight: 700; }
 .sale-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }

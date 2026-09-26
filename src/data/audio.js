@@ -48,4 +48,8 @@ export const SFX = Object.freeze({
   potion: { notes: [59,64,69], duration: 0.085, wave: 'triangle', level: 0.18 },
   heal: { notes: [64,69,72], duration: 0.1, wave: 'triangle', level: 0.18 },
   equip: { notes: [60,67], duration: 0.08, wave: 'square', level: 0.14 },
+  gambleCommon: { notes: [52, 57], duration: 0.075, wave: 'triangle', level: 0.13 },
+  gambleMagic: { notes: [62, 69, 74], duration: 0.075, wave: 'sine', level: 0.17 },
+  gambleRare: { notes: [64, 71, 76, 80], duration: 0.08, wave: 'triangle', level: 0.2 },
+  gambleLegendary: { notes: [57, 69, 76, 84], duration: 0.105, wave: 'sawtooth', level: 0.22 },
 });

@@ -1,4 +1,4 @@
-import { ART } from './config.js?v=dba7a118f0c64652';
+import { ART } from './config.js?v=cd5d8d477f8af273';
 
 // World-space stride and SVG-space articulation are visual only; see DESIGN.md.
 export const ANIMATION = Object.freeze({
