@@ -1,0 +1,48 @@
+// Frequencies are MIDI pitches (null = rest); tracks loop on their own phrase.
+// The bass pulse and eighth-note lead use independent voices and envelopes.
+export const AUDIO = Object.freeze({
+  scheduleInterval: 50, lookAhead: 0.18, maxScheduleLag: 0.3,
+  referencePitch: 69, referenceFrequency: 440, semitones: 12,
+  leadGate: 0.79, bassGate: 1.65,
+  leadAttack: 0.008, bassAttack: 0.012, release: 0.045,
+  leadLevel: 0.18, bassLevel: 0.16, beatLevel: 0.09,
+  musicGain: 0.34, sfxGain: 0.4, volumeMaximum: 100,
+  beatFrequency: 76, beatEndFrequency: 37, beatDuration: 0.11,
+});
+
+export const TRACKS = Object.freeze({
+  menu: { bpm: 72, lead: [57,null,60,56,57,null,63,60,56,null,52,55,56,null,52,null],
+    bass: [33,33,32,32,29,29,31,31], beats: [1,0,0,1,1,0,1,0], wave: 'triangle' },
+  town: { bpm: 86, lead: [57,60,64,null,62,60,57,null,55,57,60,null,59,57,52,null],
+    bass: [33,33,36,36,29,29,31,31], beats: [1,0,0,0,1,0,0,0], wave: 'triangle' },
+  act0: { bpm: 124, lead: [57,57,60,null,56,57,63,60,57,null,53,56,55,53,52,null],
+    bass: [33,33,32,32,29,29,31,31], beats: [1,0,1,0,1,0,1,1], wave: 'square' },
+  act1: { bpm: 108, lead: [52,55,58,55,52,null,51,48,52,55,59,58,55,null,51,null],
+    bass: [28,28,31,31,27,27,24,24], beats: [1,0,0,1,1,0,1,0], wave: 'square' },
+  act2: { bpm: 132, lead: [55,null,62,60,58,55,53,55,51,null,58,56,55,51,48,null],
+    bass: [31,31,34,34,27,27,29,29], beats: [1,0,1,0,1,0,0,1], wave: 'triangle' },
+  act3: { bpm: 94, lead: [62,60,58,null,55,58,57,null,54,58,62,60,58,54,50,null],
+    bass: [38,38,34,34,31,31,30,30], beats: [1,0,0,0,1,0,0,1], wave: 'square' },
+  act4: { bpm: 146, lead: [48,55,59,60,54,59,63,60,48,55,59,65,63,59,54,null],
+    bass: [24,24,30,30,27,27,29,29], beats: [1,1,0,1,1,0,1,1], wave: 'sawtooth' },
+  dungeon: { bpm: 116, lead: [50,null,53,56,50,49,53,null,46,null,50,53,46,45,49,null],
+    bass: [26,26,25,25,22,22,21,21], beats: [1,0,0,1,1,0,0,1], wave: 'square' },
+  boss: { bpm: 164, lead: [48,55,60,59,48,55,63,60,48,54,59,58,48,54,65,63],
+    bass: [24,24,30,30,29,29,23,23], beats: [1,1,1,0,1,1,1,1], wave: 'sawtooth' },
+  sheep: { bpm: 142, lead: [60,64,67,65,60,null,72,67,59,62,65,64,59,67,65,null],
+    bass: [36,36,35,35,33,33,31,31], beats: [1,0,1,0,1,0,1,0], wave: 'square' },
+});
+
+export const SFX = Object.freeze({
+  hit: { notes: [54,44], duration: 0.065, wave: 'square', level: 0.24 },
+  attack: { notes: [55,60], duration: 0.055, wave: 'square', level: 0.16 },
+  cast: { notes: [64,67,72], duration: 0.09, wave: 'triangle', level: 0.2 },
+  skill: { notes: [64,67,72], duration: 0.09, wave: 'triangle', level: 0.2 },
+  loot: { notes: [67,72,76], duration: 0.1, wave: 'square', level: 0.19 },
+  level: { notes: [60,64,67,72,76], duration: 0.14, wave: 'triangle', level: 0.24 },
+  boss: { notes: [48,47,43,36], duration: 0.16, wave: 'sawtooth', level: 0.28 },
+  death: { notes: [57,53,48,41], duration: 0.12, wave: 'triangle', level: 0.22 },
+  portal: { notes: [57,64,69,72], duration: 0.1, wave: 'square', level: 0.16 },
+  heal: { notes: [64,69,72], duration: 0.1, wave: 'triangle', level: 0.18 },
+  equip: { notes: [60,67], duration: 0.08, wave: 'square', level: 0.14 },
+});
