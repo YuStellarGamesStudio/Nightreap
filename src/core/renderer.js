@@ -1,4 +1,4 @@
-import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=77574b6c67351d1d';
+import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=b925c08793267d57';
 import { CONFIG, ART } from '../data/config.js?v=c718bdc80f8941c9';
 import { TerrainRenderer } from './terrain-renderer.js?v=a89e6623abcdc8a6';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
@@ -189,7 +189,7 @@ export class Renderer {
     for (const entity of actors) {
       if (entity.rx != null) { this.terrain.drawObstacle(entity, state.area.theme); continue; }
       if (entity !== p && !isExplored(state.area, entity.x, entity.y)) continue;
-      if (entity.hp<=0) continue;
+      if (entity.hp<=0 && entity!==p) continue;
       let art=entity===p ? ART[p.form && p.form!=='human' ? p.form : p.classId] : ART[entity.kind] || ART[entity.family] || ART.demon;
       if (entity.boss) art=ART.boss;
       const parts=this.rigs.get(art) || this.rigs.get(ART.demon);
@@ -222,6 +222,15 @@ export class Renderer {
       const floating=FLOATING_ART.has(art);
       const phase=floating?pose.floatPhase:null;
       this.drawShadow(point.x,point.y,size,phase);
+      if (entity===p && p.hp<=0) {
+        ctx.save();
+        ctx.translate(point.x,point.y);
+        ctx.scale(1,ANIMATION.deathFlatten);
+        ctx.rotate(ANIMATION.deathAngle);
+        this.drawRig(parts,0,size/2,size,pose.facing,0,null);
+        ctx.restore();
+        continue;
+      }
       if(entity===p || entity.elite){ctx.strokeStyle=entity===p?'#b5ab8055':'#d4af5daa';ctx.beginPath();ctx.ellipse(point.x,point.y,size/3,size/7,0,0,Math.PI*2);ctx.stroke();}
       this.drawRig(parts,point.x,point.y+(floating?Math.sin(phase)*ANIMATION.floatHeight:0),
         size,pose.facing,pose.moving?pose.phase:0,phase);

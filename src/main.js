@@ -5,7 +5,7 @@ import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
 import { ACT_MUSIC } from './data/audio.js?v=c5e4578c00cd424f';
-import { Renderer } from './core/renderer.js?v=85a24925e62c9f17';
+import { Renderer } from './core/renderer.js?v=1822a268c5482197';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
 import { GameLoop } from './core/loop.js?v=a08da43477caf53d';
 import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
@@ -15,7 +15,7 @@ import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatchin
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
-import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=e7e65818e23a0a39';
+import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=e11c580f9a3da791';
 import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
 
 const $ = id => document.getElementById(id);
@@ -145,9 +145,8 @@ function enterArea(options) {
   void audio.unlock().catch(failure);
   audio.play('portal');
 }
-function returnTown(dead = false) {
+function returnTown() {
   if (inTown) return;
-  if (dead) { deathPenalty(player); notify(UI.dead, 'death'); }
   inTown = true;
   input.clear();
   player.hp = player.maxHp;
@@ -180,6 +179,19 @@ function confirmReturnTown() {
   }, 'return-confirm'));
   content.append(destination, description, actions);
   cancel.focus();
+}
+
+function showDeath() {
+  state.paused = true;
+  player.hp = 0;
+  input.clear();
+  setInventoryOpen(false);
+  deathPenalty(player);
+  audio.play('death');
+  renderHud();
+  $('death-screen').showModal();
+  $('death-return').focus();
+  void persist();
 }
 function renderProgress() {
   const p = player, area = state.area;
@@ -416,6 +428,9 @@ function renderHud() {
   $('resource-potion').disabled = inTown || !p.potions.resource || p.resource >= p.maxResource;
 }
 function renderTranslations() {
+  $('death-title').textContent = message(UI.deathTitle);
+  $('death-description').textContent = message(UI.deathDescription);
+  $('death-return').textContent = message(UI.town);
   document.documentElement.lang = language;
   $('screenshot-button').textContent = message(UI.screenshot);
   for (const [id, key] of Object.entries({ 'brand-title':'title', 'brand-subtitle':'subtitle',
@@ -856,7 +871,7 @@ function tryTravel(kind) {
 }
 function action(key) {
   if (key === 'gesture') { void audio.unlock().catch(failure); return; }
-  if (titleOpen) return;
+  if (titleOpen || $('death-screen').open) return;
   if (key === 'tab') { setInventoryOpen($('inventory-panel').hidden); return; }
   if (key === 'escape') {
     if ($('modal').open) { closeModal(); return; }
@@ -878,7 +893,7 @@ function update(dt) {
   input.secondarySkill = settings.rightMouseSkill;
   combat.update(dt, input);
   revealExploration(state.area, player.x, player.y);
-  if (pendingDeath) { pendingDeath = false; returnTown(true); return; }
+  if (pendingDeath) { pendingDeath = false; showDeath(); return; }
   saveElapsed += dt;
   if (saveElapsed >= CONFIG.saveInterval) { saveElapsed %= CONFIG.saveInterval; void persist(); }
   lastUi += dt;
@@ -892,6 +907,16 @@ function update(dt) {
 function render(alpha) { renderer.draw(state, alpha); }
 
 input = new Input($('game'), (x, y) => renderer.toWorld(x, y), action);
+$('death-screen').addEventListener('cancel', event => event.preventDefault());
+$('death-screen').addEventListener('keydown', event => {
+  if (event.key === 'Tab') { event.preventDefault(); $('death-return').focus(); }
+});
+$('death-return').addEventListener('click', () => {
+  if (!$('death-screen').open) return;
+  $('death-screen').close();
+  returnTown();
+  $('depart-button').focus();
+});
 $('modal').addEventListener('close', () => {
   invalidateShop();
   if (modalOpen) { state.paused = inTown || modalPaused; modalOpen = false; renderSkills(); }
