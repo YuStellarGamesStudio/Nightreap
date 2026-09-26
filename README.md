@@ -83,6 +83,8 @@ Every composition has its own `src/data/music/{scene}.json`; `src/data/music/ind
 
 Core, combat, equipment, world, persistence, and audio modules have milestone checkpoint commits; game integration and acceptance remain pending. The gameplay above describes design goals. See [ACCEPTANCE.md](ACCEPTANCE.md) for observed verification.
 
-## License
+## 授權 / License
 
-[MIT](LICENSE) © 2026 YueyuHoshizora
+© 2026 YueyuHoshizora。本專案以 [GNU Affero General Public License v3.0（AGPL-3.0-only）](LICENSE) 授權；[原始碼](https://github.com/YueyuHoshizora/Nightreap)公開提供。
+
+© 2026 YueyuHoshizora. Licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0-only)](LICENSE). [Source code](https://github.com/YueyuHoshizora/Nightreap) is available online.

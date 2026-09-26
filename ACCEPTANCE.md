@@ -6,7 +6,7 @@
 
 - [x] 全部指定文件存在，CLAUDE.md 單行引用；規範包含 PLAN 第 0 節全文。
 - [x] DESIGN.md 保留 §3 屬性、33 詞綴、五職技能、怪物、難度、合成及掉落結構，列出實作初值。
-- [x] 中英 README、MIT、CNAME、空 .nojekyll、含中英網址 sitemap；assets 與 src 目錄存在。
+- [x] 中英 README、AGPL-3.0-only、CNAME、空 .nojekyll、含中英網址 sitemap；assets 與 src 目錄存在。（原 M0 使用 MIT，依使用者新指示更新）
 
 ## 功能與硬指標
 
@@ -28,7 +28,7 @@
 - [ ] 多首場景暗黑 chiptune；音樂/音效獨立開關及 0–100 滑桿即時生效，重載保存。（#13、26）
 - [ ] 全部圖像為精緻 SVG，無像素或純色塊敷衍；全局暗黑；鐮刀＋永夜彎月 icon 16/32/180/192/512。（#12、21、25、27、41）
 - [ ] 無框架、CDN、建置依賴；所有調整數值集中 src/data，與 DESIGN 同步；資料以外不寫死調整數值。（#2、15）
-- [ ] 根目錄文件、MIT、中英 README、CNAME、sitemap、.nojekyll 齊全。（#15、16、19、20、22、23、37）
+- [ ] 根目錄文件、AGPL-3.0-only、中英 README、CNAME、sitemap、.nojekyll 齊全。（#15、16、20、22、23、37；授權依本輪指示覆蓋原 #19）
 - [ ] 每里程碑提交 M0–M7，執行期間零 push；Git log 只能證明 commit，不能證明未 push。（#38）
 
 ## 驗收紀錄
@@ -87,3 +87,8 @@
 - 十個場景分別為 `menu`、`town`、`act0`–`act4`、`dungeon`、`boss`、`sheep` 的獨立 JSON，索引只列檔名；十首旋律、低音、節拍、BPM 與原資料逐項相同。
 - 隔離 Chromium 載入十首各自版本化 JSON（另含索引），未請求舊的彙總 `music.json`；十種場景皆實際建立 Web Audio 聲部與排程，無新增頁面錯誤。
 - Service Worker 快取內有索引加十份曲目、無彙總檔；停止 HTTP 服務、離線重載後，遊戲可從開始畫面進入 Burning Village Road 並行走。此為離線載入與遊戲場景驗證，未冒稱人工聽感已驗證。
+
+### 授權與企劃書回退
+
+- 企劃書已單獨還原至首次提交 `2e03ff1` 的位元組內容，Git blob SHA-1 同為 `36e2164c8eebb124edf693a3a6476cce2b2da326`；原 MIT 裁示保留，授權改動依使用者明確覆蓋指示記於 PLAN.md。
+- LICENSE 改採 GNU 官方 AGPL v3.0 全文，README 同步中英文 AGPL-3.0-only 與原始碼網址。Chromium 1280×720 目視開始畫面的原始碼連結，切換中文後連結仍存在、可正常開始遊戲，無新增瀏覽器錯誤。

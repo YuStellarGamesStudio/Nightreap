@@ -32,6 +32,7 @@
 - 補齊 PWA 安裝、離線、版本更新及各尺寸 SVG 網頁／安裝圖示；更新不得刪除 IndexedDB 存檔。
 - 依後續要求提供根目錄 `favicon.ico`，由 SVG 原圖轉出多尺寸；配樂資料另拆成 JSON，沿用共用音訊引擎並納入離線快取。
 - 依最新授權按需求拆分獨立子任務，由執行 Agent 整合並實際驗證；階段性提交、不自動推送。
+- 依使用者明確確認，授權改為 AGPL-3.0-only，取代企劃書原 MIT 裁示 #19；企劃書單獨還原到首次提交版本，保留原文不改寫。
 
 ---
 
@@ -45,7 +46,7 @@
 | 網址 | https://nightreap.yustellar.dev |
 | 遠端倉庫 | https://github.com/YueyuHoshizora/Nightreap.git |
 | 部署 | GitHub Pages＋CNAME `nightreap.yustellar.dev` |
-| 授權 | MIT |
+| 授權 | AGPL-3.0-only（使用者確認覆蓋企劃書原 MIT 裁示 #19） |
 | 存檔 | IndexedDB（資料庫 `nightreap`），存檔／讀檔／匯出／匯入（JSON） |
 | 語言 | 英文（預設）、中文；`?lang=zh` 查詢參數切換 |
 | PWA | 可安裝為桌面應用、離線可玩 |
@@ -61,7 +62,7 @@ Nightreap/
 ├── DESIGN.md          # 全部數值唯一來源
 ├── ACCEPTANCE.md      # 驗收清單與標準
 ├── README.md          # 中英雙語
-├── LICENSE            # MIT
+├── LICENSE            # AGPL-3.0-only
 ├── CNAME              # nightreap.yustellar.dev
 ├── .nojekyll          # 空檔
 ├── sitemap.xml
@@ -86,7 +87,7 @@ Nightreap/
 - [ ] `CLAUDE.md`：僅一行引用 `AGENTS.md`
 - [ ] `DESIGN.md`：由企劃書 §3 初始化（屬性、詞綴池 33 條、技能組五職業、怪物、難度、合成、掉落表骨架）
 - [ ] `ACCEPTANCE.md`：驗收清單（見第 5 節硬指標全數納入）
-- [ ] `README.md`：中英雙語；`LICENSE`：MIT；`CNAME`：`nightreap.yustellar.dev`
+- [ ] `README.md`：中英雙語；`LICENSE`：AGPL-3.0-only；`CNAME`：`nightreap.yustellar.dev`
 - [ ] `.nojekyll`（空檔）、`sitemap.xml`（含 `?lang=zh|en` 列）
 
 ### M1 核心架構

@@ -119,6 +119,8 @@ input[type="range"] { min-height: 36px; cursor: pointer; }
 .title-menu button { min-height: 50px; font: 16px Georgia, serif; letter-spacing: .04em; background: linear-gradient(110deg, #282635eb, #141927d9); }
 .title-menu .primary { background: linear-gradient(110deg, #74523ce8, #342b35e8); border-color: #c99c65; color: #f6dfb5; }
 .title-footnote { margin: 28px 0 0; color: #8b858d; font: italic 12px/1.5 Georgia, serif; }
+.title-source { margin: 8px 0 0; font: 12px/1.5 Georgia, serif; }
+.title-source a { color: #cdb8a0; }
 .update-button { position: fixed; z-index: 16; right: 18px; bottom: 18px; max-width: calc(100% - 36px); border-color: #d1a76c; box-shadow: 0 4px 24px #000c; }
 .world-heading { position: absolute; z-index: 2; top: 14px; left: 18px; max-width: 55%; pointer-events: none; text-shadow: 0 2px 6px #050507, 0 0 12px #050507; }
 #area-kicker { color: #e3bc83; font: 700 10px Georgia, serif; letter-spacing: .15em; }
