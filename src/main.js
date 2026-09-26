@@ -15,7 +15,7 @@ import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatchin
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
-import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=e11c580f9a3da791';
+import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=1f01adf22871d910';
 import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
 
 const $ = id => document.getElementById(id);
@@ -263,24 +263,31 @@ function renderSkills() {
     tile.disabled = inTown || state.paused || remaining > 0 || player.resource < skill.cost;
     return tile;
   }));
-  $('passives').replaceChildren(...role().passives.map(passive => node('div', 'passive-label', message(passive))));
-  if (player.attributePoints) {
-    const stats = node('div', 'attribute-points', `${message(UI.attributePoints)}: ${player.attributePoints}`);
-    for (const attribute of Object.keys(player.attributes)) {
-      stats.append(button(`${message(UI[attribute])} ${player.attributes[attribute]} +`, () => {
-        if (combat.spendAttribute(attribute)) { renderSkills(); renderHud(); void persist(); }
-      }, 'stat-button'));
-    }
-    $('passives').append(stats);
+  const points = player.attributePoints + player.skillPoints;
+  $('passives').replaceChildren(button(`${message(UI.growth)}${points ? ` · +${points}` : ''}`, openGrowth, 'growth-button'));
+}
+function openGrowth() {
+  const content = openModal(UI.growth);
+  content.append(...role().passives.map(passive => node('div', 'passive-label', message(passive))));
+  const stats = node('div', 'modal-grid');
+  content.append(node('h3', '', `${message(UI.attributePoints)}: ${player.attributePoints}`), stats);
+  for (const attribute of Object.keys(player.attributes)) {
+    const choice = button(`${message(UI[attribute])} ${player.attributes[attribute]} +`, () => {
+      if (combat.spendAttribute(attribute)) { renderSkills(); renderHud(); openGrowth(); void persist(); }
+    }, 'stat-button');
+    choice.disabled = !player.attributePoints;
+    stats.append(choice);
   }
-  if (player.skillPoints) {
-    const ranks = node('div', 'skill-points', `${message(UI.skillPoints)}: ${player.skillPoints}`);
-    role().skills.slice(1).forEach((skill, index) => ranks.append(button(
-      `${message(skill.name)} + (${message(UI.rank)} ${player.skillRanks[skill.id] || 0})`, () => {
-        if (combat.spendSkill(index + 1)) { renderSkills(); void persist(); }
-      }, 'stat-button')));
-    $('passives').append(ranks);
-  }
+  const ranks = node('div', 'modal-grid');
+  content.append(node('h3', '', `${message(UI.skillPoints)}: ${player.skillPoints}`), ranks);
+  role().skills.slice(1).forEach((skill, index) => {
+    const choice = button(`${message(skill.name)} + (${message(UI.rank)} ${player.skillRanks[skill.id] || 0})`, () => {
+      if (combat.spendSkill(index + 1)) { renderSkills(); openGrowth(); void persist(); }
+    }, 'stat-button');
+    choice.disabled = !player.skillPoints;
+    ranks.append(choice);
+  });
+  $('modal-close').focus();
 }
 function updateSkillAvailability() {
   const skills = combat.skills;

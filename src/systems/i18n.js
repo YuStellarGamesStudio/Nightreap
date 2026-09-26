@@ -58,6 +58,7 @@ export const UI = {
   level: label('Level', '等級'), depth: label('Depth', '深度'), gold: label('Gold', '金幣'), materials: label('Materials', '材料'), tickets: label('Tickets', '綿羊券'),
   difficulty: label('Difficulty', '難度'), locked: label('Defeat the Abyss Lord to unlock.', '擊敗深淵之主解鎖。'),
   attributePoints: label('Attribute points', '屬性點'), skillPoints: label('Skill points', '技能點'),
+  growth: label('Character growth', '角色成長'),
   strength: label('Strength', '力量'), dexterity: label('Dexterity', '敏捷'), intelligence: label('Intelligence', '智力'), vitality: label('Vitality', '體力'), spirit: label('Spirit', '精神'),
   human: label('Human', '人形'), bear: label('Bear', '熊形'), wolf: label('Wolf', '狼形'),
   rank: label('Rank', '等級'), seconds: label('seconds', '秒'),
