@@ -23,6 +23,19 @@
 
 核心循環：**出城探索 → 清怪刷裝 → 搭配詞綴 → 回城整備 → 挑戰 Boss 或更深地下城**。
 
+### 本輪介面與探索
+
+- 開始畫面提供開始／繼續旅程、讀取、設定及語言切換；五幕各有獨立村落式庇護所，商人與鍛造僅在城鎮可用。
+- 背包按需開啟，裝備以人形九槽呈現；技能圖示列位於下方。角色與怪物採分件 SVG 步態。
+- 野外與地下城為連續大地圖，包含實體地形障礙、隨機怪群及探索黑霧。
+
+### 安裝與離線
+
+使用 HTTPS 網站或本機 HTTP 伺服器開啟（不可直接開 `file://`）。首次連線等待資產快取完成後，可由支援的桌面瀏覽器選單安裝；之後可離線重新啟動及遊玩。新版本完成快取後顯示「存檔並重新載入」，更新不刪除 IndexedDB。
+
+圖示以 SVG 為來源，提供 16／32／180／192／512 與 maskable 版本；另提供由 SVG 轉製、含 16／32／48px 的根目錄 `favicon.ico`。維護者修改資產後執行 `node scripts/version-assets.mjs`，將內容雜湊與離線清單一起提交；這是發版維護工具，遊戲直接執行已提交檔案，不需建置。
+
+
 ### 開發狀態
 
 目前已有核心、戰鬥、裝備、世界、存檔與音訊模組的階段性提交，尚待遊戲整合與驗收。上述玩法為設計目標；功能是否完成及驗證通過，以 [ACCEPTANCE.md](ACCEPTANCE.md) 紀錄為準。
@@ -48,6 +61,19 @@ A desktop dark-fantasy survivor ARPG featuring five classes, affix-driven loot, 
 7. **Keep your progress:** Death returns you to town with a small penalty, but you keep your equipment. Five character slots, autosaving, and JSON export/import are planned. Enemies and bosses respawn when you re-enter an area; world state is not saved.
 
 Core loop: **Explore → Slay and loot → Combine affixes → Prepare in town → Challenge bosses or deeper dungeons**.
+
+### Current interface and exploration
+
+- A title screen offers start/continue, loading, settings and language selection. Each act has a distinct sanctuary village; trading and forging are town-only.
+- Inventory opens on demand with nine anatomical equipment slots; the bottom skill bar uses icons. Actors use articulated SVG movement.
+- Continuous wilderness and dungeon maps feature solid obstacles, random monster packs and exploration fog.
+
+### Installation and offline play
+
+Open over HTTPS or a local HTTP server, not `file://`. After the first online asset download completes, install from a supported desktop browser's menu and play offline. A ready update offers “Save & reload”; updating never deletes IndexedDB.
+
+SVG source icons cover 16/32/180/192/512 and maskable variants; the root `favicon.ico` contains derived 16/32/48px images. After asset changes, maintainers run `node scripts/version-assets.mjs` and commit the refreshed hashes and offline inventory. This is release maintenance, not a required game build step.
+
 
 ### Status
 

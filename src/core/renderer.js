@@ -1,7 +1,7 @@
-import { ANIMATION, FLOATING_ART } from '../data/animation.js';
-import { CONFIG, ART } from '../data/config.js';
-import { TerrainRenderer } from './terrain-renderer.js';
-import { isExplored } from '../systems/exploration.js';
+import { ANIMATION, FLOATING_ART } from '../data/animation.js?v=ee8f6f7a081853ea';
+import { CONFIG, ART } from '../data/config.js?v=0bc99017d137590b';
+import { TerrainRenderer } from './terrain-renderer.js?v=fa54c2b9186e698c';
+import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
 

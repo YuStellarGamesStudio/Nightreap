@@ -6,8 +6,13 @@
   <meta name="theme-color" content="#11131c">
   <meta name="description" content="Nightreap — a dark fantasy loot-driven action RPG beneath an endless night.">
   <title>Nightreap · 永夜收割</title>
-  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/game.css?v=d970515421ac6427">
+  <link rel="icon" href="favicon.ico?v=1e1864e5f176f518" type="image/x-icon" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="assets/icon.svg?v=7b41c761a5cf9f2b" type="image/svg+xml" sizes="any">
+  <link rel="icon" href="assets/icon-32.svg?v=dba4824a4f3913c8" type="image/svg+xml" sizes="32x32">
+  <link rel="icon" href="assets/icon-16.svg?v=8a427d37f106e15f" type="image/svg+xml" sizes="16x16">
+  <link rel="apple-touch-icon" href="assets/icon-180.svg?v=ceb7273a32a293b5" sizes="180x180">
+  <link rel="manifest" href="manifest.webmanifest?v=29a0d84bf2256812">
+  <link rel="stylesheet" href="css/game.css?v=5075451ae5a5be4d">
 </head>
 <body>
   <div id="desktop-warning" role="alert"></div>
@@ -26,7 +31,7 @@
     </div>
   </section>
   <header class="topbar">
-    <a class="brand" href="./" aria-label="Nightreap"><img src="assets/icon.svg" alt="" width="42" height="42"><span><strong id="brand-title">NIGHTREAP</strong><small id="brand-subtitle">BENEATH THE LAST MOON</small></span></a>
+    <a class="brand" href="./" aria-label="Nightreap"><img src="assets/icon.svg?v=7b41c761a5cf9f2b" alt="" width="42" height="42"><span><strong id="brand-title">NIGHTREAP</strong><small id="brand-subtitle">BENEATH THE LAST MOON</small></span></a>
     <div class="character-line"><span id="character-name">Wanderer</span><span id="character-level">I</span><span class="separator">/</span><span id="difficulty-label">Normal</span></div>
     <nav class="top-actions"><button id="inventory-button" type="button" aria-controls="inventory-panel" aria-expanded="false">Inventory</button><button id="save-button" type="button">Save</button><button id="load-button" type="button">Load</button><button id="settings-button" type="button">Settings</button><button id="language-button" type="button">中文</button></nav>
   </header>
@@ -35,7 +40,7 @@
       <canvas id="game" tabindex="0" aria-label="Nightreap game world"></canvas>
       <div id="village" class="village-scene">
         <img id="village-art" class="village-art" alt="">
-        <img id="village-hero" class="village-hero" src="assets/warrior.svg" alt="">
+        <img id="village-hero" class="village-hero" src="assets/warrior.svg?v=7401f886ee91db51" alt="">
         <button id="shop-button" class="village-service village-merchant" type="button">Merchant</button>
         <button id="forge-button" class="village-service village-forge" type="button">Forge</button>
         <div class="village-actions"><button id="oath-button" type="button">Choose your oath</button><button id="depart-button" class="primary" type="button">Enter the night</button></div>
@@ -70,7 +75,7 @@
     </aside>
   </main>
   <section class="skill-panel panel" aria-label="Skills">
-    <div class="hero-summary"><div id="class-portrait" class="portrait"><img src="assets/warrior.svg" alt=""></div><div id="class-name" class="class-name">Warrior</div></div>
+    <div class="hero-summary"><div id="class-portrait" class="portrait"><img src="assets/warrior.svg?v=7401f886ee91db51" alt=""></div><div id="class-name" class="class-name">Warrior</div></div>
     <div id="skills" class="skills"></div>
     <div class="hero-actions"><div id="passives" class="passives"></div><button id="town-button" type="button" class="subtle">Return to sanctuary</button></div>
   </section>
@@ -82,6 +87,7 @@
   </footer>
   <dialog id="modal"><div class="modal-heading"><h2 id="modal-title"></h2><button id="modal-close" aria-label="Close">×</button></div><div id="modal-content"></div></dialog>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
-  <script type="module" src="src/main.js?v=c9c9bdda2ddb6260"></script>
+  <button id="update-button" class="update-button" type="button" hidden>Update ready · Save &amp; reload</button>
+  <script type="module" src="src/main.js?v=b363d0947c30dba6"></script>
 </body>
 </html>

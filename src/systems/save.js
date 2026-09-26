@@ -1,8 +1,8 @@
 import {
   CLASS_IDS, DATABASE_NAME, DATABASE_VERSION, DEFAULT_SETTINGS,
   GEAR_SLOTS, ITEM_RARITIES, SAVE_LIMITS, SAVE_SCHEMA_VERSION,
-} from '../data/save.js';
-import { AFFIXES } from '../data/gear.js';
+} from '../data/save.js?v=459c3b474f9babff';
+import { AFFIXES } from '../data/gear.js?v=dd3a72133bbc3a05';
 
 const classes = new Set(CLASS_IDS);
 const slots = new Set(GEAR_SLOTS);

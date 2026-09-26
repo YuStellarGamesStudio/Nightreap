@@ -1,5 +1,5 @@
-import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js';
-import { TERRAIN } from '../data/terrain.js';
+import { ACTS, BOSSES, DIFFICULTIES, MONSTERS, WORLD } from '../data/world.js?v=bea1f47a1d00e4e4';
+import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
 
 const choice = (items, rng) => items[Math.min(items.length - 1, Math.floor(rng() * items.length))];
 const anchorPosition = ([column, row], dx = 0, dy = 0) => ({

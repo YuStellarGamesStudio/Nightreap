@@ -1,4 +1,4 @@
-import { CONFIG } from '../data/config.js';
+import { CONFIG } from '../data/config.js?v=0bc99017d137590b';
 
 export class GameLoop {
   constructor(update, render) {

@@ -1,4 +1,4 @@
-import { AFFIXES, SLOT_NAMES, RARITY_NAMES, GEAR_BALANCE as B } from '../data/gear.js';
+import { AFFIXES, SLOT_NAMES, RARITY_NAMES, GEAR_BALANCE as B } from '../data/gear.js?v=dd3a72133bbc3a05';
 
 const definitions = new Map(AFFIXES.map(affix => [affix.id, affix]));
 const slots = Object.keys(SLOT_NAMES);

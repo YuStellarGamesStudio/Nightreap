@@ -1,18 +1,19 @@
-import { CONFIG, UI } from './data/config.js';
-import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js';
-import { CLASSES, COMBAT } from './data/combat.js';
-import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js';
-import { ACTS, DIFFICULTIES, WORLD } from './data/world.js';
-import { SANCTUARIES } from './data/sanctuary.js';
-import { Renderer } from './core/renderer.js';
-import { Input } from './core/input.js';
-import { GameLoop } from './core/loop.js';
-import { AudioManager } from './core/audio.js';
-import { Combat, createPlayer } from './systems/combat.js';
-import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js';
-import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js';
-import { SaveStore } from './systems/save.js';
-import { revealExploration } from './systems/exploration.js';
+import { CONFIG, UI } from './data/config.js?v=0bc99017d137590b';
+import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=459c3b474f9babff';
+import { CLASSES, COMBAT } from './data/combat.js?v=936ca80f602c3b09';
+import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
+import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=bea1f47a1d00e4e4';
+import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
+import { Renderer } from './core/renderer.js?v=82e3d93a56ccb450';
+import { Input } from './core/input.js?v=eb9e1b198213da3e';
+import { GameLoop } from './core/loop.js?v=d6afbf4fc767ffde';
+import { AudioManager } from './core/audio.js?v=2be6495cc07963c9';
+import { Combat, createPlayer } from './systems/combat.js?v=f1e3b7531e2bb6a3';
+import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=51b61829a8005c30';
+import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js?v=eb46dd9db95cfb0f';
+import { SaveStore } from './systems/save.js?v=0fc28909b3cdaba8';
+import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
+import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
 import { getLanguage, setLanguage, text } from './systems/i18n.js?v=05f50c421756c74c';
 
 const $ = id => document.getElementById(id);
@@ -393,6 +394,7 @@ function renderTranslations() {
   $('title-settings').textContent = message(UI.settings);
   $('title-language').textContent = language === 'en' ? '中文' : 'English';
   $('title-footnote').textContent = message(label('A sanctuary waits beyond the dark.', '黑暗彼端，仍有庇護你的燈火。'));
+  $('update-button').textContent = message(label('Update ready · Save & reload', '更新已就緒 · 存檔並重新載入'));
   $('controls-hint').textContent = `${message(UI.controls)} · ${message(WORDS.secondary)}`;
   $('language-button').textContent = language === 'en' ? '中文' : 'English';
   $('modal-close').setAttribute('aria-label', message(UI.close));
@@ -729,6 +731,14 @@ async function boot() {
   show('desktop-warning', window.innerWidth < CONFIG.minWidth || window.innerHeight < CONFIG.minHeight);
   $('title-start').disabled = $('title-load').disabled = $('title-settings').disabled = false;
   $('title-start').focus();
+  void registerPWA({
+    beforeUpdate: () => titleOpen ? Promise.resolve(true) : persist(),
+    onUpdate(apply) {
+      show('update-button', true);
+      $('update-button').onclick = () => void apply();
+    },
+    onError: failure,
+  });
   new GameLoop(update, render).start();
 }
 void boot();
