@@ -7,8 +7,8 @@ import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
 import { Renderer } from './core/renderer.js?v=82e3d93a56ccb450';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
 import { GameLoop } from './core/loop.js?v=d6afbf4fc767ffde';
-import { AudioManager } from './core/audio.js?v=2be6495cc07963c9';
-import { Combat, createPlayer } from './systems/combat.js?v=f1e3b7531e2bb6a3';
+import { AudioManager } from './core/audio.js?v=89a6cff3fc1a0229';
+import { Combat, createPlayer } from './systems/combat.js?v=816d5bab3bd095be';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=51b61829a8005c30';
 import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js?v=eb46dd9db95cfb0f';
 import { SaveStore } from './systems/save.js?v=0fc28909b3cdaba8';
@@ -714,7 +714,7 @@ window.addEventListener('resize', () => {
 async function boot() {
   for (const element of document.querySelectorAll('.topbar, .layout, .skill-panel, .hud')) element.inert = true;
   try {
-    await renderer.load();
+    await Promise.all([renderer.load(), audio.load()]);
     const stored = await saves.loadSettings();
     if (stored) settings = { ...stored, language };
     audio.setSettings(settings);

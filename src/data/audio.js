@@ -1,5 +1,4 @@
-// Frequencies are MIDI pitches (null = rest); tracks loop on their own phrase.
-// The bass pulse and eighth-note lead use independent voices and envelopes.
+// Instrument, timing and SFX tuning live here; compositions live in music/*.json.
 export const AUDIO = Object.freeze({
   scheduleInterval: 50, lookAhead: 0.18, maxScheduleLag: 0.3,
   referencePitch: 69, referenceFrequency: 440, semitones: 12,
@@ -14,29 +13,6 @@ export const AUDIO = Object.freeze({
     monsterCast: 0.38, bossCast: 0.28, enemyAttack: 0.24,
   }),
   beatFrequency: 76, beatEndFrequency: 37, beatDuration: 0.11,
-});
-
-export const TRACKS = Object.freeze({
-  menu: { bpm: 72, lead: [57,null,60,56,57,null,63,60,56,null,52,55,56,null,52,null],
-    bass: [33,33,32,32,29,29,31,31], beats: [1,0,0,1,1,0,1,0], wave: 'triangle' },
-  town: { bpm: 86, lead: [57,60,64,null,62,60,57,null,55,57,60,null,59,57,52,null],
-    bass: [33,33,36,36,29,29,31,31], beats: [1,0,0,0,1,0,0,0], wave: 'triangle' },
-  act0: { bpm: 124, lead: [57,57,60,null,56,57,63,60,57,null,53,56,55,53,52,null],
-    bass: [33,33,32,32,29,29,31,31], beats: [1,0,1,0,1,0,1,1], wave: 'square' },
-  act1: { bpm: 108, lead: [52,55,58,55,52,null,51,48,52,55,59,58,55,null,51,null],
-    bass: [28,28,31,31,27,27,24,24], beats: [1,0,0,1,1,0,1,0], wave: 'square' },
-  act2: { bpm: 132, lead: [55,null,62,60,58,55,53,55,51,null,58,56,55,51,48,null],
-    bass: [31,31,34,34,27,27,29,29], beats: [1,0,1,0,1,0,0,1], wave: 'triangle' },
-  act3: { bpm: 94, lead: [62,60,58,null,55,58,57,null,54,58,62,60,58,54,50,null],
-    bass: [38,38,34,34,31,31,30,30], beats: [1,0,0,0,1,0,0,1], wave: 'square' },
-  act4: { bpm: 146, lead: [48,55,59,60,54,59,63,60,48,55,59,65,63,59,54,null],
-    bass: [24,24,30,30,27,27,29,29], beats: [1,1,0,1,1,0,1,1], wave: 'sawtooth' },
-  dungeon: { bpm: 116, lead: [50,null,53,56,50,49,53,null,46,null,50,53,46,45,49,null],
-    bass: [26,26,25,25,22,22,21,21], beats: [1,0,0,1,1,0,0,1], wave: 'square' },
-  boss: { bpm: 164, lead: [48,55,60,59,48,55,63,60,48,54,59,58,48,54,65,63],
-    bass: [24,24,30,30,29,29,23,23], beats: [1,1,1,0,1,1,1,1], wave: 'sawtooth' },
-  sheep: { bpm: 142, lead: [60,64,67,65,60,null,72,67,59,62,65,64,59,67,65,null],
-    bass: [36,36,35,35,33,33,31,31], beats: [1,0,1,0,1,0,1,0], wave: 'square' },
 });
 
 export const SFX = Object.freeze({

@@ -1,0 +1,12 @@
+{
+  "menu": "menu.json?v=0b80048198bedd06",
+  "town": "town.json?v=eb154257e94cf5f5",
+  "act0": "act0.json?v=bc23ef2708008b06",
+  "act1": "act1.json?v=6356e8f2e9b1a0c0",
+  "act2": "act2.json?v=6d6e6f899f8e4e08",
+  "act3": "act3.json?v=6cdba17726bfb1cd",
+  "act4": "act4.json?v=d1fbfdbeeccf2ac3",
+  "dungeon": "dungeon.json?v=63dc3fe1d38a89fd",
+  "boss": "boss.json?v=d5e32b7a0f5acff2",
+  "sheep": "sheep.json?v=7f3123254c2bb954"
+}

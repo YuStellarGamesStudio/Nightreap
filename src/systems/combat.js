@@ -1,5 +1,5 @@
 import { CLASSES, COMBAT } from '../data/combat.js?v=936ca80f602c3b09';
-import { AUDIO } from '../data/audio.js?v=241a8ba752e8b994';
+import { AUDIO } from '../data/audio.js?v=09b125992cee5872';
 import { SpatialGrid } from '../core/spatial.js?v=74cbf7213b824da4';
 import { isWalkable } from './world.js?v=51b61829a8005c30';
 

@@ -1,4 +1,4 @@
-import { AUDIO, SFX, TRACKS } from '../data/audio.js?v=241a8ba752e8b994';
+import { AUDIO, SFX } from '../data/audio.js?v=09b125992cee5872';
 import { DEFAULT_SETTINGS } from '../data/save.js?v=459c3b474f9babff';
 
 export class AudioManager {
@@ -7,6 +7,7 @@ export class AudioManager {
     this.musicGain = null;
     this.sfxGain = null;
     this.settings = { ...DEFAULT_SETTINGS };
+    this.tracks = null;
     this.scene = 'menu';
     this.timer = null;
     this.step = 0;
@@ -15,8 +16,34 @@ export class AudioManager {
     this.sfxVoices = new Set();
     this.lastSfxTime = new Map();
   }
+  async load() {
+    const catalogUrl = new URL('../data/music/index.json?v=f429095ebf9f9a5c', import.meta.url);
+    const response = await fetch(catalogUrl);
+    if (!response.ok) throw new Error(`Cannot load music index: ${response.status}`);
+    const files = await response.json();
+    if (!files || typeof files !== 'object' || Array.isArray(files) || !Object.keys(files).length)
+      throw new Error('Empty music index');
+    const entries = await Promise.all(Object.entries(files).map(async ([name, file]) => {
+      if (!/^[a-z][a-z0-9-]*$/.test(name)
+          || typeof file !== 'string'
+          || !/^[a-z][a-z0-9-]*\.json(?:\?v=[0-9a-f]{16})?$/.test(file))
+        throw new Error(`Invalid music entry: ${name}`);
+      const trackResponse = await fetch(new URL(file, catalogUrl));
+      if (!trackResponse.ok) throw new Error(`Cannot load music track ${name}: ${trackResponse.status}`);
+      const track = await trackResponse.json();
+      if (!track || !Number.isFinite(track.bpm) || track.bpm <= 0
+          || !['triangle', 'square', 'sawtooth', 'sine'].includes(track.wave)
+          || !['lead', 'bass', 'beats'].every(key => Array.isArray(track[key]) && track[key].length)
+          || ![...track.lead, ...track.bass].every(note => note === null || Number.isInteger(note))
+          || !track.beats.every(beat => beat === 0 || beat === 1))
+        throw new Error(`Invalid music track: ${name}`);
+      return [name, track];
+    }));
+    this.tracks = Object.fromEntries(entries);
+  }
 
   async unlock() {
+    if (!this.tracks) await this.load();
     if (!this.context) {
       const Context = globalThis.AudioContext || globalThis.webkitAudioContext;
       if (!Context) throw new Error('Web Audio is unavailable');
@@ -53,7 +80,7 @@ export class AudioManager {
   }
 
   setScene(scene) {
-    if (!Object.hasOwn(TRACKS, scene)) throw new RangeError(`Unknown music scene: ${scene}`);
+    if (!this.tracks || !Object.hasOwn(this.tracks, scene)) throw new RangeError(`Unknown music scene: ${scene}`);
     if (scene === this.scene && this.timer) return;
     this.pauseMusic();
     this.scene = scene;
@@ -87,7 +114,7 @@ export class AudioManager {
 
   schedule() {
     if (!this.context || this.context.state !== 'running') return;
-    const track = TRACKS[this.scene];
+    const track = this.tracks[this.scene];
     const eighth = 60 / track.bpm / 2;
     const now = this.context.currentTime;
     if (this.nextNote < now - AUDIO.maxScheduleLag) this.nextNote = now;

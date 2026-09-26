@@ -23,8 +23,18 @@ async function version(path) {
   if (visiting.has(path)) throw new Error(`Cyclic version dependency: ${path}`);
   visiting.add(path);
   let content = await readFile(resolve(root, path), 'utf8');
+  if (path === 'src/data/music/index.json') {
+    const entries = JSON.parse(content);
+    for (const [scene, file] of Object.entries(entries)) {
+      const base = file.split('?')[0];
+      if (base !== `${scene}.json`) throw new Error(`Music filename must match scene: ${scene}`);
+      entries[scene] = `${base}?v=${await version(posix.join(posix.dirname(path), base))}`;
+    }
+    content = JSON.stringify(entries, null, 2) + '\n';
+    await save(path, content);
+  }
   const matches = path.endsWith('.js')
-    ? [...content.matchAll(/\bfrom\s+(['"])(\.\.?\/[^'"]+)\1/g)]
+    ? [...content.matchAll(/(?:\bfrom\s+|new URL\()(['"])(\.\.?\/[^'"]+)\1/g)]
     : path.endsWith('.css') ? [...content.matchAll(/url\((['"])(\.\.?\/[^'"]+)\1\)/g)] : [];
   for (const match of matches.reverse()) {
     const reference = match[2];
@@ -46,7 +56,7 @@ async function files(directory) {
   for (const entry of await readdir(resolve(root, directory), { withFileTypes: true })) {
     const path = posix.join(directory, entry.name);
     if (entry.isDirectory()) result.push(...await files(path));
-    else if (/\.(js|css|svg)$/.test(entry.name)) result.push(path);
+    else if (/\.(js|css|svg|json)$/.test(entry.name)) result.push(path);
   }
   return result;
 }

@@ -35,6 +35,8 @@
 
 圖示以 SVG 為來源，提供 16／32／180／192／512 與 maskable 版本；另提供由 SVG 轉製、含 16／32／48px 的根目錄 `favicon.ico`。維護者修改資產後執行 `node scripts/version-assets.mjs`，將內容雜湊與離線清單一起提交；這是發版維護工具，遊戲直接執行已提交檔案，不需建置。
 
+配樂每首獨立存於 `src/data/music/{scene}.json`；`src/data/music/index.json` 只列場景與檔名。新增曲目時建立一份 JSON 並加入索引，不用改 Web Audio 播放引擎；發版前重新產生內容雜湊，所有曲目會各自納入離線快取。
+
 
 ### 開發狀態
 
@@ -73,6 +75,8 @@ Core loop: **Explore → Slay and loot → Combine affixes → Prepare in town �
 Open over HTTPS or a local HTTP server, not `file://`. After the first online asset download completes, install from a supported desktop browser's menu and play offline. A ready update offers “Save & reload”; updating never deletes IndexedDB.
 
 SVG source icons cover 16/32/180/192/512 and maskable variants; the root `favicon.ico` contains derived 16/32/48px images. After asset changes, maintainers run `node scripts/version-assets.mjs` and commit the refreshed hashes and offline inventory. This is release maintenance, not a required game build step.
+
+Every composition has its own `src/data/music/{scene}.json`; `src/data/music/index.json` maps scene names to filenames only. Add a track file and index entry without changing the shared Web Audio engine, then refresh content hashes so every track is cached separately for offline play.
 
 
 ### Status
