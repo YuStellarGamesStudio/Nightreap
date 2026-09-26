@@ -1,12 +1,15 @@
-import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=b925c08793267d57';
-import { CONFIG, ART } from '../data/config.js?v=c718bdc80f8941c9';
-import { TerrainRenderer } from './terrain-renderer.js?v=a89e6623abcdc8a6';
+import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=47b154d46c693913';
+import { CONFIG, ART, CORPSE_ART } from '../data/config.js?v=aa47ee4f503e4ac6';
+import { TerrainRenderer } from './terrain-renderer.js?v=794158c819350247';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
-import { VfxRenderer } from './vfx-renderer.js?v=9ca1954555cd50e1';
+import { VfxRenderer } from './vfx-renderer.js?v=069e607c0aa3cdb9';
 import { visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
+// Largest on-screen sprite (boss) sets the offscreen cache resolution.
+const rasterSize = () => Math.max(ANIMATION.svgSize, CONFIG.spriteSize * CONFIG.zoom * CONFIG.eliteScale ** 2);
+const creatureArt = entity => entity.boss ? ART.boss : ART[entity.kind] || ART[entity.family] || ART.demon;
 
 const rigMotions = new Set(['static', 'leg-left', 'leg-right', 'arm-left', 'arm-right', 'wing-left', 'wing-right', 'tail']);
 
@@ -39,6 +42,7 @@ export class Renderer {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d', { alpha: false });
     this.rigs = new Map();
+    this.corpseArt = new Map();
     // Baked once: per-actor radial gradients would cost too much with 300 enemies on screen.
     this.shadows = [SHADOW.cast, SHADOW.contact].map(layer => ({ layer, texture: shadowTexture(layer.stops) }));
     this.motion = new WeakMap();
@@ -72,10 +76,18 @@ export class Renderer {
           throw new Error(`Invalid rig part ${name}/${group.getAttribute('data-part')}`);
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">${shared}${serializer.serializeToString(group)}</svg>`;
         const source = await loadPart(svg);
-        const size = Math.max(ANIMATION.svgSize, CONFIG.spriteSize * CONFIG.zoom * CONFIG.eliteScale ** 2);
+        const size = rasterSize();
         return { source, image: rasterizeVector(source, size * this.rasterRatio), x: pivot[0], y: pivot[1], motion };
       }));
       this.rigs.set(name, parts);
+    }));
+    // Corpses never animate, so each SVG is cached whole instead of per rig part.
+    await Promise.all(Object.values(CORPSE_ART).map(async name => {
+      const url = `assets/${name}.svg`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Cannot load ${url}: ${response.status}`);
+      const source = await loadPart(await response.text());
+      this.corpseArt.set(name, { source, image: rasterizeVector(source, rasterSize() * this.rasterRatio) });
     }));
   }
   drawRig(parts, x, y, size, facing, stride, floatPhase) {
@@ -138,9 +150,10 @@ export class Renderer {
     this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     if (ratio !== this.rasterRatio) {
       this.rasterRatio = ratio;
-      const size = Math.max(ANIMATION.svgSize, CONFIG.spriteSize * CONFIG.zoom * CONFIG.eliteScale ** 2);
+      const size = rasterSize();
       for (const parts of this.rigs.values())
         for (const part of parts) part.image = rasterizeVector(part.source, size * ratio);
+      for (const corpse of this.corpseArt.values()) corpse.image = rasterizeVector(corpse.source, size * ratio);
       this.terrain.rasterize(ratio);
     }
   }
@@ -163,6 +176,26 @@ export class Renderer {
     ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(p.x,p.y-r/3,r/3,r/2,0,0,Math.PI*2);ctx.stroke();
     ctx.font='11px Georgia';ctx.textAlign='center';ctx.fillStyle='#d3c6af';ctx.fillText(label,p.x,p.y+r/3);
   }
+  drawCorpses(state) {
+    const ctx = this.ctx;
+    for (const corpse of state.corpses || []) {
+      if (!isExplored(state.area, corpse.x, corpse.y)) continue;
+      const point = this.screen(corpse.x, corpse.y);
+      if (point.x < -CONFIG.renderMargin || point.x > this.width + CONFIG.renderMargin
+        || point.y < -CONFIG.renderMargin || point.y > this.height + CONFIG.renderMargin) continue;
+      const enemy = corpse.source;
+      const art = this.corpseArt.get(CORPSE_ART[enemy.kind]);
+      if (!art) continue;
+      const size = CONFIG.spriteSize * CONFIG.zoom * (enemy.boss ? CONFIG.eliteScale * CONFIG.eliteScale : enemy.elite ? CONFIG.eliteScale : 1);
+      ctx.save();
+      ctx.globalAlpha = ANIMATION.corpseAlpha;
+      ctx.translate(point.x, point.y);
+      // Keep the facing the monster had when it fell; off-screen kills have no pose and use the art default.
+      ctx.scale(this.motion.get(enemy)?.facing ?? 1, 1);
+      ctx.drawImage(art.image, -size / 2, -size * ANIMATION.corpseAnchorY / ANIMATION.svgSize, size, size);
+      ctx.restore();
+    }
+  }
   draw(state,alpha) {
     // Moving between displays can change DPR without changing the canvas's CSS size.
     if (this.rasterRatio !== (window.devicePixelRatio || 1)) this.resize();
@@ -179,6 +212,7 @@ export class Renderer {
       const h=this.screen(hazard.x,hazard.y);
       ctx.fillStyle='#90526430';ctx.strokeStyle='#9f786c60';ctx.beginPath();ctx.ellipse(h.x,h.y,hazard.radius*CONFIG.zoom,hazard.radius*CONFIG.zoom/2,0,0,Math.PI*2);ctx.fill();ctx.stroke();
     }
+    this.drawCorpses(state);
     const follow={ x:(p.prevX??p.x)+(p.x-(p.prevX??p.x))*alpha, y:(p.prevY??p.y)+(p.y-(p.prevY??p.y))*alpha };
     const effects=state.effects||[], visuals=state.visuals||[];
     this.vfx.drawFields(effects,state.time,true,follow);
@@ -190,8 +224,7 @@ export class Renderer {
       if (entity.rx != null) { this.terrain.drawObstacle(entity, state.area.theme); continue; }
       if (entity !== p && !isExplored(state.area, entity.x, entity.y)) continue;
       if (entity.hp<=0 && entity!==p) continue;
-      let art=entity===p ? ART[p.form && p.form!=='human' ? p.form : p.classId] : ART[entity.kind] || ART[entity.family] || ART.demon;
-      if (entity.boss) art=ART.boss;
+      const art=entity===p ? ART[p.form && p.form!=='human' ? p.form : p.classId] : creatureArt(entity);
       const parts=this.rigs.get(art) || this.rigs.get(ART.demon);
       const prevX=entity.prevX??entity.x,prevY=entity.prevY??entity.y;
       let worldX=prevX+(entity.x-prevX)*alpha,worldY=prevY+(entity.y-prevY)*alpha;

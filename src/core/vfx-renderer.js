@@ -1,4 +1,4 @@
-import { CONFIG } from '../data/config.js?v=c718bdc80f8941c9';
+import { CONFIG } from '../data/config.js?v=aa47ee4f503e4ac6';
 import { VFX, VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 
 // Interprets the layer recipes in data/vfx.js with Canvas 2D vector primitives.

@@ -23,3 +23,11 @@ export const ART = Object.freeze({
   'spore-stalker': 'creatures/spore-stalker', 'frost-bat': 'creatures/frost-bat',
   'void-colossus': 'creatures/void-colossus',
 });
+// Keyed by species/boss id: shared family sprites still fall into distinct species corpses.
+export const CORPSE_ART = Object.freeze(Object.fromEntries([
+  'imp', 'hellhound', 'cinderling', 'infernal', 'ash-archer',
+  'revenant', 'skeletal-guard', 'ghost', 'zombie-mage', 'grave-burrower', 'crypt-scarab', 'frost-knight',
+  'blighted-wolf', 'venom-spider', 'treant', 'thorn-moth', 'spore-stalker',
+  'ice-elemental', 'snow-beast', 'snow-oracle', 'frost-bat', 'parasite', 'void-tendril', 'void-colossus', 'sheep',
+  'pyre-warden', 'mourning-wraith', 'blight-matriarch', 'glacial-herald', 'abyss-lord',
+].map(kind => [kind, `corpses/${kind}`])));

@@ -1,4 +1,4 @@
-import { ART } from './config.js?v=c718bdc80f8941c9';
+import { ART } from './config.js?v=aa47ee4f503e4ac6';
 
 // World-space stride and SVG-space articulation are visual only; see DESIGN.md.
 export const ANIMATION = Object.freeze({
@@ -20,6 +20,10 @@ export const ANIMATION = Object.freeze({
   attackFacingHold: 0.45,
   deathAngle: Math.PI / 2,
   deathFlatten: 0.55,
+  // Corpse SVGs share the 128-unit sprite scale; this SVG y sits on the world point where the monster died.
+  corpseAnchorY: 80,
+  // Corpses stay translucent so the ground and effect layers read through them.
+  corpseAlpha: 0.3,
 });
 
 // Grounding shadows are baked soft textures; radii/offsets scale with the drawn sprite size.
