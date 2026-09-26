@@ -28,8 +28,7 @@ export class Input {
       if (event.button === 0) this.attack = false;
       if (event.button === 2) this.secondary = false;
     });
-    const view = canvas.closest('.viewport') || canvas;
-    view.addEventListener('contextmenu', event => {
+    document.addEventListener('contextmenu', event => {
       event.preventDefault();
     });
     window.addEventListener('keydown', event => {

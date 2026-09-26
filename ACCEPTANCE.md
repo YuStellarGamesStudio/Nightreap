@@ -349,3 +349,8 @@
 
 - 根因：通用 `button:active` 的 `translateY(1px)` 覆寫了頭盔、腰帶、鞋子三個置中槽的 `translateX(-50%)`，按住時各向右跳 66px。Chromium 1440×900 修正前實測三槽 X 位移皆為 +66px，左側護甲槽為 0。
 - 三槽點按樣式保留水平置中，同時保留向下 1px 的按壓回饋。新版 CSS 載入後，Chromium 實際按住並點擊頭盔、腰帶、鞋子：三槽按住時 X 位移均為 0、Y 位移 +1px，放開後仍位於 x=798；護甲槽亦維持 X 位移 0。裝備頁保持顯示，沒有頁面例外。測試在空槽進行；其他瀏覽器及有裝備物品時未測。
+
+### 全頁右鍵選單攔截
+
+- 原本只在 `.viewport` 阻止 `contextmenu`；Chromium 1440×900 於開始標題、開始按鈕、頂欄背包按鈕實際右鍵時，事件 `defaultPrevented=false`，畫布則為 `true`。依本次使用者要求將攔截移到 `document`，覆蓋開始畫面、頂欄、背包、設定對話框與畫布。
+- 新版本實際對上述各處及來源連結、裝備頁按鈕右鍵，`contextmenu` 事件均為 `defaultPrevented=true`。野外巫師在畫布短點右鍵後實際呼叫 `cast(1)` 成功施放火球，法力與技能冷卻正常變動；沒有新增頁面例外。`node --check src/core/input.js` 通過。僅在本機 Chromium 驗證，其他瀏覽器未測。
