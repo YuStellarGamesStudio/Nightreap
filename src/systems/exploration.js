@@ -1,4 +1,4 @@
-import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
+import { TERRAIN } from '../data/terrain.js?v=fb3dec75add047a6';
 
 // Stored only on the transient area, never in the character save.
 export function initializeExploration(area) {

@@ -1,9 +1,9 @@
-import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=47b154d46c693913';
-import { CONFIG, ART, CORPSE_ART } from '../data/config.js?v=aa47ee4f503e4ac6';
-import { TerrainRenderer } from './terrain-renderer.js?v=794158c819350247';
-import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
+import { ANIMATION, FLOATING_ART, SHADOW } from '../data/animation.js?v=28dd9f82ca23f731';
+import { CONFIG, ART, CORPSE_ART } from '../data/config.js?v=150ea1c4a95afc0e';
+import { TerrainRenderer } from './terrain-renderer.js?v=d78088a9fdb5acb5';
+import { isExplored } from '../systems/exploration.js?v=17e880da1985dcab';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
-import { VfxRenderer } from './vfx-renderer.js?v=069e607c0aa3cdb9';
+import { VfxRenderer } from './vfx-renderer.js?v=48b5232955f512e6';
 import { visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
@@ -303,6 +303,6 @@ export class Renderer {
   }
   minimap(state){
     this.terrain.drawMinimap(state.area, state.player,
-      this.width-CONFIG.miniSize-CONFIG.playerRadius, CONFIG.playerRadius, CONFIG.miniSize);
+      CONFIG.playerRadius, this.height - CONFIG.miniSize - CONFIG.playerRadius, CONFIG.miniSize);
   }
 }

@@ -46,7 +46,7 @@ export const TERRAIN = Object.freeze({
   navigation: { cellSize: 32, playerRadius: 18 },
   exploration: { cellSize: 64, revealRadius: 280, frontierAlpha: 0.65 },
   render: {
-    groundTile: 160, obstacleHeight: 1.5, miniSize: 120,
-    miniMarkerSize: 4, miniPlayerRadius: 3, miniObstacleRadius: 1, miniStrokeWidth: 1,
+    groundTile: 160, obstacleHeight: 1.5, miniSize: 150,
+    miniMarkerSize: 5, miniPlayerRadius: 3.75, miniObstacleRadius: 1.25, miniStrokeWidth: 1.25,
   },
 });

@@ -1,19 +1,19 @@
-import { CONFIG, ART } from './data/config.js?v=aa47ee4f503e4ac6';
+import { CONFIG, ART } from './data/config.js?v=150ea1c4a95afc0e';
 import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
 import { CLASSES, COMBAT } from './data/combat.js?v=fdc1129299fc0d36';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
 import { ACT_MUSIC } from './data/audio.js?v=c5e4578c00cd424f';
-import { Renderer } from './core/renderer.js?v=e0bdcd6e34f4a136';
-import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=6db24e1649c5b803';
+import { Renderer } from './core/renderer.js?v=7185833c9fa0c452';
+import { Input } from './core/input.js?v=a8d88bce7004f0ed';
+import { GameLoop } from './core/loop.js?v=1f7b88356958683e';
 import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
-import { Combat, createPlayer, skillRankScales } from './systems/combat.js?v=dbb7ada9bebd012a';
-import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
+import { Combat, createPlayer, skillRankScales } from './systems/combat.js?v=de908b1f16bfae84';
+import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=b2d93fe55488415e';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
-import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
+import { revealExploration } from './systems/exploration.js?v=17e880da1985dcab';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
 import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=e53b6131f86e52f9';
 import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
@@ -972,7 +972,7 @@ function action(key) {
   else if (key === 'q' || key === 'e') combat.usePotion(key === 'q' ? 'health' : 'resource');
 }
 function update(dt) {
-  if (inTown || state.paused) return;
+  if (inTown || state.paused) { input.secondaryQueued = false; return; }
   input.attackSkill = settings.leftMouseSkill;
   input.secondarySkill = settings.rightMouseSkill;
   combat.update(dt, input);
