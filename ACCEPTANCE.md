@@ -354,3 +354,8 @@
 
 - 原本只在 `.viewport` 阻止 `contextmenu`；Chromium 1440×900 於開始標題、開始按鈕、頂欄背包按鈕實際右鍵時，事件 `defaultPrevented=false`，畫布則為 `true`。依本次使用者要求將攔截移到 `document`，覆蓋開始畫面、頂欄、背包、設定對話框與畫布。
 - 新版本實際對上述各處及來源連結、裝備頁按鈕右鍵，`contextmenu` 事件均為 `defaultPrevented=true`。野外巫師在畫布短點右鍵後實際呼叫 `cast(1)` 成功施放火球，法力與技能冷卻正常變動；沒有新增頁面例外。`node --check src/core/input.js` 通過。僅在本機 Chromium 驗證，其他瀏覽器未測。
+
+### 自爆怪收割計數修正
+
+- 焦黑農田產生時 `requiredKills=46` 且敵人陣列有 46 隻；修正前讓其中一隻燼火爆怪接近玩家並引爆後，陣列只剩 45 隻，`killed=0`。根因是自爆直接設定 `hp=0`、`_killed=true`，繞過 `Combat.kill()` 與 `recordKill()`；同一行為也影響墓穴甲蟲與劇毒蛛。
+- 自爆改走共用死亡流程。`node --test tests/world-advance.test.mjs tests/combat-input.test.mjs`：4/4 通過。另以實際戰鬥更新模擬焦黑農田三隻連續自爆，得到收割 3/46、剩餘 43 隻；清除剩餘敵人後為 46/46、`cleared=true`，`advance()` 指向第一幕第三張。舊版進行中的地圖不保存世界狀態，重新進圖才會套用修正；未在瀏覽器手動打完全部 46 隻。

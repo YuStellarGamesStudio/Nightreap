@@ -882,9 +882,7 @@ export class Combat {
         if (dist < B.enemyBomberRange + target.radius) {
           this.telegraph(enemy, target, B.enemyBomberRange, B.enemyWindup,
             enemy.damage * 2, 'fire', 'strike', ATTACK_VFX[enemy.kind]);
-          enemy.hp = 0;
-          enemy._killed = true;
-          enemy.attackTime = interval;
+          this.kill(enemy);
         }
         break;
       case 'charger':
