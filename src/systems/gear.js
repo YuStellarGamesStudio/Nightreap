@@ -1,4 +1,5 @@
 import { AFFIXES, SLOT_NAMES, RARITY_NAMES, GEAR_BALANCE as B } from '../data/gear.js?v=dd3a72133bbc3a05';
+import { SAVE_LIMITS } from '../data/save.js?v=2a952fa1ede7fff0';
 
 const definitions = new Map(AFFIXES.map(affix => [affix.id, affix]));
 const slots = Object.keys(SLOT_NAMES);
@@ -152,6 +153,36 @@ export function equip(player, itemId, slot) {
   return { ok: true, message: message(`Equipped ${item.name.en}.`, `已裝備${item.name.zh}。`) };
 }
 
+function equipmentScore(item) {
+  if (!item || item.durability <= 0) return -Infinity;
+  let score = 0;
+  // Normalize unlike units; fixed affix order keeps equal scores stable.
+  for (const definition of AFFIXES) {
+    const entry = item.affixes.find(affix => affix.id === definition.id);
+    if (entry) score += entry.value / definition.tiers[1][1];
+  }
+  return score;
+}
+
+export function equipBest(player) {
+  if (!validPlayer(player)) return fail('Invalid character.', '角色資料無效。');
+  let changed = 0;
+  for (const slot of slots) {
+    let best = null;
+    let bestScore = equipmentScore(player.equipment[slot]);
+    for (const item of player.inventory) {
+      if (item.slot !== slot && !(item.slot === 'ring1' && slot === 'ring2')) continue;
+      const score = equipmentScore(item);
+      if (score > bestScore) { best = item; bestScore = score; }
+    }
+    // Swapped-out rings remain candidates for the second ring slot.
+    if (best && equip(player, best.id, slot).ok) changed++;
+  }
+  return { ok: true, changed, message: changed
+    ? message(`Upgraded ${changed} equipment slots.`, `已更新 ${changed} 個裝備部位。`)
+    : message('No better equipment in your inventory.', '背包中沒有更好的裝備。') };
+}
+
 export function unequip(player, slot) {
   if (!validPlayer(player) || !slots.includes(slot)) return fail('Invalid slot.', '裝備部位無效。');
   const item = player.equipment[slot];
@@ -168,12 +199,55 @@ export function sell(player, itemId) {
   if (index < 0) return fail('Item not in inventory.', '背包中找不到裝備。');
   const item = player.inventory[index];
   if (!Number.isSafeInteger(item.sellValue) || item.sellValue < 0
-    || !Number.isSafeInteger(player.gold + item.sellValue)) {
+    || item.sellValue > SAVE_LIMITS.currency - player.gold) {
     return fail('Invalid sale value.', '出售價格無效。');
   }
   player.inventory.splice(index, 1);
   player.gold += item.sellValue;
   return { ok: true, message: message(`Sold for ${item.sellValue} gold.`, `出售獲得 ${item.sellValue} 金幣。`) };
+}
+
+export function matchesSaleFilter(item, filter) {
+  return Boolean(item && filter && Array.isArray(filter.rarities) && Array.isArray(filter.slots)
+    && filter.rarities.includes(item.rarity) && filter.slots.includes(item.slot)
+    && Number.isSafeInteger(item.level) && Number.isSafeInteger(filter.maxLevel)
+    && item.level <= filter.maxLevel);
+}
+
+export function salePreview(player, filter) {
+  let count = 0;
+  let gold = 0;
+  if (!Array.isArray(player?.inventory)) return { count, gold };
+  for (const item of player.inventory) {
+    if (!matchesSaleFilter(item, filter)) continue;
+    count++;
+    gold += item.sellValue;
+  }
+  return { count, gold };
+}
+
+export function sellMatching(player, filter) {
+  if (!validPlayer(player)) return fail('Invalid character.', '角色資料無效。');
+  let count = 0;
+  let gold = 0;
+  for (const item of player.inventory) {
+    if (!matchesSaleFilter(item, filter)) continue;
+    if (!item || !Number.isSafeInteger(item.sellValue) || item.sellValue < 0
+      || item.sellValue > SAVE_LIMITS.currency - player.gold - gold) {
+      return fail('Invalid sale value.', '出售價格無效。');
+    }
+    gold += item.sellValue;
+    count++;
+  }
+  if (count) {
+    for (let index = player.inventory.length - 1; index >= 0; index--) {
+      if (matchesSaleFilter(player.inventory[index], filter)) player.inventory.splice(index, 1);
+    }
+    player.gold += gold;
+  }
+  return { ok: true, count, gold, message: count
+    ? message(`Sold ${count} items for ${gold} gold.`, `出售 ${count} 件裝備，獲得 ${gold} 金幣。`)
+    : message('No matching items to sell.', '沒有符合條件的裝備可出售。') };
 }
 
 export function repair(player) {
@@ -261,7 +335,7 @@ export function craft(player, itemId, affixIndex, operation = 'reroll', rng = Ma
     : message('Crafting failed; only materials were consumed.', '合成失敗，僅消耗材料。') };
 }
 
-export function grantLoot(player, enemy, area, rng = Math.random) {
+export function grantLoot(player, enemy, area, saleFilter = null, rng = Math.random) {
   if (!validPlayer(player) || !validMoney(player.materials) || !validMoney(player.tickets)
     || !enemy || !area || typeof rng !== 'function') return [];
   const difficulty = Number.isInteger(area.difficulty) ? Math.min(3, Math.max(0, area.difficulty)) : 0;
@@ -277,19 +351,50 @@ export function grantLoot(player, enemy, area, rng = Math.random) {
   const drop = Boolean(enemy.boss || enemy.elite || random(rng) < chance);
   const items = [];
   const available = Math.max(0, B.inventoryCapacity - player.inventory.length);
-  // First-kill loot takes priority if only one inventory slot remains.
-  if (enemy.boss && enemy.firstKill && available) {
-    items.push(generateItem({ level, difficulty, depth, rarity: B.firstKillRarity }, rng));
+  let soldCount = 0;
+  let soldGold = 0;
+  let leftBehind = 0;
+  if (saleFilter) {
+    // Roll both rewards regardless of capacity; sold first-kill gear never occupies the
+    // priority slot that an unmatched normal boss drop can use.
+    const rewards = [];
+    if (enemy.boss && enemy.firstKill) {
+      rewards.push(generateItem({ level, difficulty, depth, rarity: B.firstKillRarity }, rng));
+    }
+    if (drop) {
+      const rarity = rarityFor(difficulty, depth, rng);
+      const minimum = enemy.boss ? B.bossMinimumRarity : null;
+      const guaranteed = minimum && B.rarities.indexOf(rarity) < B.rarities.indexOf(minimum) ? minimum : rarity;
+      rewards.push(generateItem({ level, difficulty, depth, rarity: guaranteed }, rng));
+    }
+    for (const item of rewards) {
+      if (matchesSaleFilter(item, saleFilter)) {
+        soldCount++;
+        soldGold += item.sellValue;
+      } else if (items.length < available) {
+        items.push(item);
+      } else {
+        leftBehind++;
+      }
+    }
+  } else {
+    // Preserve the disabled path's capacity-dependent RNG sequence.
+    if (enemy.boss && enemy.firstKill && available) {
+      items.push(generateItem({ level, difficulty, depth, rarity: B.firstKillRarity }, rng));
+    }
+    if (drop && items.length < available) {
+      const rarity = rarityFor(difficulty, depth, rng);
+      const minimum = enemy.boss ? B.bossMinimumRarity : null;
+      const guaranteed = minimum && B.rarities.indexOf(rarity) < B.rarities.indexOf(minimum) ? minimum : rarity;
+      items.push(generateItem({ level, difficulty, depth, rarity: guaranteed }, rng));
+    }
+    leftBehind = (enemy.boss && enemy.firstKill ? 1 : 0) + Number(drop) - items.length;
   }
-  if (drop && items.length < available) {
-    const rarity = rarityFor(difficulty, depth, rng);
-    const minimum = enemy.boss ? B.bossMinimumRarity : null;
-    const guaranteed = minimum && B.rarities.indexOf(rarity) < B.rarities.indexOf(minimum) ? minimum : rarity;
-    items.push(generateItem({ level, difficulty, depth, rarity: guaranteed }, rng));
-  }
-  if (!Number.isSafeInteger(player.gold + gold) || !Number.isSafeInteger(player.materials + materials)
-    || (ticket && !Number.isSafeInteger(player.tickets + 1))) return [];
-  player.gold += gold;
+  if (!Number.isSafeInteger(soldGold) || soldGold > SAVE_LIMITS.currency - player.gold - gold
+    || gold > SAVE_LIMITS.currency - player.gold
+    || materials > SAVE_LIMITS.currency - player.materials
+    || (ticket && player.tickets >= SAVE_LIMITS.consumable)) return [];
+  player.gold += gold + soldGold;
   player.materials += materials;
   if (ticket) player.tickets++;
   player.inventory.push(...items);
@@ -298,6 +403,8 @@ export function grantLoot(player, enemy, area, rng = Math.random) {
   if (materials) events.push(message(`+${materials} materials`, `+${materials} 材料`));
   if (ticket) events.push(message('Sheep ticket found!', '獲得綿羊券！'));
   for (const item of items) events.push(message(`Found ${item.name.en}!`, `獲得${item.name.zh}！`));
-  if (drop && items.length < (enemy.firstKill ? 2 : 1)) events.push(message('Inventory full; item left behind.', '背包已滿，無法拾取掉落裝備。'));
+  if (soldCount) events.push(message(`Auto-sold ${soldCount} items for ${soldGold} gold.`,
+    `自動出售 ${soldCount} 件裝備，獲得 ${soldGold} 金幣。`));
+  if (leftBehind) events.push(message('Inventory full; item left behind.', '背包已滿，無法拾取掉落裝備。'));
   return events;
 }

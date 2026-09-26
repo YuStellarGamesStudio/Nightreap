@@ -30,6 +30,12 @@ export const SAVE_LIMITS = Object.freeze({
   durability: 100,
 });
 export const DEFAULT_SETTINGS = Object.freeze({
+  autoSell: false,
+  saleFilter: Object.freeze({
+    rarities: Object.freeze([]),
+    slots: Object.freeze(GEAR_SLOTS.filter(slot => slot !== 'ring2')),
+    maxLevel: SAVE_LIMITS.itemLevel,
+  }),
   language: 'en',
   musicEnabled: true,
   sfxEnabled: true,

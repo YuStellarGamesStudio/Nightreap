@@ -1,13 +1,14 @@
 import {
   CLASS_IDS, DATABASE_NAME, DATABASE_VERSION, DEFAULT_SETTINGS,
   GEAR_SLOTS, ITEM_RARITIES, SAVE_LIMITS, SAVE_SCHEMA_VERSION,
-} from '../data/save.js?v=3f0d6ba9d81adfbd';
+} from '../data/save.js?v=2a952fa1ede7fff0';
 import { AFFIXES } from '../data/gear.js?v=dd3a72133bbc3a05';
 
 const classes = new Set(CLASS_IDS);
 const slots = new Set(GEAR_SLOTS);
 const affixesById = new Map(AFFIXES.map(affix => [affix.id, affix]));
 const rarities = new Set(ITEM_RARITIES);
+const itemSlots = new Set(DEFAULT_SETTINGS.saleFilter.slots);
 const playerFields = [
   'classId', 'level', 'xp', 'gold', 'materials', 'tickets', 'potions',
   'inventory', 'equipment', 'attributes', 'attributePoints', 'skillPoints',
@@ -46,11 +47,31 @@ function label(value, path) {
   return { en: value.en, zh: value.zh };
 }
 
+function filterSelection(value, path, allowed) {
+  if (!Array.isArray(value) || value.length > allowed.size) fail(path);
+  const seen = new Set();
+  for (const entry of value) {
+    if (typeof entry !== 'string' || !allowed.has(entry) || seen.has(entry)) fail(path);
+    seen.add(entry);
+  }
+  return [...seen];
+}
+
+function saleFilterValue(value) {
+  object(value, 'settings.saleFilter', ['rarities', 'slots', 'maxLevel']);
+  return {
+    rarities: filterSelection(value.rarities, 'settings.saleFilter.rarities', rarities),
+    slots: filterSelection(value.slots, 'settings.saleFilter.slots', itemSlots),
+    maxLevel: number(value.maxLevel, 'settings.saleFilter.maxLevel', 1, SAVE_LIMITS.itemLevel),
+  };
+}
+
 function settingsValue(value) {
   object(value, 'settings', ['language', 'musicEnabled', 'sfxEnabled', 'musicVolume', 'sfxVolume'],
-    ['leftMouseSkill', 'rightMouseSkill']);
+    ['leftMouseSkill', 'rightMouseSkill', 'autoSell', 'saleFilter']);
   if (value.language !== 'en' && value.language !== 'zh') fail('settings.language');
   if (typeof value.musicEnabled !== 'boolean' || typeof value.sfxEnabled !== 'boolean') fail('settings.enabled');
+  if (Object.hasOwn(value, 'autoSell') && typeof value.autoSell !== 'boolean') fail('settings.autoSell');
   return {
     language: value.language, musicEnabled: value.musicEnabled, sfxEnabled: value.sfxEnabled,
     musicVolume: number(value.musicVolume, 'settings.musicVolume', 0, SAVE_LIMITS.volume, false),
@@ -59,6 +80,8 @@ function settingsValue(value) {
       ? number(value.leftMouseSkill, 'settings.leftMouseSkill', 0, SAVE_LIMITS.mouseSkill) : DEFAULT_SETTINGS.leftMouseSkill,
     rightMouseSkill: Object.hasOwn(value, 'rightMouseSkill')
       ? number(value.rightMouseSkill, 'settings.rightMouseSkill', 0, SAVE_LIMITS.mouseSkill) : DEFAULT_SETTINGS.rightMouseSkill,
+    autoSell: Object.hasOwn(value, 'autoSell') ? value.autoSell : DEFAULT_SETTINGS.autoSell,
+    saleFilter: saleFilterValue(Object.hasOwn(value, 'saleFilter') ? value.saleFilter : DEFAULT_SETTINGS.saleFilter),
   };
 }
 
@@ -320,7 +343,7 @@ export class SaveStore {
             if (row.classId !== player.classId) fail('stored classId');
             return player;
           }),
-          settings: settings.result ? settingsValue(settings.result.value) : { ...DEFAULT_SETTINGS },
+          settings: settings.result ? settingsValue(settings.result.value) : settingsValue(DEFAULT_SETTINGS),
         };
         done(JSON.stringify(result));
       };
@@ -351,7 +374,7 @@ export class SaveStore {
             if (row.classId !== player.classId) fail('stored classId');
             return player;
           }),
-          settings: previousSettings.result ? settingsValue(previousSettings.result.value) : { ...DEFAULT_SETTINGS },
+          settings: previousSettings.result ? settingsValue(previousSettings.result.value) : settingsValue(DEFAULT_SETTINGS),
         };
         meta.put({ key: 'backup', value: backup });
         store.clear();
