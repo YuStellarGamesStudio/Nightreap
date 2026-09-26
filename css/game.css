@@ -108,7 +108,7 @@ input[type="range"] { min-height: 36px; cursor: pointer; }
 .village-merchant { left: 25%; }
 .village-forge { left: 75%; }
 .village-actions { position: absolute; z-index: 2; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; }
-.village-actions button { min-width: 160px; }
+.village-actions button { width: 160px; min-width: 160px; margin: 0; }
 .oath-close { position: absolute; top: 8px; right: 8px; width: 44px; padding: 0; font-size: 22px; }
 .title-screen { position: fixed; z-index: 15; inset: 0; display: flex; align-items: center; background: linear-gradient(90deg, #080c17f2 0%, #0b1024a6 40%, #0c101522 75%), url("../assets/title-scene.svg?v=15db5f41acffe9c2") center / cover no-repeat; }
 .title-content { width: 650px; max-height: 100%; padding: 35px 60px 35px 8vw; text-shadow: 0 3px 15px #000; }

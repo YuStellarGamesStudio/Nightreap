@@ -1,7 +1,8 @@
 import { ANIMATION, FLOATING_ART } from '../data/animation.js?v=ee8f6f7a081853ea';
 import { CONFIG, ART } from '../data/config.js?v=0bc99017d137590b';
-import { TerrainRenderer } from './terrain-renderer.js?v=fa54c2b9186e698c';
+import { TerrainRenderer } from './terrain-renderer.js?v=5ecc32122c67f2b0';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
+import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
 
@@ -28,6 +29,7 @@ export class Renderer {
     this.terrain = new TerrainRenderer(this.ctx, (x, y) => this.screen(x, y));
     this.camera = { x: 0, y: 0 };
     this.width = 0; this.height = 0;
+    this.rasterRatio = 0;
     this.observer = new ResizeObserver(() => this.resize());
     this.observer.observe(canvas);
     this.resize();
@@ -52,7 +54,9 @@ export class Renderer {
         if (!pivot || pivot.length !== 2 || !pivot.every(Number.isFinite) || !rigMotions.has(motion))
           throw new Error(`Invalid rig part ${name}/${group.getAttribute('data-part')}`);
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">${shared}${serializer.serializeToString(group)}</svg>`;
-        return { image: await loadPart(svg), x: pivot[0], y: pivot[1], motion };
+        const source = await loadPart(svg);
+        const size = Math.max(ANIMATION.svgSize, CONFIG.spriteSize * CONFIG.zoom * CONFIG.eliteScale ** 2);
+        return { source, image: rasterizeVector(source, size * this.rasterRatio), x: pivot[0], y: pivot[1], motion };
       }));
       this.rigs.set(name, parts);
     }));
@@ -97,6 +101,13 @@ export class Renderer {
     this.canvas.width = Math.round(rect.width * ratio);
     this.canvas.height = Math.round(rect.height * ratio);
     this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (ratio !== this.rasterRatio) {
+      this.rasterRatio = ratio;
+      const size = Math.max(ANIMATION.svgSize, CONFIG.spriteSize * CONFIG.zoom * CONFIG.eliteScale ** 2);
+      for (const parts of this.rigs.values())
+        for (const part of parts) part.image = rasterizeVector(part.source, size * ratio);
+      this.terrain.rasterize(ratio);
+    }
   }
   toWorld(x, y) {
     const px = (x - this.width / 2) / CONFIG.zoom + this.camera.x;
@@ -118,6 +129,8 @@ export class Renderer {
     ctx.font='11px Georgia';ctx.textAlign='center';ctx.fillStyle='#d3c6af';ctx.fillText(label,p.x,p.y+r/3);
   }
   draw(state,alpha) {
+    // Moving between displays can change DPR without changing the canvas's CSS size.
+    if (this.rasterRatio !== (window.devicePixelRatio || 1)) this.resize();
     const ctx=this.ctx,p=state.player;
     const target=project(p.x,p.y);
     this.camera.x += (target.x-this.camera.x)*CONFIG.cameraEase;

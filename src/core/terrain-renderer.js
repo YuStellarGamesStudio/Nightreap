@@ -1,5 +1,7 @@
 import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
 import { initializeExploration, isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
+import { CONFIG } from '../data/config.js?v=0bc99017d137590b';
+import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 
 const TAU = Math.PI * 2;
 const THEMES = {
@@ -30,6 +32,8 @@ export class TerrainRenderer {
     this.ctx = ctx;
     this.project = project;
     this.images = new Map();
+    this.sources = new Map();
+    this.rasterRatio = 1;
     this.patterns = new Map();
     this.transform = { ax: 0, ay: 0, bx: 0, by: 0, x: 0, y: 0 };
   }
@@ -48,8 +52,20 @@ export class TerrainRenderer {
     await Promise.all(groups.map(async group => {
       const name = group.getAttribute('data-terrain');
       const fragment = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">${shared}${serialize.serializeToString(group)}</svg>`;
-      this.images.set(name, await decodeVector(fragment));
+      this.sources.set(name, await decodeVector(fragment));
     }));
+    this.rasterize(this.rasterRatio);
+  }
+
+  rasterize(ratio) {
+    this.rasterRatio = ratio;
+    // Cover the largest projected obstacle, including its raised silhouette, at native DPR.
+    const obstacleSize = 2 * Math.hypot(TERRAIN.obstacle.maxRadius,
+      TERRAIN.obstacle.maxRadius * TERRAIN.obstacle.maxAspect) * CONFIG.zoom * Math.max(1, TERRAIN.render.obstacleHeight);
+    const groundSize = TERRAIN.render.groundTile * CONFIG.zoom * Math.SQRT2;
+    for (const [name, source] of this.sources)
+      this.images.set(name, rasterizeVector(source, (name.startsWith('ground-') ? groundSize : obstacleSize) * ratio));
+    this.patterns.clear();
   }
 
   updateProjection() {
