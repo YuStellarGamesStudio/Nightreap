@@ -812,6 +812,9 @@ function openSettings() {
   actions.append(button(message(UI.load), () => void showSlots()), button(message(UI.export), () => void exportSaves()), button(message(UI.import), () => $('import-file').click()),
     button(message(UI.restore), () => void restoreBackup()),
     button(message(UI.fullscreen), () => {
+      // A modal dialog left open across a fullscreen switch can strand the document inert:
+      // the fullscreen root then renders above the dialog, leaving every interface unusable.
+      closeModal();
       if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
       else void document.documentElement.requestFullscreen().catch(() => {});
     }));
@@ -1079,8 +1082,15 @@ $('import-file').addEventListener('change', event => {
   void importFile(event.target.files?.[0]); event.target.value = '';
 });
 document.addEventListener('visibilitychange', () => { if (document.hidden && !titleOpen) void persist(); });
-window.addEventListener('resize', () => {
+function syncViewportWarning() {
   show('desktop-warning', window.innerWidth < CONFIG.minWidth || window.innerHeight < CONFIG.minHeight);
+}
+window.addEventListener('resize', syncViewportWarning);
+// Fullscreen transitions fire transient sizes; re-check once the transition has settled
+// so a transient undersized value cannot leave the full-screen warning stuck over the UI.
+document.addEventListener('fullscreenchange', () => {
+  syncViewportWarning();
+  setTimeout(syncViewportWarning, 300);
 });
 
 async function boot() {

@@ -295,6 +295,12 @@
 - 加點提示（中英雙語，本輪新增）：Chromium 1280×720 實測滑鼠停留於屬性與技能加點按鈕浮出提示。中文實測：力量「每點效果：護甲 +0.96；主屬性：攻擊與技能傷害 +2%」（0.96 為 0.8×戰士被動 1.2）；順劈斬顯示說明＋等級 0→1＋「受技能等級影響的傷害維持 ×1.00」（等級 0 已用等級 1 威力）；戰吼如實標示「沒有隨等級成長的效果」。英文實測：Dexterity「Critical chance +0.2% … Does not increase movement or attack speed」、Vitality「Life +8; maximum life +0.25%」。移開即隱藏，無頁面錯誤。
 - 是否受技能等級影響由 `src/systems/combat.js` 匯出的 `skillRankScales` 判定（以 51 技能真實資料逐一核對：warcry／teleport／召喚／變身等 static，傷害效果 scales），非介面層自列型別；零點數時按鈕禁用但提示仍可停留顯示。未逐職業驗證全部 12 提示，未驗證其他瀏覽器。
 
+### 全螢幕切換介面凍結修正
+
+- 使用者回報：全螢幕時所有介面卡死不能用。修正兩處：設定內「啟動全螢幕」切換前先 `closeModal()` 關閉 modal 對話框，避免 dialog 開啟期間切換全螢幕時，全螢幕根元素蓋在 top-layer dialog 之上、文件維持 inert（`showModal()` 使外部失能）導致所有介面無法操作；另補 `fullscreenchange` 監聽重同步桌面解析度警示（轉場後 300ms 再檢查一次），避免轉場瞬時尺寸把警示層卡在介面上。
+- Chromium（headed 1440×813、DPR 2）實測：設定→啟動全螢幕後 modal 立即關閉、全螢幕生效、畫面中心為遊戲介面；全螢幕中可再開設定、以 × 關閉、按鈕往返切換兩次皆正常，`#desktop-warning` 隱藏正確，無頁面錯誤。JS 語法檢查通過，資產版本 `8a21d0c622dff8ec`。
+- 未能在本環境重現原始卡死（Chromium 無頭與 headed 皆不凍結，無相關錯誤）；根因判定為 modal＋全螢幕的 top layer／inert 交互，屬規範行為、Chromium 實作較寬容，故以關閉 dialog 切換為根因修正。Safari／Firefox 未實測；Escape 退出全螢幕為瀏覽器行為，CDP 驅動下未觸發，未驗證。
+
 ### 讀檔確認視窗
 
 - Chromium 1280×720 中英文：選擇已保存的戰士後顯示暗金遊戲內視窗、等級／幕別及庇護所 SVG；未使用瀏覽器原生確認。中文視窗內容高度與捲動高度皆為 419px，預設聚焦取消；英文亦經截圖確認完整呈現。
