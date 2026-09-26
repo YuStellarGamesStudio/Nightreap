@@ -27,7 +27,14 @@
 
 - 開始畫面提供開始／繼續旅程、設定及語言切換；讀檔移入設定，存檔直接保存目前角色。五幕各有獨立村落式庇護所，商人與鍛造僅在城鎮可用。
 - 背包按需開啟，每頁依可用高度填滿物品列，裝備以人形九槽呈現；設定可分別指定滑鼠左右鍵技能，下方技能列標示 LMB／RMB。角色與怪物採分件 SVG 步態。
+- 背包「一鍵換裝」比較所有頁面的裝備：以各詞綴數值除以該詞綴 T1 上限後加總，換上更高分裝備（含雙戒指）。略過損壞裝備，同分保留原裝；舊裝留在背包並自動存檔。這是通用評分，不替代流派搭配判斷。
+- 一鍵換裝固定在背包面板右下角。介面基準字級 16px，裝備／技能名稱與生命數值放大加粗，詞綴詳情 15px；背包加寬、長名稱可顯示兩行，避免靠縮小文字塞版面。
+- 背包「出售篩選」另開小視窗，多選稀有度與部位、指定物品等級上限，預覽件數及總價後在庇護所一鍵出售。「自動售出」預設關閉，開啟後新掉落符合條件即換金幣（滿背包也可）；不回頭清空背包、不出售身上裝備，條件隨存檔保存。出售無法復原。
+- 網站提供固定英文的 Open Graph／Twitter 分享卡，使用 1200×630 PNG；向量原圖為 `assets/nightreap-social.svg`，分享平台相容圖為同名 `.png`。
 - 野外與地下城為連續大地圖，包含實體地形障礙、隨機怪群及探索黑霧。
+- 怪物共 25 種（含綿羊）：五幕新增灰骨弓手、墓穴甲蟲、孢霧潛行者、霜翼蝙蝠、虛空巨像，各有獨立造型，分別採遠程、自爆、潛地、飛行、重裝近戰行為，並加入地下城混編；怪物總量不因此增加。
+- 上方「截圖」位於背包左側，下載包含當前場景、HUD 與已開背包的 PNG；依本機時間命名 `Nightreap_YYYYMMDD-HHmmss.png`，以裝置像素比例輸出，不上傳圖片。
+- 提示各自停留 5 秒，再以 0.5 秒向右滑出並淡出；城鎮或暫停時也會正常消失。
 
 ### 安裝與離線
 
@@ -68,7 +75,14 @@ Core loop: **Explore → Slay and loot → Combine affixes → Prepare in town �
 
 - A title screen offers start/continue, settings and language selection. Load is inside Settings; Save immediately saves the current character. Each act has a distinct sanctuary village; trading and forging are town-only.
 - Inventory fills each page with as many complete item rows as fit; equipment uses nine anatomical slots. Settings assigns left/right mouse skills independently, marked LMB/RMB on the bottom skill bar. Actors use articulated SVG movement.
+- “Equip best” compares every inventory page against equipped gear using the sum of each affix value divided by its T1 maximum, including both ring slots. Broken candidates are skipped and ties keep current gear; replaced items stay in inventory and changes autosave. This general score does not optimize a specific build.
+- Equip best stays at the inventory panel’s lower-right corner. The interface uses a 16px base with larger, bolder item/skill names and health values, plus 15px affix details. A wider inventory and two-line names preserve readability.
+- “Sell filter” opens a separate window for rarity, slot and maximum item level. Preview the count/value and sell matching inventory in town. Auto-sell is off by default; when enabled, matching new drops become gold even with a full bag. Existing inventory and equipped items are not auto-sold; filters persist with saves. Sales cannot be undone.
+- Open Graph and Twitter cards use fixed English metadata and a 1200×630 PNG, derived from the editable vector source `assets/nightreap-social.svg`.
 - Continuous wilderness and dungeon maps feature solid obstacles, random monster packs and exploration fog.
+- The roster has 25 species including sheep. Each act adds a distinct Ashbone Archer, Crypt Scarab, Spore Stalker, Frostwing Bat or Void Colossus, using ranged, explosive, burrowing, flying or tank behavior respectively. All five also join dungeon packs without increasing total spawn counts.
+- Screenshot, immediately left of Inventory, downloads the current scene and visible interface as a PNG at the device pixel ratio. Local-time filenames use `Nightreap_YYYYMMDD-HHmmss.png`; images are not uploaded.
+- Each notification stays for 5 seconds, then slides right and fades out over 0.5 seconds, including in town or while gameplay is paused.
 
 ### Installation and offline play
 
