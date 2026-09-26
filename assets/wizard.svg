@@ -1,1 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 100"><defs><linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8152b2"/><stop offset=".45" stop-color="#8152b2"/><stop offset="1" stop-color="#151522"/></linearGradient><linearGradient id="silver" x2=".8" y2="1"><stop stop-color="#dfd8c5"/><stop offset=".5" stop-color="#7f8190"/><stop offset="1" stop-color="#343543"/></linearGradient><radialGradient id="glow"><stop stop-color="#fff0c4"/><stop offset=".35" stop-color="#8152b2"/><stop offset="1" stop-color="#382744"/></radialGradient></defs><g fill="url(#body)" stroke="#171523" stroke-width="1.6" stroke-linejoin="round"><path d="M31 35L22 57 12 81 40 92 65 82 51 38Z"/><path d="M32 36L18 55 10 45 7 50 17 66 36 48M49 39L61 51 71 31 76 34 65 63 47 54"/><path d="M27 28L40 6 51 27 60 32 21 35Z"/><ellipse cx="40" cy="32" rx="10" ry="11" fill="url(#silver)"/><path d="M39 44L35 78M26 81L51 82" stroke="#e7b5ff"/><path d="M73 26L68 88" stroke="#a48768" stroke-width="4"/><circle cx="74" cy="22" r="8" fill="url(#glow)"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="robe" x1="34" y1="30" x2="93" y2="111" gradientUnits="userSpaceOnUse"><stop stop-color="#ac86bd"/><stop offset=".25" stop-color="#674d88"/><stop offset=".7" stop-color="#29243f"/><stop offset="1" stop-color="#141b29"/></linearGradient>
+    <linearGradient id="lining" x1="42" y1="49" x2="91" y2="106" gradientUnits="userSpaceOnUse"><stop stop-color="#876889"/><stop offset=".42" stop-color="#443051"/><stop offset="1" stop-color="#211d30"/></linearGradient>
+    <linearGradient id="metal" x1="50" y1="31" x2="83" y2="101" gradientUnits="userSpaceOnUse"><stop stop-color="#f9e6cb"/><stop offset=".34" stop-color="#a7a1b4"/><stop offset=".74" stop-color="#5e5877"/><stop offset="1" stop-color="#d5b591"/></linearGradient>
+    <linearGradient id="wood" x1="94" y1="12" x2="118" y2="109" gradientUnits="userSpaceOnUse"><stop stop-color="#b18e82"/><stop offset=".5" stop-color="#554052"/><stop offset="1" stop-color="#251e30"/></linearGradient>
+    <radialGradient id="arcane" cx=".37" cy=".31" r=".72"><stop stop-color="#fff7dc"/><stop offset=".25" stop-color="#b0ddfa"/><stop offset=".58" stop-color="#6873cb"/><stop offset="1" stop-color="#28346f"/></radialGradient>
+    <linearGradient id="face" x1="51" y1="20" x2="75" y2="45" gradientUnits="userSpaceOnUse"><stop stop-color="#e1c5a8"/><stop offset=".53" stop-color="#aa8390"/><stop offset="1" stop-color="#624e6d"/></linearGradient>
+  </defs>
+  <g data-part="wizard-cape" data-pivot="64 47" data-motion="static" stroke="#1a1a30" stroke-linejoin="round">
+    <path d="M48 43Q31 47 32 74L22 105 38 101 50 108 64 101 81 107 95 102 88 70Q93 53 77 43Z" fill="url(#robe)" stroke-width="2"/>
+    <path d="M35 72Q41 76 42 92M84 73Q78 81 83 96" stroke="#ccadcb" stroke-opacity=".47" stroke-width="1.4" fill="none"/>
+    <path d="M24 103L34 98 38 102 47 104 51 107 65 99 82 105 92 99" stroke="#c1a27e" stroke-width="1.2" fill="none"/>
+  </g>
+  <g data-part="wizard-leg-rear" data-pivot="73 75" data-motion="leg-right" stroke="#171b2c" stroke-linejoin="round">
+    <path d="M65 74L79 72 83 92 77 109 79 116 67 118 64 109 69 91Z" fill="url(#lining)" stroke-width="2"/>
+    <path d="M69 96L80 94 78 104 67 106Z" fill="url(#robe)" stroke="#99849e"/>
+    <path d="M68 107L78 107 80 115 83 119 66 120 61 118Z" fill="#29283d" stroke="#bca28a" stroke-width="1.7"/>
+    <path d="M66 116L77 115M70 110L77 110" stroke="#d0b9a4" stroke-width="1"/>
+  </g>
+  <g data-part="wizard-leg-front" data-pivot="54 75" data-motion="leg-left" stroke="#171b2c" stroke-linejoin="round">
+    <path d="M46 73L61 76 59 93 52 108 54 117 40 119 40 111 43 90Z" fill="url(#lining)" stroke-width="2"/>
+    <path d="M43 96L57 95 54 104 40 106Z" fill="url(#robe)" stroke="#99849e"/>
+    <path d="M41 107L53 108 55 117 54 120 36 120 34 117Z" fill="#29283d" stroke="#bca28a" stroke-width="1.7"/>
+    <path d="M36 117L51 116M43 111L51 111" stroke="#d0b9a4" stroke-width="1"/>
+  </g>
+  <g data-part="wizard-arm-rear" data-pivot="43 50" data-motion="arm-left" stroke="#181a2c" stroke-linejoin="round">
+    <path d="M40 45Q30 49 28 65L20 80 26 87 37 78 46 58Z" fill="url(#robe)" stroke="#a287aa" stroke-width="1.7"/>
+    <path d="M29 73L39 77 29 89 19 85Z" fill="url(#lining)" stroke="#d1b8a2" stroke-width="1.4"/>
+    <path d="M22 83L29 87 23 95 17 94 15 89Z" fill="url(#face)" stroke-width="1.3"/>
+    <path d="M15 89Q11 88 10 82M17 90L16 80M20 91L22 82" fill="none" stroke="#e3bfb0" stroke-width="1.3"/>
+    <path d="M9 75L15 71 20 74 16 79 8 79Z" fill="url(#arcane)" stroke="#aacaf0" stroke-width="1"/>
+    <path d="M6 68L7 63M18 67L22 62M13 79L13 84" stroke="#a2c9f4" stroke-width="1.3"/>
+  </g>
+  <g data-part="wizard-body" data-pivot="64 60" data-motion="static" stroke="#1e1c30" stroke-linejoin="round">
+    <path d="M49 42Q63 46 79 42L87 62 79 78 89 98 76 102 63 92 49 102 37 98 49 74 41 60Z" fill="url(#robe)" stroke-width="2.2"/>
+    <path d="M51 49L64 61 76 48 80 59 67 70 62 72 45 58Z" fill="url(#lining)" stroke="#c09cb9" stroke-width="1.3"/>
+    <path d="M62 57L67 57 70 94 63 98 57 94Z" fill="#2c2a48" stroke="#c6a57f" stroke-width="1.3"/>
+    <path d="M62 62L67 62M61 72L68 72M60 84L69 84" stroke="url(#metal)" stroke-width="1.1"/>
+    <path d="M42 76Q62 82 82 75L81 82Q63 88 46 82Z" fill="#352b46" stroke="#b39ab3" stroke-width="1.4"/>
+    <path d="M58 79L69 79 70 87 64 91 57 86Z" fill="url(#metal)" stroke-width="1"/>
+    <circle cx="64" cy="84" r="2.6" fill="url(#arcane)"/>
+    <path d="M41 96L50 98 62 91M68 93L78 100 86 97" fill="none" stroke="#d5b08f" stroke-width="1.2"/>
+    <path d="M47 91L45 96M80 90L82 97" stroke="#e2d2b2" stroke-width="1.2"/>
+  </g>
+  <g data-part="wizard-head" data-pivot="64 41" data-motion="static" stroke="#211e30" stroke-linejoin="round">
+    <path d="M53 35L73 35 79 48 63 55 48 47Z" fill="url(#lining)" stroke="#b091a3" stroke-width="1.8"/>
+    <path d="M53 20Q62 16 72 22L75 35 68 45 61 47 52 39Z" fill="url(#face)" stroke-width="1.5"/>
+    <path d="M53 33L60 32M67 32L73 33" stroke="#493e5c" stroke-width="1.7"/>
+    <path d="M57 36L60 36M68 36L71 35" stroke="#a0ccee" stroke-width="1.5"/>
+    <path d="M59 42Q64 45 69 41" fill="none" stroke="#735267"/>
+    <path d="M47 29Q47 17 58 13L68 6 76 20 82 30 76 36 71 24 56 26 51 39Z" fill="url(#robe)" stroke="#c8a8c5" stroke-width="1.8"/>
+    <path d="M52 23L70 20M55 20L69 17M47 30L51 33M77 27L81 30" stroke="#e3c7aa" stroke-width="1.15" fill="none"/>
+    <path d="M62 14L67 12 70 17 66 20Z" fill="url(#arcane)" stroke="#c6c0e3" stroke-width=".7"/>
+  </g>
+  <g data-part="wizard-arm-front" data-pivot="84 49" data-motion="arm-right" stroke="#1a1b2f" stroke-linejoin="round">
+    <path d="M78 45Q87 43 96 54L102 71 91 78 83 62Z" fill="url(#robe)" stroke="#b396bd" stroke-width="1.8"/>
+    <path d="M90 68L103 67 108 79 96 84Z" fill="url(#lining)" stroke="#d7bba1" stroke-width="1.4"/>
+    <path d="M97 80L106 78 110 86 106 92 100 89Z" fill="url(#face)" stroke-width="1.2"/>
+    <path d="M110 115Q105 91 107 66L109 32 105 17 109 13 114 30 112 65 115 114Z" fill="url(#wood)" stroke="#30283d" stroke-width="1.5"/>
+    <path d="M108 81L113 80M108 94L115 93M106 55L113 53" stroke="#e2bf92" stroke-width="1.4"/>
+    <path d="M108 27Q100 24 102 17L105 12M112 27Q121 25 120 16L115 11" fill="none" stroke="url(#metal)" stroke-width="2.4"/>
+    <path d="M109 4L115 12 112 21 105 14Z" fill="url(#arcane)" stroke="#d3d4ef" stroke-width="1.4"/>
+    <path d="M110 7L109 16M107 12L113 13" stroke="#fff8e2" stroke-opacity=".75" stroke-width=".8"/>
+  </g>
+</svg>

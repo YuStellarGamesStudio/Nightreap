@@ -1,12 +1,28 @@
+import { ANIMATION, FLOATING_ART } from '../data/animation.js';
 import { CONFIG, ART } from '../data/config.js';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
+
+const rigMotions = new Set(['static', 'leg-left', 'leg-right', 'arm-left', 'arm-right', 'wing-left', 'wing-right', 'tail']);
+
+async function loadPart(svg) {
+  const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  try {
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    return image;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
 
 export class Renderer {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d', { alpha: false });
-    this.images = new Map();
+    this.rigs = new Map();
+    this.motion = new WeakMap();
     this.camera = { x: 0, y: 0 };
     this.width = 0; this.height = 0;
     this.observer = new ResizeObserver(() => this.resize());
@@ -15,11 +31,60 @@ export class Renderer {
   }
   async load() {
     await Promise.all([...new Set(Object.values(ART))].map(async name => {
-      const image = new Image();
-      image.src = `assets/${name}.svg`;
-      await image.decode();
-      this.images.set(name, image);
+      const url = `assets/${name}.svg`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Cannot load ${url}: ${response.status}`);
+      const document = new DOMParser().parseFromString(await response.text(), 'image/svg+xml');
+      const root = document.documentElement;
+      const viewBox = root.getAttribute('viewBox');
+      const groups = [...root.children].filter(child => child.localName === 'g' && child.hasAttribute('data-part'));
+      if (root.localName !== 'svg' || !viewBox || !groups.length) throw new Error(`Missing SVG rig: ${url}`);
+      const serializer = new XMLSerializer();
+      const defs = [...root.children].find(child => child.localName === 'defs');
+      const shared = defs ? serializer.serializeToString(defs) : '';
+      const parts = await Promise.all(groups.map(async group => {
+        const pivot = group.getAttribute('data-pivot')?.trim().split(/[\s,]+/).map(Number);
+        const motion = group.getAttribute('data-motion');
+        if (!pivot || pivot.length !== 2 || !pivot.every(Number.isFinite) || !rigMotions.has(motion))
+          throw new Error(`Invalid rig part ${name}/${group.getAttribute('data-part')}`);
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">${shared}${serializer.serializeToString(group)}</svg>`;
+        return { image: await loadPart(svg), x: pivot[0], y: pivot[1], motion };
+      }));
+      this.rigs.set(name, parts);
     }));
+  }
+  drawRig(parts, x, y, size, facing, stride, floatPhase) {
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.translate(x, y - size);
+    ctx.translate(size / 2, 0);
+    ctx.scale(facing * size / ANIMATION.svgSize, size / ANIMATION.svgSize);
+    ctx.translate(-ANIMATION.svgSize / 2, 0);
+    for (const part of parts) {
+      const motion = part.motion;
+      let angle = 0, lift = 0;
+      if (stride && (motion === 'leg-left' || motion === 'leg-right')) {
+        const step = Math.sin(stride + (motion === 'leg-right' ? Math.PI : 0));
+        angle = step * ANIMATION.legAngle;
+        lift = Math.max(0, step) * ANIMATION.footLift;
+      } else if (motion === 'arm-left' || motion === 'arm-right') {
+        const step = stride ? Math.sin(stride + (motion === 'arm-left' ? Math.PI : 0)) : 0;
+        angle = step * ANIMATION.armAngle + (floatPhase === null ? 0 : Math.sin(floatPhase) * ANIMATION.floatArmAngle);
+      } else if (motion === 'wing-left' || motion === 'wing-right') {
+        angle = Math.sin(floatPhase ?? stride) * ANIMATION.wingAngle * (motion === 'wing-right' ? -1 : 1);
+      } else if (motion === 'tail') {
+        angle = Math.sin(floatPhase ?? stride) * ANIMATION.tailAngle;
+      }
+      if (angle || lift) {
+        ctx.save();
+        ctx.translate(part.x, part.y - lift);
+        ctx.rotate(angle);
+        ctx.translate(-part.x, -part.y);
+        ctx.drawImage(part.image, 0, 0, ANIMATION.svgSize, ANIMATION.svgSize);
+        ctx.restore();
+      } else ctx.drawImage(part.image, 0, 0, ANIMATION.svgSize, ANIMATION.svgSize);
+    }
+    ctx.restore();
   }
   resize() {
     const rect = this.canvas.getBoundingClientRect();
@@ -85,15 +150,39 @@ export class Renderer {
     actors.sort((a,b) => (a.x+a.y)-(b.x+b.y));
     for (const entity of actors) {
       if (entity.hp<=0) continue;
-      const point=this.screen((entity.prevX??entity.x)+(entity.x-(entity.prevX??entity.x))*alpha,(entity.prevY??entity.y)+(entity.y-(entity.prevY??entity.y))*alpha);
-      if (point.x < -CONFIG.renderMargin || point.x > this.width+CONFIG.renderMargin || point.y < -CONFIG.renderMargin || point.y > this.height+CONFIG.renderMargin) continue;
       let art=entity===p ? (p.form && p.form!=='human' ? p.form : p.classId) : ART[entity.kind] || ART[entity.family] || 'demon';
       if (entity.boss) art='boss';
-      const image=this.images.get(art)||this.images.get('demon');
+      const parts=this.rigs.get(art) || this.rigs.get('demon');
+      const prevX=entity.prevX??entity.x,prevY=entity.prevY??entity.y;
+      let worldX=prevX+(entity.x-prevX)*alpha,worldY=prevY+(entity.y-prevY)*alpha;
+      let pose=this.motion.get(entity);
+      if (state.paused && pose && pose.art===art) { worldX=pose.x;worldY=pose.y; }
+      const point=this.screen(worldX,worldY);
+      if (point.x < -CONFIG.renderMargin || point.x > this.width+CONFIG.renderMargin || point.y < -CONFIG.renderMargin || point.y > this.height+CONFIG.renderMargin) continue;
       const size=CONFIG.spriteSize*CONFIG.zoom*(entity.boss?CONFIG.eliteScale*CONFIG.eliteScale:entity.elite?CONFIG.eliteScale:state.minions?.includes(entity)?CONFIG.minionScale:1);
+      if (!pose || pose.art!==art) {
+        pose={ art, x:worldX, y:worldY, phase:0, facing:1, moving:false, floatPhase:state.time*ANIMATION.floatRate };
+        this.motion.set(entity,pose);
+      } else if (!state.paused) {
+        const dx=worldX-pose.x,dy=worldY-pose.y;
+        const distance=Math.hypot(dx,dy);
+        const simulatedStep=Math.hypot(entity.x-prevX,entity.y-prevY);
+        // Ignore the whole teleport interval, including its interpolated subframes.
+        pose.moving=simulatedStep>ANIMATION.minMovement && simulatedStep<=ANIMATION.maxStepDistance
+          && distance>ANIMATION.minMovement && distance<=ANIMATION.maxSampleDistance;
+        if (pose.moving) {
+          pose.phase=(pose.phase+Math.min(distance,ANIMATION.maxStepDistance)*Math.PI*2/ANIMATION.strideDistance)%(Math.PI*2);
+          if (Math.abs(dx-dy)>ANIMATION.facingThreshold) pose.facing=dx-dy<0?-1:1;
+        }
+        pose.x=worldX;pose.y=worldY;
+        pose.floatPhase=state.time*ANIMATION.floatRate;
+      }
       ctx.fillStyle='#05070baa';ctx.beginPath();ctx.ellipse(point.x,point.y,CONFIG.shadowWidth*CONFIG.zoom,CONFIG.shadowHeight*CONFIG.zoom,0,0,Math.PI*2);ctx.fill();
       if(entity===p || entity.elite){ctx.strokeStyle=entity===p?'#b5ab8055':'#d4af5daa';ctx.beginPath();ctx.ellipse(point.x,point.y,size/3,size/7,0,0,Math.PI*2);ctx.stroke();}
-      if(image) ctx.drawImage(image,point.x-size/2,point.y-size,size,size);
+      const floating=FLOATING_ART.has(art);
+      const phase=floating?pose.floatPhase:null;
+      this.drawRig(parts,point.x,point.y+(floating?Math.sin(phase)*ANIMATION.floatHeight:0),
+        size,pose.facing,pose.moving?pose.phase:0,phase);
       if(entity.hp<entity.maxHp || entity.boss){ctx.fillStyle='#20151d';ctx.fillRect(point.x-CONFIG.barWidth/2,point.y-size-CONFIG.barHeight,CONFIG.barWidth,CONFIG.barHeight);ctx.fillStyle=entity===p?'#b25261':'#bd865a';ctx.fillRect(point.x-CONFIG.barWidth/2,point.y-size-CONFIG.barHeight,CONFIG.barWidth*Math.max(0,entity.hp/entity.maxHp),CONFIG.barHeight);}
       if(entity.status && Object.values(entity.status).some(v=>v>0||v?.duration>0)){ctx.strokeStyle=entity.status.frozen?'#9bdded':'#ca7657';ctx.beginPath();ctx.arc(point.x,point.y-size/2,size/2,0,Math.PI*2);ctx.stroke();}
     }
