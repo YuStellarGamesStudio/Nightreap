@@ -1,6 +1,6 @@
 import { CLASSES, COMBAT } from '../data/combat.js?v=fdc1129299fc0d36';
 import { AUDIO } from '../data/audio.js?v=c5e4578c00cd424f';
-import { VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=a956e5f214ab820d';
+import { ATTACK_VFX, VFX_LIMITS, visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 import { SpatialGrid } from '../core/spatial.js?v=aea79118b961517e';
 import { isWalkable } from './world.js?v=5c31f3b40f67ee3b';
 
@@ -14,6 +14,7 @@ const direction = (from, to) => {
 };
 const roll = percent => Math.random() * 100 < percent;
 const has = (enemy, affix) => enemy.affixes?.includes(affix);
+const MELEE_LOOK = { melee: true };
 
 export function createPlayer(classId) {
   if (!CLASSES.some(entry => entry.id === classId)) throw new RangeError(`Unknown class: ${classId}`);
@@ -640,7 +641,7 @@ export class Combat {
         shot.x += shot.dx * shot.speed * dt / steps;
         shot.y += shot.dy * shot.speed * dt / steps;
         if (!isWalkable(s.area, shot.x, shot.y, shot.radius)) {
-          if (shot.side === 'player') this.visual(shot.vfx, 'hit', { x: shot.x, y: shot.y, angle: Math.atan2(shot.dy, shot.dx), part: shot.vfxPart });
+          this.shotVisual(shot);
           struck = true; break;
         }
         if (shot.side === 'player') {
@@ -652,7 +653,7 @@ export class Combat {
                 vfx: shot.vfx, vfxPart: shot.vfxPart });
             else {
               this.damageEnemy(enemy, shot.power, shot);
-              this.visual(shot.vfx, 'hit', { x: shot.x, y: shot.y, angle: Math.atan2(shot.dy, shot.dx), part: shot.vfxPart });
+              this.shotVisual(shot);
               if (shot.split) this.splitShot(shot);
             }
             if (!shot.pierce) { struck = true; break; }
@@ -663,11 +664,13 @@ export class Combat {
             if (shot.status) this.applyStatus(p, shot.status, shot.statusTime);
           } else this.area(shot.x, shot.y, B.procExplosionRadius, B.procExplosionDamage,
             { element: 'physical', proc: false, vfx: 'reflect' });
+          this.shotVisual(shot);
           struck = true;
         } else {
           for (const minion of s.minions) {
             if (minion.hp <= 0 || distance(shot, minion) > shot.radius + minion.radius) continue;
             minion.hp -= shot.damage;
+            this.shotVisual(shot);
             struck = true;
             break;
           }
@@ -696,7 +699,11 @@ export class Combat {
         || effect.type === 'tornado' || effect.type === 'trail' || effect.type === 'hazard') {
         if (effect.delay > 0) {
           effect.delay -= dt;
-          if (effect.delay <= 0) effect.type = effect.side === 'enemy' ? 'hazard' : 'zone';
+          if (effect.delay <= 0) {
+            effect.type = effect.side === 'enemy' ? 'hazard' : 'zone';
+            if (effect.spell) this.visual(effect.spell, 'impact', { x: effect.x, y: effect.y, radius: effect.radius, part: 0 });
+            if (effect.melee) this.meleeVisual(effect.source, effect);
+          }
         } else if (effect.pulses !== 0 || effect.active > 0 || effect.type === 'aura'
           || effect.type === 'tornado' || effect.type === 'trail' || effect.type === 'hazard') {
           effect.pulse -= dt;
@@ -769,6 +776,7 @@ export class Combat {
           { proc: false, element: 'physical' });
         m.attackTime = B.minionAttackInterval;
         this.aim(m, target);
+        this.meleeVisual(m, target);
       }
     }
   }
@@ -783,6 +791,7 @@ export class Combat {
   }
 
   enemyHit(enemy, target, multiplier = 1, status = null) {
+    this.meleeVisual(enemy, target);
     if (target === this.player) {
       this.damagePlayer(enemy.damage * multiplier, enemy.element || 'physical', enemy);
       if (status) this.applyStatus(target, status);
@@ -792,18 +801,41 @@ export class Combat {
 
   enemyProjectile(enemy, target, spread = 0, status = null) {
     const d = direction(enemy, target), angle = Math.atan2(d.y, d.x) + spread;
+    const vfx = ATTACK_VFX[enemy.kind]?.shot;
     this.projectile({ x: enemy.x, y: enemy.y, dx: Math.cos(angle), dy: Math.sin(angle),
       side: 'enemy', source: enemy, radius: B.enemyProjectileRadius,
       speed: B.enemyProjectileSpeed, range: B.enemyCasterRange + B.enemyRangedRange,
-      damage: enemy.damage, element: enemy.element || 'physical', status });
+      damage: enemy.damage, element: enemy.element || 'physical', status, vfx, vfxPart: 0 });
+    if (!spread) this.enemyLaunch(enemy, vfx, target);
     if (distance(enemy, this.player) < AUDIO.audibleRange) this.onEvent('enemyAttack');
   }
 
-  telegraph(enemy, target, radius, delay, damage, element = 'physical', type = 'strike') {
+  enemyLaunch(enemy, vfx, target) {
+    this.visual(vfx, 'launch', { x: enemy.x, y: enemy.y, x2: target.x, y2: target.y,
+      angle: Math.atan2(target.y - enemy.y, target.x - enemy.x), radius: enemy.radius, part: 0 });
+  }
+
+  // Hit bursts for any shot; enemy spells without a hit recipe show their impact at bolt size.
+  shotVisual(shot) {
+    const data = { x: shot.x, y: shot.y, angle: Math.atan2(shot.dy, shot.dx), part: shot.vfxPart ?? 0 };
+    if (!this.visual(shot.vfx, 'hit', data) && shot.side === 'enemy')
+      this.visual(shot.vfx, 'impact', { ...data, radius: VFX_LIMITS.enemyImpactRadius });
+  }
+
+  // Melee swings draw from the attacker toward the struck point; family picks the palette.
+  meleeVisual(attacker, point) {
+    const style = ATTACK_VFX[attacker.kind]?.melee ?? 'monsterClaw';
+    this.visual(style, 'cast', { x: attacker.x, y: attacker.y, x2: point.x, y2: point.y,
+      angle: Math.atan2(point.y - attacker.y, point.x - attacker.x),
+      range: Math.max(distance(attacker, point), attacker.radius * 2), variant: attacker.family, part: 0 });
+  }
+
+  // `look.spell` detonates a spell impact on the circle; `look.melee` swings from the attacker.
+  telegraph(enemy, target, radius, delay, damage, element = 'physical', type = 'strike', look = null) {
     this.state.effects.push({ x: target.x, y: target.y, radius,
       type: 'telegraph', color: colors.warning, life: delay + B.effectFlashLife,
       maxLife: delay + B.effectFlashLife, delay, active: 0, pulses: 1,
-      damage, side: 'enemy', element, source: enemy, strike: type });
+      damage, side: 'enemy', element, source: enemy, strike: type, spell: look?.spell, melee: look?.melee });
     if (!enemy.boss && distance(enemy, this.player) < AUDIO.audibleRange)
       this.onEvent(element === 'physical' ? 'enemyAttack' : 'monsterCast');
   }
@@ -818,7 +850,7 @@ export class Combat {
         const range = behavior === 'caster' ? B.enemyCasterRange : B.enemyRangedRange;
         if (dist < range) {
           if (behavior === 'caster') this.telegraph(enemy, target, B.enemyBomberRange,
-            B.enemyWindup, enemy.damage, enemy.element || 'arcane');
+            B.enemyWindup, enemy.damage, enemy.element || 'arcane', 'strike', ATTACK_VFX[enemy.kind]);
           else {
             this.enemyProjectile(enemy, target);
             if (has(enemy, 'multishot')) {
@@ -833,7 +865,7 @@ export class Combat {
       case 'bomber':
         if (dist < B.enemyBomberRange + target.radius) {
           this.telegraph(enemy, target, B.enemyBomberRange, B.enemyWindup,
-            enemy.damage * 2, 'fire');
+            enemy.damage * 2, 'fire', 'strike', ATTACK_VFX[enemy.kind]);
           enemy.hp = 0;
           enemy._killed = true;
           enemy.attackTime = interval;
@@ -843,7 +875,7 @@ export class Combat {
         if (dist < B.enemyChargeRange && dist > B.enemyTankRange) {
           const d = direction(enemy, target);
           enemy.charge = { dx: d.x, dy: d.y, life: B.enemyChargeLength / (enemy.speed * B.enemyChargeSpeed) };
-          this.telegraph(enemy, target, B.enemyTankRange, B.enemyWindup, enemy.damage, 'physical');
+          this.telegraph(enemy, target, B.enemyTankRange, B.enemyWindup, enemy.damage, 'physical', 'strike', MELEE_LOOK);
           enemy.attackTime = interval * 1.8;
         } else if (dist < enemy.radius + target.radius + B.enemyContactRange) {
           this.enemyHit(enemy, target);
@@ -854,7 +886,7 @@ export class Combat {
         if (dist < B.enemyBurrowRange && dist > B.enemyTankRange) {
           enemy.burrow = { x: target.x, y: target.y, life: B.enemyBurrowDelay };
           this.telegraph(enemy, target, B.enemyTankRange, B.enemyBurrowDelay,
-            enemy.damage, 'physical');
+            enemy.damage, 'physical', 'strike', MELEE_LOOK);
           enemy.attackTime = interval * 2;
         } else if (dist < enemy.radius + target.radius + B.enemyContactRange) {
           this.enemyHit(enemy, target);
@@ -864,7 +896,7 @@ export class Combat {
       default:
         if (dist < enemy.radius + target.radius + (behavior === 'tank' ? B.enemyTankRange : B.enemyContactRange)) {
           this.telegraph(enemy, target, enemy.radius + target.radius + B.enemyContactRange,
-            B.enemyWindup, enemy.damage * (behavior === 'tank' ? 1.5 : 1), 'physical');
+            B.enemyWindup, enemy.damage * (behavior === 'tank' ? 1.5 : 1), 'physical', 'strike', MELEE_LOOK);
           enemy.attackTime = interval * (behavior === 'tank' ? 1.6 : 1);
         }
     }
@@ -907,26 +939,28 @@ export class Combat {
         delay: B.bossWindup, active: B.bossHazardLife, pulse: 0, interval: B.statusTick,
         damage: enemy.damage * B.bossSummonDamage, element: 'fire', side: 'enemy', source: enemy });
     } else if (ability === 'homing') {
-      const d = direction(enemy, target);
+      const d = direction(enemy, target), vfx = ATTACK_VFX[enemy.kind]?.shot;
       this.projectile({ x: enemy.x, y: enemy.y, dx: d.x, dy: d.y,
         side: 'enemy', source: enemy, radius: B.enemyProjectileRadius * 2,
         speed: B.bossTrackingSpeed, range: B.enemyLeash, damage: enemy.damage,
-        element: 'arcane', homingPlayer: true });
+        element: 'arcane', homingPlayer: true, vfx, vfxPart: 0 });
+      this.enemyLaunch(enemy, vfx, target);
     } else {
-      const face = direction(enemy, target);
+      const face = direction(enemy, target), vfx = ATTACK_VFX[enemy.kind]?.shot;
       const count = B.bossBulletCount + (phase - 1) * B.bossBulletGrowth;
       for (let i = 0; i < count; i++) {
         const angle = Math.atan2(face.y, face.x) + (i - (count - 1) / 2) * B.bossBarrageWidth;
         this.projectile({ x: enemy.x, y: enemy.y, dx: Math.cos(angle), dy: Math.sin(angle),
           side: 'enemy', source: enemy, radius: B.enemyProjectileRadius,
           speed: B.enemyProjectileSpeed, range: B.enemyLeash, damage: enemy.damage,
-          element: 'arcane' });
+          element: 'arcane', vfx, vfxPart: 0 });
       }
+      this.enemyLaunch(enemy, vfx, target);
       this.telegraph(enemy, target, B.bossNovaRadius, B.bossWindup,
-        enemy.damage, 'arcane');
+        enemy.damage, 'arcane', 'strike', ATTACK_VFX[enemy.kind]);
     }
     if (phase >= 2 && diff >= 1) this.telegraph(enemy, target, B.bossRingRadius,
-      B.bossWindup, enemy.damage * B.bossSummonDamage, 'arcane');
+      B.bossWindup, enemy.damage * B.bossSummonDamage, 'arcane', 'strike', ATTACK_VFX[enemy.kind]);
     enemy.attackTime = B.bossCooldown * (1 - (phase - 1) * B.bossPhaseSpeed);
     if (distance(enemy, this.player) < AUDIO.audibleRange) this.onEvent('bossCast');
   }

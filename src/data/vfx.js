@@ -6,7 +6,7 @@
 export const VFX_LIMITS = Object.freeze({
   maxVisuals: 160, seedRange: 1e6,
   fadeIn: 0.12, fadeOut: 0.6, fieldFade: 0.35, overlayFade: 0.4,
-  projectileLift: 22, projectileShadow: 0.45,
+  projectileLift: 22, projectileShadow: 0.45, enemyImpactRadius: 34,
 });
 
 const steel = ['#ffffff', '#c9d6e8', '#5d7089'];
@@ -33,6 +33,14 @@ const mana = ['#eef6ff', '#5c9cff', '#17306e'];
 
 const fx = (life, ...layers) => ({ life, layers });
 const silent = fx(0);
+
+// Melee strikes are tinted by the attacker's family (minions use their kind as family).
+const meleePalettes = {
+  demon: [ember, fire], undead: [bone, necro], beast: [blood, earth], elemental: [frost, frost],
+  void: [shadow, arcane], sheep: [shadow, moon], skeleton: [bone, necro], golem: [stone, earth], wolf: [moon, blood],
+};
+const perFamily = make => Object.fromEntries([['cast', make(steel, dust)],
+  ...Object.entries(meleePalettes).map(([family, [main, accent]]) => [`cast:${family}`, make(main, accent)])]);
 
 export const VFX = {
   // Warrior
@@ -464,6 +472,78 @@ export const VFX = {
       { shape: 'ring', colors: gold, from: 0.2, to: 2, width: 6, radius: 50 },
       { shape: 'motes', colors: gold, kind: 'star', count: 10, spread: 1, rise: 70, size: 4, radius: 40 }),
   },
+
+  // Monster spells whose element has no class projectile, built from the same orb primitive.
+  frostbolt: {
+    launch: fx(0.3, { shape: 'motes', colors: frost, kind: 'snow', count: 8, spread: 1, rise: 20, size: 2, at: 'origin', radius: 22 }),
+    projectile: { shape: 'orb', colors: frost, size: 8, trail: 44, sparkles: 5 },
+    hit: fx(0.5, { shape: 'shards', colors: frost, count: 6, spread: 0.8, height: 20, width: 7, radius: 30 },
+      { shape: 'ring', colors: frost, from: 0.2, to: 1, width: 3, radius: 32 }),
+  },
+  voidbolt: {
+    launch: fx(0.3, { shape: 'sigil', colors: shadow, scale: 0.9, points: 5, speed: -4, at: 'origin', radius: 26 }),
+    projectile: { shape: 'orb', colors: shadow, size: 8, trail: 46, sparkles: 5 },
+    hit: fx(0.45, { shape: 'ring', colors: shadow, from: 0.1, to: 1, width: 3, radius: 32 },
+      { shape: 'smoke', colors: shadow, count: 5, spread: 0.6, size: 16, rise: 14, radius: 30 }),
+    impact: fx(0.8, { shape: 'ring', colors: shadow, from: 0.15, to: 1, width: 7, fill: 0.3 },
+      { shape: 'vortex', colors: arcane, arms: 4, turns: 0.5, from: 0.2, to: 1, width: 3, speed: 3, alpha: 0.6 },
+      { shape: 'sparks', colors: arcane, count: 12, speed: 0.9, rise: 26, width: 2 },
+      { shape: 'smoke', colors: shadow, count: 8, spread: 0.8, size: 26, rise: 30, start: 0.2 }),
+  },
+
+  // Monster and minion melee; `cast` draws from the attacker toward the struck point.
+  monsterSlash: perFamily((main, accent) => fx(0.3,
+    { shape: 'slash', colors: main, width: 16, arc: 1.4, sweep: 0.45, trail: 0.7 },
+    { shape: 'sparks', colors: accent, count: 5, speed: 0.35, spread: 0.9, start: 0.3, rise: 6, width: 1.5 })),
+  monsterClaw: perFamily((main, accent) => fx(0.34,
+    { shape: 'claws', colors: main, count: 3, gap: 12, width: 7, stagger: 0.05, tilt: 0.5 },
+    { shape: 'sparks', colors: accent, count: 4, speed: 0.35, spread: 0.8, start: 0.3, rise: 8, width: 1.5 })),
+  monsterBite: perFamily((main, accent) => fx(0.36,
+    { shape: 'jaws', colors: main, size: 40, close: 0.5, focus: 0.8 },
+    { shape: 'sparks', colors: accent, count: 4, speed: 0.3, spread: 0.7, start: 0.35, rise: 8, width: 1.5, at: 'target', radius: 22 })),
+  monsterSlam: perFamily((main, accent) => fx(0.5,
+    { shape: 'ring', colors: main, from: 0.1, to: 1, width: 6, at: 'target', radius: 44, blend: 'source-over' },
+    { shape: 'cracks', colors: accent, count: 6, length: 0.8, width: 2.5, at: 'target', radius: 44 },
+    { shape: 'smoke', colors: dust, count: 5, spread: 0.7, size: 18, rise: 12, at: 'target', radius: 40 })),
+};
+
+// Attack visuals keyed by attacker kind. Bows fire the ranger arrow, spellcasters use the spell of
+// their element: `shot` styles projectiles, `spell` detonates on caster/bomber warning circles
+// (the circle still draws first so the dodge window stays readable), `melee` picks the swing.
+// Unlisted melee attackers (boss summons) default to `monsterClaw`.
+export const ATTACK_VFX = {
+  'ash-archer': { shot: 'steadyshot' },
+  'frost-knight': { shot: 'frostbolt' },
+  'ice-elemental': { shot: 'frostbolt' },
+  'void-tendril': { shot: 'voidbolt' },
+  infernal: { spell: 'fireball' },
+  'zombie-mage': { spell: 'corpseexplosion' },
+  'snow-oracle': { spell: 'frostnova' },
+  cinderling: { spell: 'procExplosion' },
+  'crypt-scarab': { spell: 'corpseexplosion' },
+  'venom-spider': { spell: 'poisonnova' },
+  imp: { melee: 'monsterClaw' },
+  hellhound: { melee: 'monsterBite' },
+  revenant: { melee: 'monsterSlash' },
+  'skeletal-guard': { melee: 'monsterSlash' },
+  ghost: { melee: 'monsterClaw' },
+  'grave-burrower': { melee: 'monsterClaw' },
+  'blighted-wolf': { melee: 'monsterBite' },
+  treant: { melee: 'monsterSlam' },
+  'thorn-moth': { melee: 'monsterClaw' },
+  'spore-stalker': { melee: 'monsterClaw' },
+  'snow-beast': { melee: 'monsterSlam' },
+  'frost-bat': { melee: 'monsterBite' },
+  parasite: { melee: 'monsterBite' },
+  'void-colossus': { melee: 'monsterSlam' },
+  sheep: { melee: 'monsterBite' },
+  skeleton: { melee: 'monsterSlash' },
+  golem: { melee: 'monsterSlam' },
+  wolf: { melee: 'monsterBite' },
+  'pyre-warden': { shot: 'fireball', spell: 'fireball' },
+  'mourning-wraith': { shot: 'bonetooth', spell: 'corpseexplosion' },
+  'glacial-herald': { shot: 'frostbolt', spell: 'frostnova' },
+  'abyss-lord': { shot: 'missile', spell: 'voidbolt' },
 };
 
 export function visualRecipe(key, kind, part = 0, variant) {

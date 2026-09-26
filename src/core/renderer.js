@@ -3,8 +3,8 @@ import { CONFIG, ART } from '../data/config.js?v=cd5d8d477f8af273';
 import { TerrainRenderer } from './terrain-renderer.js?v=f80ebf0560569bd3';
 import { isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
-import { VfxRenderer } from './vfx-renderer.js?v=5aa8f7232f9b4626';
-import { visualRecipe } from '../data/vfx.js?v=a956e5f214ab820d';
+import { VfxRenderer } from './vfx-renderer.js?v=7add6bbce47fb00e';
+import { visualRecipe } from '../data/vfx.js?v=22df8b0455347034';
 
 const project = (x, y) => ({ x: x - y, y: (x + y) / 2 });
 
@@ -241,7 +241,7 @@ export class Renderer {
     for(const projectile of state.projectiles || []){
       const px=(projectile.prevX??projectile.x)+(projectile.x-(projectile.prevX??projectile.x))*alpha;
       const py=(projectile.prevY??projectile.y)+(projectile.y-(projectile.prevY??projectile.y))*alpha;
-      if (projectile.side!=='enemy' && this.vfx.drawProjectile(projectile,px,py,state.time)) continue;
+      if (this.vfx.drawProjectile(projectile,px,py,state.time)) continue;
       const q=this.screen(px,py),r=(projectile.radius||CONFIG.barHeight)*CONFIG.zoom;
       ctx.fillStyle=projectile.side==='enemy'?'#e47563':'#d8c69a';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=CONFIG.shadowWidth;
       ctx.beginPath();ctx.ellipse(q.x,q.y-CONFIG.playerRadius,r*2,r,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
