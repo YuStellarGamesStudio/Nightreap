@@ -30,7 +30,7 @@
 - 背包「一鍵換裝」比較所有頁面的裝備：以各詞綴數值除以該詞綴 T1 上限後加總，換上更高分裝備（含雙戒指）。略過損壞裝備，同分保留原裝；舊裝留在背包並自動存檔。這是通用評分，不替代流派搭配判斷。
 - 一鍵換裝固定在背包面板右下角。介面基準字級 16px，裝備／技能名稱與生命數值放大加粗，詞綴詳情 15px；背包加寬、長名稱可顯示兩行，避免靠縮小文字塞版面。
 - 背包「出售篩選」另開小視窗，多選稀有度與部位、指定物品等級上限，預覽件數及總價後在庇護所一鍵出售。「自動售出」預設關閉，開啟後新掉落符合條件即換金幣（滿背包也可）；不回頭清空背包、不出售身上裝備，條件隨存檔保存。出售無法復原。
-- 網站提供固定英文的 Open Graph／Twitter 分享卡，使用 1200×630 PNG；向量原圖為 `assets/nightreap-social.svg`，分享平台相容圖為同名 `.png`。
+- 網站提供固定英文的 Open Graph／Twitter 分享卡，使用 1200×630 PNG；向量原圖為 `assets/social/nightreap-social.svg`，分享平台相容圖為同名 `.png`。
 - 野外與地下城為連續大地圖，包含實體地形障礙、隨機怪群及探索黑霧。
 - 怪物共 25 種（含綿羊）：五幕新增灰骨弓手、墓穴甲蟲、孢霧潛行者、霜翼蝙蝠、虛空巨像，各有獨立造型，分別採遠程、自爆、潛地、飛行、重裝近戰行為，並加入地下城混編；怪物總量不因此增加。
 - 上方「截圖」位於背包左側，下載包含當前場景、HUD 與已開背包的 PNG；依本機時間命名 `Nightreap_YYYYMMDD-HHmmss.png`，以裝置像素比例輸出，不上傳圖片。
@@ -43,6 +43,8 @@
 圖示以 SVG 為來源，提供 16／32／180／192／512 與 maskable 版本；另提供由 SVG 轉製、含 16／32／48px 的根目錄 `favicon.ico`。維護者修改資產後執行 `node scripts/version-assets.mjs`，將內容雜湊與離線清單一起提交；這是發版維護工具，遊戲直接執行已提交檔案，不需建置。
 
 配樂每首獨立存於 `src/data/music/{scene}.json`；`src/data/music/index.json` 只列場景與檔名。新增曲目時建立一份 JSON 並加入索引，不用改 Web Audio 播放引擎；發版前重新產生內容雜湊，所有曲目會各自納入離線快取。
+
+美術目錄位於 `assets/`：`characters/` 五職人物、`creatures/` 怪物／召喚物／變身、`terrain/` 地形圖集、`sanctuaries/` 五村、`ui/` 技能與裝備、`icons/` 網站圖示、`scenes/` 開始場景、`social/` 分享圖。人物映射集中在 `src/data/config.js` 的 `ART`；地形圖集依 `data-terrain` 分組，不拆成每障礙一檔。
 
 
 ### 開發狀態
@@ -78,7 +80,7 @@ Core loop: **Explore → Slay and loot → Combine affixes → Prepare in town �
 - “Equip best” compares every inventory page against equipped gear using the sum of each affix value divided by its T1 maximum, including both ring slots. Broken candidates are skipped and ties keep current gear; replaced items stay in inventory and changes autosave. This general score does not optimize a specific build.
 - Equip best stays at the inventory panel’s lower-right corner. The interface uses a 16px base with larger, bolder item/skill names and health values, plus 15px affix details. A wider inventory and two-line names preserve readability.
 - “Sell filter” opens a separate window for rarity, slot and maximum item level. Preview the count/value and sell matching inventory in town. Auto-sell is off by default; when enabled, matching new drops become gold even with a full bag. Existing inventory and equipped items are not auto-sold; filters persist with saves. Sales cannot be undone.
-- Open Graph and Twitter cards use fixed English metadata and a 1200×630 PNG, derived from the editable vector source `assets/nightreap-social.svg`.
+- Open Graph and Twitter cards use fixed English metadata and a 1200×630 PNG, derived from the editable vector source `assets/social/nightreap-social.svg`.
 - Continuous wilderness and dungeon maps feature solid obstacles, random monster packs and exploration fog.
 - The roster has 25 species including sheep. Each act adds a distinct Ashbone Archer, Crypt Scarab, Spore Stalker, Frostwing Bat or Void Colossus, using ranged, explosive, burrowing, flying or tank behavior respectively. All five also join dungeon packs without increasing total spawn counts.
 - Screenshot, immediately left of Inventory, downloads the current scene and visible interface as a PNG at the device pixel ratio. Local-time filenames use `Nightreap_YYYYMMDD-HHmmss.png`; images are not uploaded.
@@ -91,6 +93,8 @@ Open over HTTPS or a local HTTP server, not `file://`. After the first online as
 SVG source icons cover 16/32/180/192/512 and maskable variants; the root `favicon.ico` contains derived 16/32/48px images. After asset changes, maintainers run `node scripts/version-assets.mjs` and commit the refreshed hashes and offline inventory. This is release maintenance, not a required game build step.
 
 Every composition has its own `src/data/music/{scene}.json`; `src/data/music/index.json` maps scene names to filenames only. Add a track file and index entry without changing the shared Web Audio engine, then refresh content hashes so every track is cached separately for offline play.
+
+Artwork lives under `assets/`: `characters/` for heroes, `creatures/` for monsters/summons/forms, `terrain/` for the terrain atlas, `sanctuaries/` for villages, `ui/` for skills/equipment, `icons/` for site icons, `scenes/` for the title scene, and `social/` for share images. Actor paths are centralized in `ART` in `src/data/config.js`; terrain remains one atlas grouped by `data-terrain`, not one file per obstacle.
 
 
 ### Status
