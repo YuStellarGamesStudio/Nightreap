@@ -1,6 +1,6 @@
 import { TERRAIN } from '../data/terrain.js?v=a4d576ef9a3ef4e2';
 import { initializeExploration, isExplored } from '../systems/exploration.js?v=9c05b30176a59828';
-import { CONFIG } from '../data/config.js?v=717cc8651159a6d8';
+import { CONFIG } from '../data/config.js?v=c718bdc80f8941c9';
 import { rasterizeVector } from './vector-image.js?v=921478b13bcc057d';
 
 const TAU = Math.PI * 2;

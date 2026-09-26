@@ -1,53 +1,24 @@
-import { CONFIG, UI, ART } from './data/config.js?v=717cc8651159a6d8';
+import { CONFIG, ART } from './data/config.js?v=c718bdc80f8941c9';
 import { DEFAULT_SETTINGS, SAVE_LIMITS } from './data/save.js?v=2a952fa1ede7fff0';
 import { CLASSES, COMBAT } from './data/combat.js?v=fdc1129299fc0d36';
 import { AFFIXES, GEAR_BALANCE, SLOT_NAMES } from './data/gear.js?v=dd3a72133bbc3a05';
 import { ACTS, DIFFICULTIES, WORLD } from './data/world.js?v=ef5f78c241fd8cdd';
 import { SANCTUARIES } from './data/sanctuary.js?v=27c83fc812468275';
 import { ACT_MUSIC } from './data/audio.js?v=c5e4578c00cd424f';
-import { Renderer } from './core/renderer.js?v=5b5bae0cb019f4d5';
+import { Renderer } from './core/renderer.js?v=85a24925e62c9f17';
 import { Input } from './core/input.js?v=eb9e1b198213da3e';
-import { GameLoop } from './core/loop.js?v=91bfe918d00a4b1e';
+import { GameLoop } from './core/loop.js?v=a08da43477caf53d';
 import { AudioManager } from './core/audio.js?v=9175c82b0ec34617';
-import { Combat, createPlayer } from './systems/combat.js?v=12e0e4dd7a7b481b';
+import { Combat, createPlayer } from './systems/combat.js?v=063fed6d9007da7c';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js?v=5c31f3b40f67ee3b';
 import { getModifiers, equip, equipBest, unequip, sell, salePreview, sellMatching, repair, buy, craft, grantLoot } from './systems/gear.js?v=45d026153c480c72';
 import { SaveStore } from './systems/save.js?v=4faf8ce27f236bfb';
 import { revealExploration } from './systems/exploration.js?v=9c05b30176a59828';
 import { registerPWA } from './systems/pwa.js?v=db9b2832dbced912';
-import { getLanguage, setLanguage, text } from './systems/i18n.js?v=05f50c421756c74c';
+import { UI, getLanguage, setLanguage, text } from './systems/i18n.js?v=e7e65818e23a0a39';
 import { captureViewport, screenshotFilename } from './core/screenshot.js?v=2ce5f207b47a042d';
 
 const $ = id => document.getElementById(id);
-const label = (en, zh) => ({ en, zh });
-const WORDS = {
-  noSlot: label('Empty slot', '空裝備槽'), rank: label('Rank', '等級'),
-  durability: label('Durability', '耐久'), selectAffix: label('Select an affix', '選擇詞綴'),
-  newCharacter: label('New character', '新角色'), noBackup: label('No backup to restore.', '沒有可還原的備份。'),
-  importPreview: label('Import preview', '匯入預覽'), itemLevel: label('Item level', '物品等級'),
-  seconds: label('seconds', '秒'), exportReady: label('Save exported.', '存檔已匯出。'),
-  loaded: label('Character loaded.', '已讀取角色。'),
-  imported: label('Save imported; current character reloaded.', '已匯入存檔並重新載入角色。'),
-  restoreDone: label('Backup restored; current character reloaded.', '已還原備份並重新載入角色。'),
-  healthShort: label('LIFE', '生命'), resourceShort: label('RESOURCE', '資源'),
-  noAffixes: label('No affixes on this item.', '這件裝備沒有詞綴。'),
-  primary: label('LMB · Primary', '左鍵 · 普攻'), secondary: label('RMB · Secondary', '右鍵 · 次要攻擊'),
-  sanctuaryOnly: label('Available in the sanctuary only.', '僅能在庇護所使用。'),
-  equipBest: label('Equip best', '一鍵換裝'),
-  gambleRarities: {
-    common: label('Common', '普通'), magic: label('Magic', '魔法'),
-    rare: label('Rare', '稀有'), legendary: label('Legendary', '傳說'),
-  },
-  gambleRepeat: label('Gamble again', '再賭一次'),
-  gambleWaiting: label('The relic is being revealed…', '裝備即將現形……'),
-  gamblePrompt: label('An unknown relic waits in the dark.', '一件未知裝備靜候於黑暗中。'),
-  saleFilter: label('Sell filter', '出售篩選'),
-  saleFilterActive: label('Sell filter · Auto ON', '出售篩選 · 自動開'),
-  screenshot: label('Screenshot', '截圖'),
-  screenshotReady: label('Screenshot download started.', '已開始下載截圖。'),
-  equipBestHint: label('Compare all inventory items by the sum of affix values / their T1 maximums. Skip broken items; keep equipped items on ties. Not a build-specific recommendation.',
-    '比較整個背包：各詞綴數值 ÷ 該詞綴 T1 上限後加總。略過損壞裝備，同分保留原裝；不代表特定流派最佳搭配。'),
-};
 const node = (tag, className, value) => {
   const element = document.createElement(tag);
   if (className) element.className = className;
@@ -113,7 +84,7 @@ function notify(value, sound) {
 }
 function failure(error) {
   console.error(error);
-  notify(label(`${message(UI.uiError)}: ${error.message}`, `${text(UI.uiError, 'zh')}：${error.message}`));
+  notify(UI.uiError(error.message));
 }
 async function persist(announce = false) {
   try {
@@ -176,9 +147,7 @@ function enterArea(options) {
 }
 function returnTown(dead = false) {
   if (inTown) return;
-  if (!dead && !window.confirm(message(label(
-    'Return to the sanctuary? Current exploration will end; enemies and the area will reset when you enter again.',
-    '確定返回庇護所？本次探索將結束，再次進入時怪物與地圖將重置。')))) return;
+  if (!dead && !window.confirm(message(UI.confirmReturn))) return;
   if (dead) { deathPenalty(player); notify(UI.dead, 'death'); }
   inTown = true;
   input.clear();
@@ -253,7 +222,7 @@ function renderSkills() {
     tile.append(node('span', 'skill-key', bindings), node('span', 'skill-name', message(skill.name)),
       node('small', 'skill-cost', `${skill.cost} ${message(role().resourceName)}`));
     const remaining = player.cooldowns[skill.id] || 0;
-    const cooldown = node('span', 'skill-cooldown', remaining > 0 ? `${remaining.toFixed(1)} ${message(WORDS.seconds)}` : '');
+    const cooldown = node('span', 'skill-cooldown', remaining > 0 ? `${remaining.toFixed(1)} ${message(UI.seconds)}` : '');
     tile.append(cooldown);
     tile.disabled = inTown || state.paused || remaining > 0 || player.resource < skill.cost;
     return tile;
@@ -271,7 +240,7 @@ function renderSkills() {
   if (player.skillPoints) {
     const ranks = node('div', 'skill-points', `${message(UI.skillPoints)}: ${player.skillPoints}`);
     role().skills.slice(1).forEach((skill, index) => ranks.append(button(
-      `${message(skill.name)} + (${message(WORDS.rank)} ${player.skillRanks[skill.id] || 0})`, () => {
+      `${message(skill.name)} + (${message(UI.rank)} ${player.skillRanks[skill.id] || 0})`, () => {
         if (combat.spendSkill(index + 1)) { renderSkills(); void persist(); }
       }, 'stat-button')));
     $('passives').append(ranks);
@@ -282,7 +251,7 @@ function updateSkillAvailability() {
   const tiles = $('skills').children;
   for (let index = 0; index < tiles.length; index++) {
     const skill = skills[index], remaining = player.cooldowns[skill.id] || 0;
-    tiles[index].lastChild.textContent = remaining > 0 ? `${remaining.toFixed(1)} ${message(WORDS.seconds)}` : '';
+    tiles[index].lastChild.textContent = remaining > 0 ? `${remaining.toFixed(1)} ${message(UI.seconds)}` : '';
     tiles[index].disabled = inTown || state.paused || remaining > 0 || player.resource < skill.cost;
   }
 }
@@ -325,7 +294,7 @@ function renderInventory() {
   $('materials-value').textContent = `${player.materials} ${message(UI.materials)} · ${player.tickets} ${message(UI.tickets)}`;
   const equipment = activePanel === 'equipment';
   $('equip-best').disabled = !player.inventory.length;
-  $('sale-filter-button').textContent = message(settings.autoSell ? WORDS.saleFilterActive : WORDS.saleFilter);
+  $('sale-filter-button').textContent = message(settings.autoSell ? UI.saleFilterActive : UI.saleFilter);
   $('sale-filter-button').dataset.autoSell = String(settings.autoSell);
   show('items', !equipment);
   show('inventory-pagination', !equipment);
@@ -341,9 +310,9 @@ function renderInventory() {
       if (item) tile.dataset.rarity = item.rarity;
       tile.dataset.itemId = item?.id || '';
       const slotName = `${message(name)}${slot.startsWith('ring') ? ` ${slot.slice(-1)}` : ''}`;
-      tile.title = `${slotName} · ${item ? message(item.name) : message(WORDS.noSlot)}`;
+      tile.title = `${slotName} · ${item ? message(item.name) : message(UI.noSlot)}`;
       tile.append(node('span', 'slot-label', slotName), itemIcon(slot),
-        node('strong', 'item-name', item ? message(item.name) : message(WORDS.noSlot)));
+        node('strong', 'item-name', item ? message(item.name) : message(UI.noSlot)));
       return tile;
     }));
   } else {
@@ -373,7 +342,7 @@ function updateItemSelection() {
 }
 function appendItemDescription(container, item) {
   const title = node('h3', 'detail-name', message(item.name)); title.dataset.rarity = item.rarity;
-  container.append(title, node('p', 'detail-meta', `${message(SLOT_NAMES[item.slot])} · ${message(WORDS.itemLevel)} ${item.level} · ${message(WORDS.durability)} ${item.durability}/${item.maxDurability}`));
+  container.append(title, node('p', 'detail-meta', `${message(SLOT_NAMES[item.slot])} · ${message(UI.itemLevel)} ${item.level} · ${message(UI.durability)} ${item.durability}/${item.maxDurability}`));
   for (const entry of item.affixes) {
     const affix = AFFIXES.find(definition => definition.id === entry.id);
     container.append(node('div', 'affix-row', `${message(affix.name)} +${entry.value} · T${entry.tier}`));
@@ -401,14 +370,14 @@ function renderItemDetail() {
       if (inTown) apply(sell(player, item.id));
     });
     sellButton.disabled = !inTown;
-    if (!inTown) sellButton.title = message(WORDS.sanctuaryOnly);
+    if (!inTown) sellButton.title = message(UI.sanctuaryOnly);
     actions.append(sellButton);
   }
   if (inTown && item.affixes.length) actions.append(button(message(UI.forge), () => openForge(item.id)));
 }
 function renderHud() {
   const p = player;
-  $('health-label').textContent = message(WORDS.healthShort);
+  $('health-label').textContent = message(UI.healthShort);
   $('resource-label').textContent = message(role().resourceName).toUpperCase();
   $('health-value').textContent = `${Math.ceil(p.hp)} / ${p.maxHp}`;
   $('resource-value').textContent = `${Math.floor(p.resource)} / ${p.maxResource}`;
@@ -424,7 +393,7 @@ function renderHud() {
 }
 function renderTranslations() {
   document.documentElement.lang = language;
-  $('screenshot-button').textContent = message(WORDS.screenshot);
+  $('screenshot-button').textContent = message(UI.screenshot);
   for (const [id, key] of Object.entries({ 'brand-title':'title', 'brand-subtitle':'subtitle',
     'inventory-button':'inventory', 'sanctuary-title':'character', 'sanctuary-hint':'sanctuaryHint',
     'save-button':'save', 'settings-button':'settings',
@@ -438,20 +407,20 @@ function renderTranslations() {
   $('oath-button').textContent = message(UI.character);
   $('oath-close').setAttribute('aria-label', message(UI.close));
   $('title-eyebrow').textContent = message(UI.subtitle);
-  $('title-tagline').textContent = message(label('The night is endless. Your flame is not.', '長夜無盡，你的火光卻並非永恆。'));
-  $('title-start').textContent = message(hasSavedCharacter ? label('Continue journey', '繼續旅程') : label('Begin your journey', '開始旅程'));
+  $('title-tagline').textContent = message(UI.tagline);
+  $('title-start').textContent = message(hasSavedCharacter ? UI.continueJourney : UI.beginJourney);
   $('title-settings').textContent = message(UI.settings);
   $('title-language').textContent = language === 'en' ? '中文' : 'English';
-  $('title-footnote').textContent = message(label('A sanctuary waits beyond the dark.', '黑暗彼端，仍有庇護你的燈火。'));
-  $('update-button').textContent = message(label('Update ready · Save & reload', '更新已就緒 · 存檔並重新載入'));
-  $('controls-hint').textContent = `${message(UI.controls)} · ${message(WORDS.secondary)}`;
+  $('title-footnote').textContent = message(UI.titleFootnote);
+  $('update-button').textContent = message(UI.updateReady);
+  $('controls-hint').textContent = `${message(UI.controls)} · ${message(UI.secondary)}`;
   $('language-button').textContent = language === 'en' ? '中文' : 'English';
   $('modal-close').setAttribute('aria-label', message(UI.close));
   $('inventory-close').setAttribute('aria-label', message(UI.close));
   $('inventory-panel').setAttribute('aria-label', `${message(UI.inventory)} · ${message(UI.equipment)}`);
-  $('equip-best').textContent = message(WORDS.equipBest);
-  $('equip-best').title = message(WORDS.equipBestHint);
-  $('shop-button').title = $('forge-button').title = inTown ? '' : message(WORDS.sanctuaryOnly);
+  $('equip-best').textContent = message(UI.equipBest);
+  $('equip-best').title = message(UI.equipBestHint);
+  $('shop-button').title = $('forge-button').title = inTown ? '' : message(UI.sanctuaryOnly);
 }
 function renderAll() { renderTranslations(); renderClassChoice(); renderProgress(); renderSkills(); renderInventory(); renderHud(); }
 
@@ -496,11 +465,9 @@ function rowButton(container, title, detail, callback) {
   return row;
 }
 function openSaleFilter() {
-  const content = openModal(WORDS.saleFilter);
+  const content = openModal(UI.saleFilter);
   const form = node('div', 'sale-filter');
-  form.append(node('p', 'sale-help', message(label(
-    'Match a selected rarity AND slot, up to the item level below. No selection means no sales.',
-    '稀有度、部位與等級上限須同時符合；同類可複選，未選擇則不出售。'))));
+  form.append(node('p', 'sale-help', message(UI.saleHelp)));
   const groups = {};
   const addGroup = (key, title, entries) => {
     const field = node('fieldset', 'sale-group');
@@ -518,15 +485,10 @@ function openSaleFilter() {
     });
     field.append(choices); form.append(field);
   };
-  addGroup('rarities', label('Rarity', '稀有度'), [
-    ['common', label('Common · White', '普通 · 白色')],
-    ['magic', label('Magic · Blue', '魔法 · 藍色')],
-    ['rare', label('Rare · Gold', '稀有 · 金色')],
-    ['legendary', label('Legendary · Orange', '傳說 · 橘色')],
-  ]);
-  addGroup('slots', label('Equipment slots', '裝備部位'),
+  addGroup('rarities', UI.saleRarity, Object.entries(UI.saleRarities));
+  addGroup('slots', UI.saleSlots,
     Object.entries(SLOT_NAMES).filter(([slot]) => slot !== 'ring2'));
-  const levelLabel = node('label', 'sale-level', message(label('Maximum item level (inclusive)', '物品等級上限（含）')));
+  const levelLabel = node('label', 'sale-level', message(UI.saleMaxLevel));
   const level = node('input');
   level.type = 'number'; level.id = 'sale-max-level'; level.min = '1';
   level.max = String(SAVE_LIMITS.itemLevel); level.step = '1'; level.required = true;
@@ -552,9 +514,7 @@ function openSaleFilter() {
   });
   automatic.id = 'auto-sell-toggle';
   actions.append(manual, automatic); form.append(actions);
-  form.append(node('p', 'sale-help', message(label(
-    'Manual sales: sanctuary only. Auto-sell: new drops only, even with a full bag. Equipped gear is never sold. Sales cannot be undone.',
-    '手動出售僅限庇護所；自動售出只處理新掉落，背包滿仍可售出。不出售身上裝備，售出後無法復原。'))));
+  form.append(node('p', 'sale-help', message(UI.saleRules)));
   content.append(form);
   function refresh() {
     const valid = level.validity.valid;
@@ -569,14 +529,11 @@ function openSaleFilter() {
     if (!selected) settings.autoSell = false;
     const preview = salePreview(player, settings.saleFilter);
     summary.textContent = message(valid
-      ? label(`${preview.count} matching items · ${preview.gold} gold`, `符合 ${preview.count} 件 · 共 ${preview.gold} 金幣`)
-      : label(`Enter a whole level from 1 to ${SAVE_LIMITS.itemLevel}; this edit is not applied.`,
-        `請輸入 1–${SAVE_LIMITS.itemLevel} 的整數等級；此修改尚未套用。`));
-    manual.textContent = message(label(`Sell matching (${preview.count})`, `一鍵出售（${preview.count} 件）`));
+      ? UI.salePreview(preview.count, preview.gold) : UI.saleLevelInvalid(SAVE_LIMITS.itemLevel));
+    manual.textContent = message(UI.sellMatching(preview.count));
     manual.disabled = !inTown || !valid || !preview.count;
-    manual.title = inTown ? '' : message(WORDS.sanctuaryOnly);
-    automatic.textContent = message(settings.autoSell
-      ? label('Auto-sell: ON', '自動售出：開啟') : label('Auto-sell: OFF', '自動售出：關閉'));
+    manual.title = inTown ? '' : message(UI.sanctuaryOnly);
+    automatic.textContent = message(settings.autoSell ? UI.autoSellOn : UI.autoSellOff);
     automatic.setAttribute('aria-pressed', String(settings.autoSell));
     automatic.disabled = !settings.autoSell && (!valid || !selected);
   }
@@ -598,10 +555,10 @@ function openShop() {
   const gold = node('p', 'shop-gold');
   const status = node('p', 'shop-status');
   status.setAttribute('role', 'status');
-  const repeat = button(`${message(WORDS.gambleRepeat)} · ${GEAR_BALANCE.gambleGold} ${message(UI.gold)}`,
+  const repeat = button(`${message(UI.gambleRepeat)} · ${GEAR_BALANCE.gambleGold} ${message(UI.gold)}`,
     gamble, 'gamble-repeat');
   repeat.hidden = true;
-  panel.append(node('p', 'gamble-placeholder', message(WORDS.gamblePrompt)), repeat);
+  panel.append(node('p', 'gamble-placeholder', message(UI.gamblePrompt)), repeat);
   layout.append(controls, panel);
   content.append(gold, layout, status);
   const active = () => shopSession === session && $('modal').open && content.isConnected && inTown;
@@ -639,16 +596,16 @@ function openShop() {
     refreshGold();
     if (!result.ok) { status.textContent = message(result.message); return; }
     renderInventory(); renderHud(); void persist();
-    status.textContent = message(WORDS.gambleWaiting);
+    status.textContent = message(UI.gambleWaiting);
     const item = result.item;
     const card = node('div', 'gamble-card gamble-revealing');
     card.dataset.rarity = item.rarity;
     card.style.setProperty('--gamble-reveal-duration', `${CONFIG.gambleRevealDuration}s`);
     const details = node('div', 'gamble-details');
     details.setAttribute('aria-hidden', 'true');
-    details.append(node('span', 'gamble-rarity', message(WORDS.gambleRarities[item.rarity])));
+    details.append(node('span', 'gamble-rarity', message(UI.gambleRarities[item.rarity])));
     appendItemDescription(details, item);
-    if (!item.affixes.length) details.append(node('p', 'gamble-no-affixes', message(WORDS.noAffixes)));
+    if (!item.affixes.length) details.append(node('p', 'gamble-no-affixes', message(UI.noAffixes)));
     card.append(itemIcon(item.slot, 'gamble-icon'), details);
     panel.querySelector('.gamble-card, .gamble-placeholder')?.remove();
     panel.prepend(card);
@@ -682,7 +639,7 @@ function openForge(itemId = selectedItemId, affixIndex = 0) {
   if (!item) {
     const content = openModal(UI.forge);
     const choices = owned.filter(entry => entry.affixes.length);
-    if (!choices.length) content.append(node('p', '', message(WORDS.noAffixes)));
+    if (!choices.length) content.append(node('p', '', message(UI.noAffixes)));
     else for (const choice of choices) {
       const tile = button(null, () => openForge(choice.id), 'affix-choice');
       tile.dataset.rarity = choice.rarity;
@@ -691,9 +648,9 @@ function openForge(itemId = selectedItemId, affixIndex = 0) {
     }
     return;
   }
-  if (!item.affixes.length) { notify(WORDS.noAffixes); return; }
+  if (!item.affixes.length) { notify(UI.noAffixes); return; }
   const content = openModal(UI.forge);
-  content.append(itemIcon(item.slot, 'detail-icon'), node('h3', '', message(item.name)), node('p', '', message(WORDS.selectAffix)));
+  content.append(itemIcon(item.slot, 'detail-icon'), node('h3', '', message(item.name)), node('p', '', message(UI.selectAffix)));
   const affixes = node('div', 'modal-grid'); content.append(affixes);
   item.affixes.forEach((entry, index) => {
     const affix = AFFIXES.find(definition => definition.id === entry.id);
@@ -726,7 +683,7 @@ function openSettings() {
     const caption = node('label', 'setting-toggle');
     const toggle = node('input'); toggle.type = 'checkbox'; toggle.checked = settings[`${prefix}Enabled`];
     const slider = node('input'); slider.type = 'range'; slider.min = '0'; slider.max = String(SAVE_LIMITS.volume); slider.value = String(settings[`${prefix}Volume`]);
-    slider.setAttribute('aria-label', `${message(name)} ${message(label('volume', '音量'))}`);
+    slider.setAttribute('aria-label', `${message(name)} ${message(UI.volume)}`);
     const level = node('span', '', slider.value);
     toggle.addEventListener('change', () => { settings[`${prefix}Enabled`] = toggle.checked; audio.setSettings(settings); void persistSettings(); });
     slider.addEventListener('input', () => { settings[`${prefix}Volume`] = Number(slider.value); level.textContent = slider.value; audio.setSettings(settings); void persistSettings(); });
@@ -734,8 +691,8 @@ function openSettings() {
     field.append(caption, slider, level); content.append(field);
   }
   const bindings = node('div', 'mouse-bindings');
-  bindings.append(node('p', '', message(label('Mouse skills · follows the skill slot when changing class or form.', '滑鼠技能 · 切換職業或形態時沿用技能欄位置。'))));
-  for (const [key, name] of [['leftMouseSkill', label('Left mouse', '滑鼠左鍵')], ['rightMouseSkill', label('Right mouse', '滑鼠右鍵')]]) {
+  bindings.append(node('p', '', message(UI.mouseSkills)));
+  for (const [key, name] of [['leftMouseSkill', UI.leftMouse], ['rightMouseSkill', UI.rightMouse]]) {
     const caption = node('label', 'setting-row', message(name));
     const select = node('select');
     select.id = key;
@@ -767,13 +724,11 @@ async function showSlots() {
     const grid = node('div', 'modal-grid'); content.append(grid);
     for (const entry of entries) {
       const name = message(CLASSES.find(character => character.id === entry.classId).name);
-      const detail = entry.exists ? `${message(UI.level)} ${entry.level} · ${message(ACTS[entry.progress.act].name)}` : message(WORDS.newCharacter);
+      const detail = entry.exists ? `${message(UI.level)} ${entry.level} · ${message(ACTS[entry.progress.act].name)}` : message(UI.newCharacter);
       const choice = button(`${name} · ${detail}`, async () => {
         try {
           if (!entry.exists) { notify(UI.noSave); return; }
-          if (!window.confirm(message(label(
-            `Load ${name} · ${detail}? Unsaved progress will be lost and you will return to the sanctuary.`,
-            `確定讀取「${name} · ${detail}」？目前未儲存的進度將會遺失，並返回庇護所。`)))) return;
+          if (!window.confirm(message(UI.confirmLoad(`${name} · ${detail}`)))) return;
           const restored = await saves.load(entry.classId);
           if (!restored) { notify(UI.noSave); return; }
           player = Object.assign(createPlayer(entry.classId), restored);
@@ -781,7 +736,7 @@ async function showSlots() {
           makeState(createArea(player.progress));
           hasSavedCharacter = true;
           if (titleOpen) beginJourney();
-          notify(WORDS.loaded);
+          notify(UI.loaded);
           closeModal();
         } catch (error) { failure(error); }
       });
@@ -803,7 +758,7 @@ async function downloadScreenshot() {
     const url = URL.createObjectURL(await pending);
     const link = node('a'); link.href = url; link.download = filename; link.click();
     setTimeout(() => URL.revokeObjectURL(url), CONFIG.messageDuration * 1000);
-    notify(WORDS.screenshotReady);
+    notify(UI.screenshotReady);
   } catch (error) { failure(error); }
   finally { control.disabled = false; }
 }
@@ -814,7 +769,7 @@ async function exportSaves() {
     const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
     const link = node('a'); link.href = url; link.download = 'nightreap-save.json'; link.click();
     setTimeout(() => URL.revokeObjectURL(url), CONFIG.messageDuration * 1000);
-    notify(WORDS.exportReady);
+    notify(UI.exportReady);
   } catch (error) { failure(error); }
 }
 async function importFile(file) {
@@ -822,19 +777,17 @@ async function importFile(file) {
   try {
     const json = await file.text();
     const preview = saves.previewImport(json);
-    const content = openModal(WORDS.importPreview);
+    const content = openModal(UI.importPreview);
     content.append(node('p', '', message(UI.importHint)));
     for (const entry of preview.characters) {
       const name = message(CLASSES.find(character => character.id === entry.classId).name);
       content.append(node('div', 'modal-row', `${name} · ${message(UI.level)} ${entry.level} · ${message(DIFFICULTIES[entry.difficulty].name)} · ${message(ACTS[entry.act].maps[entry.map].name)} · ${entry.gold} ${message(UI.gold)} · ${entry.inventory} ${message(UI.inventory)} · ${entry.equipment} ${message(UI.equipment)}`));
     }
-    if (!preview.characters.length) content.append(node('p', '', message(WORDS.newCharacter)));
+    if (!preview.characters.length) content.append(node('p', '', message(UI.newCharacter)));
     const actions = node('div', 'modal-actions'); content.append(actions);
     actions.append(button(message(UI.confirmImport), async () => {
       try {
-        if (!window.confirm(message(label(
-          'Import this save? All character slots and settings will be replaced, including clearing slots absent from the file. Current saves will be backed up first.',
-          '確定匯入此存檔？所有角色槽與設定將被取代，檔案中沒有的角色槽也會清空。覆蓋前會先備份目前存檔。')))) return;
+        if (!window.confirm(message(UI.confirmImportSave))) return;
         if (!await persist()) return;
         await saves.importJSON(json);
         settings = { ...preview.settings };
@@ -844,25 +797,23 @@ async function importFile(file) {
         player = Object.assign(createPlayer(player.classId), restored || {});
         inTown = true; selectedItemId = null; page = 0;
         makeState(createArea(player.progress));
-        closeModal(); notify(WORDS.imported);
+        closeModal(); notify(UI.imported);
       } catch (error) { failure(error); }
     }), button(message(UI.cancel), closeModal));
   } catch (error) { failure(error); }
 }
 async function restoreBackup() {
   try {
-    if (!window.confirm(message(label(
-      'Restore the backup? All character slots and settings will be replaced, and unsaved progress will be lost.',
-      '確定還原備份？所有角色槽與設定將被取代，目前未儲存的進度將會遺失。')))) return;
+    if (!window.confirm(message(UI.confirmRestore))) return;
     const restored = await saves.restoreBackup();
-    if (!restored) { notify(WORDS.noBackup); return; }
+    if (!restored) { notify(UI.noBackup); return; }
     settings = { ...await saves.loadSettings() };
     language = setLanguage(settings.language);
     audio.setSettings(settings);
     player = Object.assign(createPlayer(player.classId), await saves.load(player.classId) || {});
     inTown = true; selectedItemId = null; page = 0;
     makeState(createArea(player.progress));
-    closeModal(); notify(WORDS.restoreDone);
+    closeModal(); notify(UI.restoreDone);
   } catch (error) { failure(error); }
 }
 function tryTravel(kind) {

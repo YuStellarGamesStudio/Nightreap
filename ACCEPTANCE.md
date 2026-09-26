@@ -271,3 +271,8 @@
 ### 啟動全螢幕按鈕
 
 - Chromium 實測：設定面板操作列顯示「Fullscreen／啟動全螢幕」按鈕，按一次進入全螢幕、再按一次離開，無頁面錯誤；不寫入設定。Firefox／Safari 未測。
+
+### 介面文案集中至 i18n.js
+
+- `src/data/config.js` 的 `UI` 表、`main.js` 的 `WORDS` 與 22 處內嵌 `label()` 文案合併為 `src/systems/i18n.js` 的 `UI`（126 條，中英皆非空）；`main.js` 已無 `label(`／`WORDS`，引用的 `UI.*` 鍵全數存在。
+- Chromium 實測 `?lang=zh`：開始畫面標語／按鈕／註腳、設定面板（音量、滑鼠技能、全螢幕按鈕）、選擇誓約面板、出售篩選面板皆顯示中文；切換 English 後出售篩選全數為英文，含數值文案「0 matching items · 0 gold」「Sell matching (0)」；無頁面錯誤。確認對話框與錯誤提示文案未逐一觸發。

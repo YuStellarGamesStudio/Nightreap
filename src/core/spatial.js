@@ -1,4 +1,4 @@
-import { CONFIG } from '../data/config.js?v=717cc8651159a6d8';
+import { CONFIG } from '../data/config.js?v=c718bdc80f8941c9';
 
 export class SpatialGrid {
   constructor(cellSize = CONFIG.cellSize) { this.cellSize = cellSize; this.cells = new Map(); }
