@@ -11,7 +11,7 @@ import { Combat, createPlayer } from './systems/combat.js';
 import { createArea, recordKill, advance, enterDungeon, enterSheep, deathPenalty } from './systems/world.js';
 import { getModifiers, equip, unequip, sell, repair, buy, craft, grantLoot } from './systems/gear.js';
 import { SaveStore } from './systems/save.js';
-import { getLanguage, setLanguage, text } from './systems/i18n.js';
+import { getLanguage, setLanguage, text } from './systems/i18n.js?v=05f50c421756c74c';
 
 const $ = id => document.getElementById(id);
 const label = (en, zh) => ({ en, zh });

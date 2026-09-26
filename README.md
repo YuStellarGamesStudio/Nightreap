@@ -8,7 +8,7 @@
 - 設計依據：[企劃書](永夜收割-Nightreap-企劃書.md)、[實作計畫](PLAN.md)、[數值設計](DESIGN.md)、[驗收](ACCEPTANCE.md)。
 - 操作規劃：WASD 移動、滑鼠瞄準與普攻、1–6 主動技能、R 終極、Tab 背包。
 - 網址：https://nightreap.yustellar.dev · 倉庫：https://github.com/YueyuHoshizora/Nightreap
-- 語言：`?lang=en` 或 `?lang=zh`；無參數依瀏覽器語言偵測（中文或英文）。
+- 語言：`?lang=en` 或 `?lang=zh`；無參數或無效參數時固定使用英文，不依瀏覽器語言切換。
 - 開發規則：依 M0–M7 分階段提交，不自動推送或部署。
 
 ### 遊戲玩法（規劃）
@@ -33,7 +33,7 @@ A desktop dark-fantasy survivor ARPG featuring five classes, affix-driven loot, 
 
 - Native HTML/CSS/JavaScript ES modules, Canvas 2D, SVG, Web Audio, and IndexedDB. No framework, CDN, or build step.
 - Planned controls: WASD to move, mouse to aim/basic attack, 1–6 for skills, R for ultimate, Tab for inventory.
-- Languages: `?lang=en` / `?lang=zh`; without a parameter, Chinese browser languages select Chinese and all others select English.
+- Languages: `?lang=en` / `?lang=zh`; missing or unsupported parameters default to English, regardless of browser language.
 - Project: https://nightreap.yustellar.dev · Repository: https://github.com/YueyuHoshizora/Nightreap
 - Development proceeds through M0–M7 with local milestone commits. No automated push or deployment.
 

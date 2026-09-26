@@ -1,15 +1,9 @@
-function browserLanguage() {
-  if (typeof navigator === 'undefined') return 'en';
-  const language = navigator.languages?.[0] || navigator.language || '';
-  return /^zh(?:-|$)/i.test(language) ? 'zh' : 'en';
-}
-
 export function getLanguage() {
   if (typeof location !== 'undefined') {
     const query = new URLSearchParams(location.search).get('lang');
     if (query === 'en' || query === 'zh') return query;
   }
-  return browserLanguage();
+  return 'en';
 }
 
 export function setLanguage(lang) {
