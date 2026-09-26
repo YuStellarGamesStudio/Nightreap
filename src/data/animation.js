@@ -16,4 +16,4 @@ export const ANIMATION = Object.freeze({
   floatArmAngle: 0.14,
 });
 
-export const FLOATING_ART = new Set(['elemental', 'void']);
+export const FLOATING_ART = new Set(['elemental', 'void', 'frost-bat']);
