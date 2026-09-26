@@ -1046,6 +1046,8 @@ export class Combat {
       const fleeing = enemy.status.feared > 0 || ranged && dist < B.enemyRetreatRange;
       if (!fleeing && dist <= idealRange) continue;
       const flying = behavior === 'flying';
+      const speed = enemy.speed * (has(enemy, 'swift') ? B.enemyFlyingSpeed : 1)
+        * (behavior === 'flying' ? B.enemyFlyingSpeed : behavior === 'tank' ? B.enemyTankSpeed : 1);
       const travel = speed * dt;
       const heading = approachVector(this.state.area, enemy, target, fleeing, travel);
       this.move(enemy, heading.x * travel, heading.y * travel, flying);
