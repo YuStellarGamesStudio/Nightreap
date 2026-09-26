@@ -168,6 +168,9 @@ function enterArea(options) {
 }
 function returnTown(dead = false) {
   if (inTown) return;
+  if (!dead && !window.confirm(message(label(
+    'Return to the sanctuary? Current exploration will end; enemies and the area will reset when you enter again.',
+    '確定返回庇護所？本次探索將結束，再次進入時怪物與地圖將重置。')))) return;
   if (dead) { deathPenalty(player); notify(UI.dead, 'death'); }
   inTown = true;
   input.clear();
