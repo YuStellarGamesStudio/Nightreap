@@ -52,6 +52,7 @@
 - 主視窗（`.viewport`）內禁用瀏覽器右鍵選單；視窗外選單保留。遊戲畫布右鍵施放右鍵技能，預設為第二技能欄，點放不會因選單或提早放開而丟失。
 - 地面怪物巡徑改走與連通檢查相同的格網距離場，正面被擋時沿障礙滑開，不再停在橢圓前；飛行單位穿過地面障礙。
 - 依最新指示，遊戲頁面各區域（包含主畫面、開始畫面、頂欄與介面）右鍵均不顯示瀏覽器預設選單；覆蓋前述「視窗外選單保留」的規則。畫布右鍵施放技能與短點放佇列維持不變。
+- 使用者指定遠端倉庫改為 `https://github.com/YuStellarGamesStudio/Nightreap.git`、網站及 CNAME 改為 `nightreap.ysgs.app`；同步對外網址與文件，企劃書原文維持唯讀。本次明確要求推送完成的變更。
 
 ---
 
@@ -62,9 +63,9 @@
 | 中文名稱 | 永夜收割 |
 | 英文名稱 | Nightreap |
 | 類型 | ARPG 式割草（45° 假透視、裝備詞綴刷寶） |
-| 網址 | https://nightreap.yustellar.dev |
-| 遠端倉庫 | https://github.com/YueyuHoshizora/Nightreap.git |
-| 部署 | GitHub Pages＋CNAME `nightreap.yustellar.dev` |
+| 網址 | https://nightreap.ysgs.app |
+| 遠端倉庫 | https://github.com/YuStellarGamesStudio/Nightreap.git |
+| 部署 | GitHub Pages＋CNAME `nightreap.ysgs.app` |
 | 授權 | AGPL-3.0-only（使用者確認覆蓋企劃書原 MIT 裁示 #19） |
 | 存檔 | IndexedDB（資料庫 `nightreap`），存檔／讀檔／匯出／匯入（JSON） |
 | 語言 | 英文（預設）、中文；`?lang=zh` 查詢參數切換 |
@@ -82,7 +83,7 @@ Nightreap/
 ├── ACCEPTANCE.md      # 驗收清單與標準
 ├── README.md          # 中英雙語
 ├── LICENSE            # AGPL-3.0-only
-├── CNAME              # nightreap.yustellar.dev
+├── CNAME              # nightreap.ysgs.app
 ├── .nojekyll          # 空檔
 ├── sitemap.xml
 ├── index.html
@@ -121,7 +122,7 @@ Nightreap/
 - [ ] `CLAUDE.md`：僅一行引用 `AGENTS.md`
 - [ ] `DESIGN.md`：由企劃書 §3 初始化（屬性、詞綴池 33 條、技能組五職業、怪物、難度、合成、掉落表骨架）
 - [ ] `ACCEPTANCE.md`：驗收清單（見第 5 節硬指標全數納入）
-- [ ] `README.md`：中英雙語；`LICENSE`：AGPL-3.0-only；`CNAME`：`nightreap.yustellar.dev`
+- [ ] `README.md`：中英雙語；`LICENSE`：AGPL-3.0-only；`CNAME`：`nightreap.ysgs.app`
 - [ ] `.nojekyll`（空檔）、`sitemap.xml`（含 `?lang=zh|en` 列）
 
 ### M1 核心架構

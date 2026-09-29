@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://nightreap.yustellar.dev/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://nightreap.yustellar.dev/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="zh" href="https://nightreap.yustellar.dev/?lang=zh" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://nightreap.yustellar.dev/" />
+    <loc>https://nightreap.ysgs.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nightreap.ysgs.app/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://nightreap.ysgs.app/?lang=zh" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://nightreap.ysgs.app/" />
   </url>
   <url>
-    <loc>https://nightreap.yustellar.dev/?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://nightreap.yustellar.dev/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="zh" href="https://nightreap.yustellar.dev/?lang=zh" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://nightreap.yustellar.dev/" />
+    <loc>https://nightreap.ysgs.app/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nightreap.ysgs.app/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://nightreap.ysgs.app/?lang=zh" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://nightreap.ysgs.app/" />
   </url>
   <url>
-    <loc>https://nightreap.yustellar.dev/?lang=zh</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://nightreap.yustellar.dev/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="zh" href="https://nightreap.yustellar.dev/?lang=zh" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://nightreap.yustellar.dev/" />
+    <loc>https://nightreap.ysgs.app/?lang=zh</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nightreap.ysgs.app/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://nightreap.ysgs.app/?lang=zh" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://nightreap.ysgs.app/" />
   </url>
 </urlset>

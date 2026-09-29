@@ -177,6 +177,7 @@
 - 直接檢查 HTTP 回傳的靜態 HTML，canonical、Open Graph 及 Twitter 大圖標籤皆存在，不依賴 JavaScript；網址為正式站 `https://nightreap.yustellar.dev/`，文字、替代文字與圖片內容固定英文。
 - Chromium 以 1200×630、DPR 1 從自包含 SVG 原圖產生 PNG，目視確認殘月、村莊、燈火與英文標題；HTTP 200、MIME `image/png`、PNG 簽章及 IHDR 尺寸 1200×630 正確。版本腳本以二進位雜湊處理 PNG，並納入資產清單。
 - 尚未部署，未宣稱任何外部社群平台已重新抓取或刷新既有分享快取。
+- 網域遷移後，靜態 HTML 的 canonical、Open Graph、Twitter 圖片網址與 sitemap 均改指向 `https://nightreap.ysgs.app/`；此為新設定，不代表新站已完成部署或外部分享快取已更新。
 
 ### 五幕新怪物
 

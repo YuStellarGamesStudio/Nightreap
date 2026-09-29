@@ -7,7 +7,7 @@
 - 技術：原生 HTML/CSS/JavaScript ES modules，Canvas 2D、SVG、Web Audio、IndexedDB；無框架、CDN 或建置步驟。
 - 設計依據：[唯讀原企劃書](永夜收割-Nightreap-企劃書.md)、[實作計畫與核准調整](PLAN.md)、[數值設計](DESIGN.md)、[驗收](ACCEPTANCE.md)。後續明確核准的調整優先於原企劃書對應段落。
 - 操作：WASD 移動、滑鼠瞄準、左右鍵施放指定技能、1–6 主動技能、R 終極、Q／E 藥水、Tab 背包、Escape 暫停或關閉面板。
-- 網址：https://nightreap.yustellar.dev · 倉庫：https://github.com/YueyuHoshizora/Nightreap
+- 網址：https://nightreap.ysgs.app · 倉庫：https://github.com/YuStellarGamesStudio/Nightreap
 - 語言：`?lang=en` 或 `?lang=zh`；無參數或無效參數時固定使用英文，不依瀏覽器語言切換。
 - 開發規則：依 M0–M7 分階段提交，不自動推送或部署。
 
@@ -59,7 +59,7 @@ A desktop dark-fantasy survivor ARPG featuring five classes, affix-driven loot, 
 - Native HTML/CSS/JavaScript ES modules, Canvas 2D, SVG, Web Audio, and IndexedDB. No framework, CDN, or build step.
 - Controls: WASD to move, mouse to aim, left/right mouse buttons for assigned skills, 1–6 for active skills, R for ultimate, Q/E for potions, Tab for inventory, and Escape to pause or close a panel.
 - Languages: `?lang=en` / `?lang=zh`; missing or unsupported parameters default to English, regardless of browser language.
-- Project: https://nightreap.yustellar.dev · Repository: https://github.com/YueyuHoshizora/Nightreap
+- Project: https://nightreap.ysgs.app · Repository: https://github.com/YuStellarGamesStudio/Nightreap
 - Development proceeds through M0–M7 with local milestone commits. No automated push or deployment.
 
 ### How to play
@@ -105,6 +105,6 @@ The game interface integrates core, combat, equipment, world, persistence, audio
 
 ## 授權 / License
 
-© 2026 YueyuHoshizora。本專案以 [GNU Affero General Public License v3.0（AGPL-3.0-only）](LICENSE) 授權；[原始碼](https://github.com/YueyuHoshizora/Nightreap)公開提供。
+© 2026 YueyuHoshizora。本專案以 [GNU Affero General Public License v3.0（AGPL-3.0-only）](LICENSE) 授權；[原始碼](https://github.com/YuStellarGamesStudio/Nightreap)公開提供。
 
-© 2026 YueyuHoshizora. Licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0-only)](LICENSE). [Source code](https://github.com/YueyuHoshizora/Nightreap) is available online.
+© 2026 YueyuHoshizora. Licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0-only)](LICENSE). [Source code](https://github.com/YuStellarGamesStudio/Nightreap) is available online.
